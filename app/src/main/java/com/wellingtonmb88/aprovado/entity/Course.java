@@ -16,7 +16,7 @@ public class Course implements Serializable {
     public float mediaB1;
     public float m2;
     public float b2;
-    public float meiaB2;
+    public float mediaB2;
     public float mediaFinal;
 
 }
