@@ -5,8 +5,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.TextView;
 
+import com.nineoldandroids.animation.ValueAnimator;
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.entity.Course;
 
@@ -58,7 +62,7 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         return mCourses.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView mTextViewCourseName;
         private TextView mTextViewCourseProfessor;
@@ -70,8 +74,15 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         private RecyclerViewCallBack mListener;
         private Course mCourse;
 
+        private View yourCustomView;
+
+
+        private int originalHeight = 0;
+        private boolean mIsViewExpanded = false;
+
         public ViewHolder(View view,  RecyclerViewCallBack listener) {
             super(view);
+            view.setOnClickListener(this);
             mListener = listener;
             mTextViewCourseName = (TextView) view.findViewById(R.id.txtName);
             mTextViewCourseProfessor = (TextView) view.findViewById(R.id.txtProfessor);
@@ -82,6 +93,15 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
             mButtonCourseEdit = (View) view.findViewById(R.id.btnEdit);
             mButtonCourseDelete.setOnClickListener(deleleListner);
             mButtonCourseEdit.setOnClickListener(editListner);
+
+            // If isViewExpanded == false then set the visibility
+            // of whatever will be in the expanded to GONE
+
+            if (mIsViewExpanded == false) {
+                // Set Views to View.GONE and .setEnabled(false)
+               // yourCustomView.setVisibility(View.GONE);
+               // yourCustomView.setEnabled(false);
+            }
         }
 
         private View.OnClickListener deleleListner = new View.OnClickListener() {
@@ -97,6 +117,66 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
                 mListener.Operation("", mCourse);
             }
         };
+
+        @Override
+        public void onClick(final View view) {
+            // If the originalHeight is 0 then find the height of the View being used
+            // This would be the height of the cardview
+            if (originalHeight == 0) {
+                originalHeight = view.getHeight();
+            }
+
+            // Declare a ValueAnimator object
+            ValueAnimator valueAnimator;
+            if (!mIsViewExpanded) {
+               // yourCustomView.setVisibility(View.VISIBLE);
+               // yourCustomView.setEnabled(true);
+
+                mIsViewExpanded = true;
+                valueAnimator = ValueAnimator.ofInt(originalHeight, originalHeight + (int) (originalHeight * 2.0)); // These values in this method can be changed to expand however much you like
+            } else {
+                mIsViewExpanded = false;
+                valueAnimator = ValueAnimator.ofInt(originalHeight + (int) (originalHeight * 2.0), originalHeight);
+
+                Animation a = new AlphaAnimation(1.00f, 0.00f); // Fade out
+
+                a.setDuration(200);
+                // Set a listener to the animation and configure onAnimationEnd
+                a.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                       // yourCustomView.setVisibility(View.INVISIBLE);
+                       // yourCustomView.setEnabled(false);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+
+                // Set the animation on the custom view
+                //yourCustomView.startAnimation(a);
+            }
+            valueAnimator.setDuration(200);
+            valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    Integer value = (Integer) animation.getAnimatedValue();
+                    view.getLayoutParams().height = value.intValue();
+                    view.requestLayout();
+                }
+            });
+
+
+            valueAnimator.start();
+
+        }
 
     }
 
