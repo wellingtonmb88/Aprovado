@@ -1,11 +1,14 @@
 package com.wellingtonmb88.aprovado.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
 /**
  * Created by Wellington on 27/05/2015.
  */
-public class Course implements Serializable {
+public class Course implements Parcelable {
 
     public long id;
     public String name;
@@ -18,5 +21,66 @@ public class Course implements Serializable {
     public float b2;
     public float mediaB2;
     public float mediaFinal;
+
+    /**
+     * A constructor that initializes the Course object
+     **/
+    public Course(){}
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Storing the Course data to Parcel object
+     **/
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        //dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeString(professor);
+        dest.writeInt(semester);
+        dest.writeFloat(m1);
+        dest.writeFloat(b1);
+        dest.writeFloat(mediaB1);
+        dest.writeFloat(m2);
+        dest.writeFloat(b2);
+        dest.writeFloat(mediaB2);
+        dest.writeFloat(mediaFinal);
+    }
+
+    /**
+     * Retrieving Course data from Parcel object
+     * This constructor is invoked by the method createFromParcel(Parcel source) of
+     * the object CREATOR
+     **/
+    private Course(Parcel in){
+        //this.id = in.readInt();
+        this.name = in.readString();
+        this.professor = in.readString();
+        this.semester = in.readInt();
+        this.m1 = in.readFloat();
+        this.m2 = in.readFloat();
+        this.b1 = in.readFloat();
+        this.b2 = in.readFloat();
+        this.mediaB1 = in.readFloat();
+        this.mediaB2 = in.readFloat();
+        this.mediaFinal = in.readFloat();
+    }
+
+    public static final Parcelable.Creator<Course> CREATOR = new Parcelable.Creator<Course>() {
+
+        @Override
+        public Course createFromParcel(Parcel source) {
+            return new Course(source);
+        }
+
+        @Override
+        public Course[] newArray(int size) {
+            return new Course[size];
+        }
+    };
+
 
 }

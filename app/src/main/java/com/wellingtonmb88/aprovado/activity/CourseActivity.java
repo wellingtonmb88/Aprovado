@@ -76,7 +76,7 @@ public class CourseActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-       Course course = (Course)intent.getBundleExtra("disciplinaExtra").getSerializable("disiclina");
+       Course course = (Course)intent.getBundleExtra("disciplinaExtra").getParcelable("disiclina");
 
         if(course != null){
 

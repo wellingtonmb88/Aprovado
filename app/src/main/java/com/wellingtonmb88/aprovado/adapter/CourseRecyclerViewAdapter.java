@@ -5,6 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.wellingtonmb88.aprovado.R;
@@ -50,6 +52,7 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         holder.mTextViewCourseMB2.setText("MB2: "+String.valueOf(mCourses.get(position).mediaB2));
         holder.mTextViewCourseMF.setText("MF: "+String.valueOf(mCourses.get(position).mediaFinal));
     }
+
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override

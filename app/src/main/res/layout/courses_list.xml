@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:ripple="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -9,7 +10,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_weight="1">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:scrollbars="vertical"
@@ -30,5 +32,41 @@
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"/>
 
+
     </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:padding="10dp"
+        android:background="#212121"
+        android:id="@+id/snackbar">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Large Text"
+            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp"
+            android:textColor="#E8EAF6"
+            android:id="@+id/textView_snackbar_text" />
+
+        <com.wellingtonmb88.aprovado.custom.CustomRippleView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Large Text"
+            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp"
+            android:textColor="#3D5AFE"
+            android:id="@+id/textView_snackbar_button"
+            ripple:alphaFactor="0.7"
+            ripple:hover="true"
+            ripple:rippleColor="@color/white_pressed" />
+    </LinearLayout>
 </LinearLayout>
