@@ -2,19 +2,27 @@ package com.wellingtonmb88.aprovado.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.jensdriller.libs.undobar.UndoBar;
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.activity.CourseActivity;
 import com.wellingtonmb88.aprovado.adapter.CourseRecyclerViewAdapter;
@@ -28,18 +36,28 @@ import java.util.List;
 /**
  * Created by Wellington on 25/05/2015.
  */
-public class CourseListFragment extends Fragment implements CourseRecyclerViewAdapter.RecyclerViewCallBack {
+public class CourseListFragment extends Fragment implements CourseRecyclerViewAdapter.RecyclerViewCallBack,  UndoBar.Listener  {
     private FloatingActionButton mAddCourseFAB;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<Course> mList;
+    private LinearLayout mSnackBar;
+    private TextView snakBarText;
+    private TextView snakBarButton;
+    private Course mLastCourseDeleted;
+    private boolean isUndo;
+
+
+    int selectedPosition = 0;
+
+    private static final int WAIT_TIMEOUT = 5000;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.courses_list, container, false);
 
-
+        mSnackBar = (LinearLayout) v.findViewById(R.id.snackbar);
         mAddCourseFAB = (FloatingActionButton) v.findViewById(R.id.floatingActionButton_add);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
 
@@ -64,10 +82,29 @@ public class CourseListFragment extends Fragment implements CourseRecyclerViewAd
 
                 Intent intent = new Intent(getActivity().getApplicationContext(), CourseActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("disiclina", new Course());
+                bundle.putParcelable("disiclina", new Course());
                 intent.putExtra("disciplinaExtra", bundle);
 
                 startActivity(intent);
+            }
+        });
+
+        snakBarButton = (TextView) mSnackBar.findViewById(R.id.textView_snackbar_button);
+        snakBarText = (TextView) mSnackBar.findViewById(R.id.textView_snackbar_text);
+
+        isUndo = false;
+        snakBarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!isUndo){
+                    isUndo = true;
+                    mList.add(selectedPosition, mLastCourseDeleted);
+                    mAdapter.notifyItemInserted(selectedPosition);
+                    final Animation anim = AnimationUtils.loadAnimation(getActivity(),  R.anim.abc_slide_out_bottom);
+                    anim.setDuration(3000);
+                    mSnackBar.startAnimation(anim);
+                    mSnackBar.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -84,27 +121,34 @@ public class CourseListFragment extends Fragment implements CourseRecyclerViewAd
                             @Override
                             public void onDismiss(RecyclerView recyclerView, final int[] reverseSortedPositions) {
 
-                                int selectedPosition = 0;
+
                                 for (int position : reverseSortedPositions) {
                                     selectedPosition = position;
+                                    break;
                                 }
-                                new MaterialDialog.Builder(getActivity())
-                                        .title("Remover")
-                                        .content("Gostaria de remover " + mList.get(selectedPosition).name + " ?")
-                                        .positiveText("Ok")
-                                        .negativeText("Cancelar")
-                                        .callback(new MaterialDialog.ButtonCallback() {
+                                isUndo = false;
+                                mLastCourseDeleted = (Course)mList.get(selectedPosition);
+                                snakBarText.setText(mLastCourseDeleted.name +" item removido.");
+                                mList.remove(selectedPosition);
+                                // do not call notifyItemRemoved for every item, it will cause gaps on deleting items
+                                mAdapter.notifyDataSetChanged();
 
-                                            @Override
-                                            public void onPositive(MaterialDialog dialog) {
+                                /*new UndoBar.Builder(getActivity())//
+                                        .setMessage(mList.get(selectedPosition).name +" item deleted.")//
+                                        .setListener(CourseListFragment.this)//
+                                        .setStyle(UndoBar.Style.LOLLIPOP)//
+                                        .setUndoToken(mList.get(selectedPosition))
+                                        .show();*/
 
-                                                for (int position : reverseSortedPositions) {
-                                                    mList.remove(position);
-                                                }
-                                                // do not call notifyItemRemoved for every item, it will cause gaps on deleting items
-                                                mAdapter.notifyDataSetChanged();
-                                            }
-                                        }).show();
+                                mSnackBar.setVisibility(View.VISIBLE);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        final Animation anim = AnimationUtils.loadAnimation(getActivity(),  R.anim.abc_slide_out_bottom);
+                                        mSnackBar.startAnimation(anim);
+                                        mSnackBar.setVisibility(View.GONE);
+                                    }
+                                }, WAIT_TIMEOUT);
                             }
                         });
         mRecyclerView.setOnTouchListener(touchListener);
@@ -172,10 +216,23 @@ public class CourseListFragment extends Fragment implements CourseRecyclerViewAd
 
         Intent intent = new Intent(getActivity().getApplicationContext(), CourseActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable("disiclina", course);
+        bundle.putParcelable("disiclina", course);
         intent.putExtra("disciplinaExtra", bundle);
 
         startActivity(intent);
+    }
+
+    @Override
+    public void onHide() {
+
+        Log.i("unDo" ,"onHide() ");
+    }
+
+    @Override
+    public void onUndo(Parcelable token) {
+        Log.i("unDo", "onUndo() " + token.toString());
+        mList.add(selectedPosition, (Course) token);
+        mAdapter.notifyItemInserted(selectedPosition);
     }
 
 
