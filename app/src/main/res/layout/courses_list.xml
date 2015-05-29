@@ -38,20 +38,21 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:layout_weight="0"
-        android:padding="10dp"
         android:background="#212121"
-        android:id="@+id/snackbar">
+        android:id="@+id/snackbar"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Large Text"
-            android:layout_marginLeft="40dp"
-            android:layout_marginStart="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:gravity="center_vertical"
             android:textColor="#E8EAF6"
             android:id="@+id/textView_snackbar_text" />
 
@@ -59,11 +60,13 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
+            android:padding="10dp"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Desfazer"
             android:layout_marginLeft="40dp"
             android:layout_marginStart="40dp"
-            android:textColor="#3D5AFE"
+            android:textColor="#9FA8DA"
             android:id="@+id/textView_snackbar_button"
             ripple:alphaFactor="0.7"
             ripple:hover="true"
