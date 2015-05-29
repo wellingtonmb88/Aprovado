@@ -3,309 +3,288 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:ripple="http://schemas.android.com/apk/res-auto"
     android:id="@+id/calculator"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="5dp"
     android:focusable="true"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:padding="5dp">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginTop="5dp"
+            card_view:cardCornerRadius="4dp">
 
-            <android.support.v7.widget.CardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                card_view:cardCornerRadius="4dp">
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <android.support.v7.widget.AppCompatTextView
-                            android:id="@+id/textView_m1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="Nota M1" />
-
-                        <android.support.v7.widget.AppCompatTextView
-                            android:id="@+id/textView_b1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="Nota B1" />
-
-                        <android.support.v7.widget.AppCompatTextView
-                            android:id="@+id/textView_mb1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="Média B1" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal">
-
-                        <android.support.v7.widget.AppCompatEditText
-                            android:id="@+id/editText_m1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:ems="10"
-                            android:gravity="center"
-                            android:inputType="number"
-                            android:textColorSecondary="@color/ColorPrimary" />
-
-                        <android.support.v7.widget.AppCompatEditText
-                            android:id="@+id/editText_b1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:ems="10"
-                            android:gravity="center"
-                            android:inputType="number" />
-
-                        <android.support.v7.widget.AppCompatEditText
-                            android:id="@+id/editText_mb1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:ems="10"
-                            android:gravity="center"
-                            android:inputType="numberDecimal" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:orientation="horizontal">
-
-                        <com.wellingtonmb88.aprovado.custom.CustomRippleView
-                            android:id="@+id/button_calculate_mb1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:padding="10dp"
-                            android:text="Calcular"
-                            android:textColor="@color/ColorPrimaryDark"
-                            ripple:alphaFactor="0.7"
-                            ripple:hover="true"
-                            ripple:rippleColor="@color/half_black" />
-
-                        <com.wellingtonmb88.aprovado.custom.CustomRippleView
-                            android:id="@+id/button_simulate_mb1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:padding="10dp"
-                            android:text="Simular B1"
-                            android:textColor="@color/ColorPrimaryDark"
-                            ripple:alphaFactor="0.7"
-                            ripple:hover="true"
-                            ripple:rippleColor="@color/half_black" />
-                    </LinearLayout>
-
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                card_view:cardCornerRadius="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <android.support.v7.widget.AppCompatTextView
-                            android:id="@+id/textView_m2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="Nota M2" />
-
-                        <android.support.v7.widget.AppCompatTextView
-                            android:id="@+id/textView_b2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="Nota B2" />
-
-                        <android.support.v7.widget.AppCompatTextView
-                            android:id="@+id/textView_mb2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="Média B2" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal">
-
-                        <android.support.v7.widget.AppCompatEditText
-                            android:id="@+id/editText_m2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:ems="10"
-                            android:gravity="center"
-                            android:inputType="number" />
-
-                        <android.support.v7.widget.AppCompatEditText
-                            android:id="@+id/editText_b2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:ems="10"
-                            android:gravity="center"
-                            android:inputType="number" />
-
-                        <android.support.v7.widget.AppCompatEditText
-                            android:id="@+id/editText_mb2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:ems="10"
-                            android:gravity="center"
-                            android:inputType="numberDecimal" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:orientation="horizontal">
-
-                        <com.wellingtonmb88.aprovado.custom.CustomRippleView
-                            android:id="@+id/button_calculate_m2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:padding="10dp"
-                            android:text="Calcular"
-                            android:textColor="@color/ColorPrimaryDark"
-                            ripple:alphaFactor="0.7"
-                            ripple:hover="true"
-                            ripple:rippleColor="@color/half_black" />
-
-                        <com.wellingtonmb88.aprovado.custom.CustomRippleView
-                            android:id="@+id/button_simulate_mb2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:padding="10dp"
-                            android:text="Simular B2"
-                            android:textColor="@color/ColorPrimaryDark"
-                            ripple:alphaFactor="0.7"
-                            ripple:hover="true"
-                            ripple:rippleColor="@color/half_black" />
-                    </LinearLayout>
-
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                card_view:cardCornerRadius="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
                     <android.support.v7.widget.AppCompatTextView
-                        android:id="@+id/textView_mf"
+                        android:id="@+id/textView_m1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Média Final" />
+                        android:text="Nota M1" />
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/textView_b1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Nota B1" />
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/textView_mb1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Média B1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal">
 
                     <android.support.v7.widget.AppCompatEditText
-                        android:id="@+id/editText_mf"
+                        android:id="@+id/editText_m1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:ems="10"
+                        android:layout_weight="1"
+                        android:textSize="14sp"
+                        android:maxLength="3"
                         android:gravity="center"
-                        android:inputType="number" />
+                        android:inputType="numberDecimal"
+                        android:hint="Nota M1"
+                        android:imeOptions="actionNext"
+                        android:textColorSecondary="@color/ColorPrimary" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <android.support.v7.widget.AppCompatEditText
+                        android:id="@+id/editText_b1"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:orientation="horizontal">
+                        android:layout_weight="1"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:hint="Nota B1"
+                        android:nextFocusDown = "@+id/editText_m2"
+                        android:inputType="numberDecimal" />
 
-                        <com.wellingtonmb88.aprovado.custom.CustomRippleView
-                            android:id="@+id/button_calculate_mf"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:padding="10dp"
-                            android:text="Calcular"
-                            android:textColor="@color/ColorPrimaryDark"
-                            ripple:alphaFactor="0.7"
-                            ripple:hover="true"
-                            ripple:rippleColor="@color/half_black" />
-
-                        <com.wellingtonmb88.aprovado.custom.CustomRippleView
-                            android:id="@+id/button_simulate_mf"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:padding="10dp"
-                            android:text="Simular MF"
-                            android:textColor="@color/ColorPrimaryDark"
-                            ripple:alphaFactor="0.7"
-                            ripple:hover="true"
-                            ripple:rippleColor="@color/half_black" />
-                    </LinearLayout>
+                    <android.support.v7.widget.AppCompatEditText
+                        android:id="@+id/editText_mb1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:inputType="numberDecimal"
+                        android:hint="Média B1"
+                        android:enabled="false"/>
 
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
-        </LinearLayout>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    card_view:cardCornerRadius="4dp"
+                    android:layout_gravity="center">
+
+                    <com.wellingtonmb88.aprovado.custom.CustomRippleView
+                        android:id="@+id/button_simulate_mb1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="Simular Nota B1"
+                        android:textColor="@color/ColorPrimaryDark"
+                        ripple:alphaFactor="0.7"
+                        ripple:hover="true"
+                        ripple:rippleColor="@color/half_black" />
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            card_view:cardCornerRadius="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/textView_m2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Nota M2" />
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/textView_b2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Nota B2" />
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/textView_mb2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Média B2" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal">
+
+                    <android.support.v7.widget.AppCompatEditText
+                        android:id="@+id/editText_m2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:inputType="numberDecimal"
+                        android:hint="Nota M2"
+                        android:imeOptions="actionNext" />
+
+                    <android.support.v7.widget.AppCompatEditText
+                        android:id="@+id/editText_b2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:hint="Nota B2"
+                        android:imeOptions="actionDone"
+                        android:inputType="numberDecimal" />
+
+                    <android.support.v7.widget.AppCompatEditText
+                        android:id="@+id/editText_mb2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:inputType="numberDecimal"
+                        android:hint="Média B2"
+                        android:enabled="false"/>
+
+                </LinearLayout>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    card_view:cardCornerRadius="4dp"
+                    android:layout_gravity="center">
+
+                    <com.wellingtonmb88.aprovado.custom.CustomRippleView
+                        android:id="@+id/button_simulate_mb2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="Simular Nota B2"
+                        android:textColor="@color/ColorPrimaryDark"
+                        ripple:alphaFactor="0.7"
+                        ripple:hover="true"
+                        ripple:rippleColor="@color/half_black" />
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            card_view:cardCornerRadius="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/textView_mf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center"
+                    android:text="Média Final" />
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/editText_mf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:inputType="numberDecimal"
+                    android:hint="Média Final"
+                    android:enabled="false"/>
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    card_view:cardCornerRadius="4dp"
+                    android:layout_gravity="center">
+
+                    <com.wellingtonmb88.aprovado.custom.CustomRippleView
+                        android:id="@+id/button_simulate_mf"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="Simular Nota MF"
+                        android:textColor="@color/ColorPrimaryDark"
+                        ripple:alphaFactor="0.7"
+                        ripple:hover="true"
+                        ripple:rippleColor="@color/half_black" />
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
 </ScrollView>

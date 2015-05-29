@@ -44,7 +44,6 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        holder.mCourse = mCourses.get(position);
         holder.mTextViewCourseName.setText(mCourses.get(position).name);
         holder.mTextViewCourseProfessor.setText("Professor: "+mCourses.get(position).professor);
         holder.mTextViewCourseMB1.setText("MB1: "+String.valueOf(mCourses.get(position).mediaB1));
@@ -65,42 +64,15 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         private TextView mTextViewCourseMB1;
         private TextView mTextViewCourseMB2;
         private TextView mTextViewCourseMF;
-        private View mButtonCourseEdit;
-        private View mButtonCourseDelete;
-        private RecyclerViewCallBack mListener;
-        private Course mCourse;
 
         public ViewHolder(View view,  RecyclerViewCallBack listener) {
-            super(view); 
-            mListener = listener;
+            super(view);
             mTextViewCourseName = (TextView) view.findViewById(R.id.txtName);
             mTextViewCourseProfessor = (TextView) view.findViewById(R.id.txtProfessor);
             mTextViewCourseMB1 = (TextView) view.findViewById(R.id.txtMB1);
             mTextViewCourseMB2 = (TextView) view.findViewById(R.id.txtMB2);
             mTextViewCourseMF = (TextView) view.findViewById(R.id.txtMF);
-            mButtonCourseDelete = (View) view.findViewById(R.id.btnDelete);
-            mButtonCourseEdit = (View) view.findViewById(R.id.btnEdit);
-            mButtonCourseDelete.setOnClickListener(deleleListner);
-            mButtonCourseEdit.setOnClickListener(editListner);
-
         }
-
-        private View.OnClickListener deleleListner = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        };
-
-        private View.OnClickListener editListner = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.Operation("", mCourse);
-            }
-        };
-
-
-
     }
 
     public interface RecyclerViewCallBack{
