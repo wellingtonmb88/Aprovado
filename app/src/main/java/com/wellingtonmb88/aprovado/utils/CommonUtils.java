@@ -52,7 +52,7 @@ public class CommonUtils {
     }
 
     /**
-     * Remove Comma or Period if there´s already one.
+     * Remove Comma or Period if there's already one.
      * Verify the max input's length according with the input's length after the
      * comma or period, to avoid more than one input.
      * @param editText
@@ -70,7 +70,7 @@ public class CommonUtils {
 
             int selectionStart = (editText.getSelectionStart() - 1);
 
-            /** Remove Comma or Period if there´s already one.
+            /** Remove Comma or Period if there's already one.
              Limit only one house after Comma or Period.**/
             if((selectionStart >= 0) && (currentInput.length() > beforeTextChanded.length())){
 
@@ -79,7 +79,7 @@ public class CommonUtils {
                 StringBuilder stringBuilder = new StringBuilder(currentInput.toString());
 
                 if(isValidFloatFormatterValue(currentInput) && !(currentInput.startsWith("0") && currentInput.length() >1) && !currentInput.startsWith(".") ) {
-                    /** Remove Comma or Period if there´s already one.**/
+                    /** Remove Comma or Period if there's already one.**/
                     if ((characterFound.equals(PERIOD) || characterFound.equals(COMMA))
                             && ((beforeTextChanded.contains(PERIOD) || beforeTextChanded.contains(COMMA)))) {
 
