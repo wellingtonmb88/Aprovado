@@ -8,19 +8,17 @@
         <item name="android:textColorPrimary">@color/ColorPrimaryDark</item>
     </style>
 
-    <style name="EditTextTheme" parent="Widget.AppCompat.EditText">
+    <style name="EditTextTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/ColorPrimary</item>
-        <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
         <item name="colorAccent">@color/teal</item>
-        <item name="android:textColorSecondary">@color/ColorPrimary</item>
+        <item name="android:textColor">@color/ColorPrimaryDark</item>
         <item name="android:textColorPrimary">@color/ColorPrimaryDark</item>
+        <item name="android:textColorSecondary">@color/ColorPrimary</item>
     </style>
 
-    <style name="ToolBarTheme" parent="@android:style/Widget.ActionBar">
+    <style name="ToolBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorAccent">@color/white</item>
         <item name="android:textColorSecondary">@color/white</item>
-        <item name="android:textColorPrimary">@color/white</item>
     </style>
 </resources>

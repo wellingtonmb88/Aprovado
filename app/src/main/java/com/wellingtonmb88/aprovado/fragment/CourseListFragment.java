@@ -44,7 +44,7 @@ public class CourseListFragment extends Fragment implements CourseRecyclerViewAd
     private TextView snakBarButton;
     private Course mLastCourseDeleted;
     private boolean isUndo;
-
+    private Handler mWorkHnalder;
 
     int selectedPosition = 0;
 
@@ -54,6 +54,7 @@ public class CourseListFragment extends Fragment implements CourseRecyclerViewAd
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.courses_list, container, false);
 
+        mWorkHnalder = new Handler();
         mRecyclerViewLayout = (RelativeLayout) v.findViewById(R.id.recycler_view_layout);
         mSnackBar = (LinearLayout) v.findViewById(R.id.snackbar);
         mAddCourseFAB = (FloatingActionButton) v.findViewById(R.id.floatingActionButton_add);
@@ -113,6 +114,7 @@ public class CourseListFragment extends Fragment implements CourseRecyclerViewAd
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             mSnackBar.setVisibility(View.GONE);
+                            mWorkHnalder.removeCallbacks(mWorkRunnable);
                         }
 
                         @Override
@@ -147,16 +149,7 @@ public class CourseListFragment extends Fragment implements CourseRecyclerViewAd
                                 // do not call notifyItemRemoved for every item, it will cause gaps on deleting items
                                 mAdapter.notifyDataSetChanged();
                                 mSnackBar.setVisibility(View.VISIBLE);
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                    if(!isUndo){
-                                        final Animation anim = AnimationUtils.loadAnimation(getActivity(),  R.anim.abc_slide_out_bottom);
-                                        mSnackBar.startAnimation(anim);
-                                        mSnackBar.setVisibility(View.GONE);
-                                    }
-                                    }
-                                }, WAIT_TIMEOUT);
+                                mWorkHnalder.postDelayed(mWorkRunnable, WAIT_TIMEOUT);
                             }
                         });
         mRecyclerView.setOnTouchListener(touchListener);
@@ -192,6 +185,7 @@ public class CourseListFragment extends Fragment implements CourseRecyclerViewAd
                         bundle.putParcelable("disiclina", mList.get(position));
                         intent.putExtra("disciplinaExtra", bundle);
                         startActivity(intent);
+
                         //Toast.makeText(getActivity().getApplicationContext(), "Clicked " + mList.get(position).name, Toast.LENGTH_SHORT).show();
                     }
                 }));
@@ -200,6 +194,30 @@ public class CourseListFragment extends Fragment implements CourseRecyclerViewAd
         return v;
     }
 
+    private Runnable mWorkRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if(!isUndo && getActivity() != null){
+                final Animation anim = AnimationUtils.loadAnimation(getActivity(),  R.anim.abc_slide_out_bottom);
+                anim.setDuration(500);
+                mSnackBar.startAnimation(anim); anim.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        mSnackBar.setVisibility(View.GONE);
+                        mWorkHnalder.removeCallbacks(mWorkRunnable);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+            }
+        }
+    };
     private List<Course> bulkInsert() {
         List<Course> listCourses = new ArrayList<>();
 

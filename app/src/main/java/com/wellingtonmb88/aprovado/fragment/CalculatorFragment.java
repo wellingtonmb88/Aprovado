@@ -149,7 +149,7 @@ public class CalculatorFragment extends Fragment {
                 } else {
                     float mb1 = 0;
                     try {
-                        mb1 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseM2.getText().toString());
+                        mb1 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseMB1.getText().toString());
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -160,12 +160,17 @@ public class CalculatorFragment extends Fragment {
                         e.printStackTrace();
                     }
 
-                    double b2 = CommonUtils.roundFloatOneHouse((((((mb1 * 2) - 25) / 5) * 5) / 3) * -1);
+                    double mb2 = CommonUtils.roundFloatOneHouse((((((mb1 * 2) - 25) / 5) * 5) / 3) * -1);
+                    double b2 = (mb2 - (m2 * 0.4))/0.6;
                     double result = (m2 * 0.4)+(b2 *0.6);
 
                     if(result < 5){
-                        b2  = Math.round(b2 + 0.35);
+                        b2  = Math.round(b2 + 0.50);
                     }
+                    if(b2 < 0){
+                        b2  = 0;
+                    }
+
                     builderDialog(b2);
                 }
             }
@@ -174,11 +179,20 @@ public class CalculatorFragment extends Fragment {
 
 
     private void builderDialog(double value) {
-        new MaterialDialog.Builder(getActivity())
-                .title("Simulacao")
-                .content("Voce precisa obter na avaliacao Bimestral aproximadamente " + CommonUtils.roundFloatOneHouse(value))
-                .positiveText("Ok")
-                .show();
+
+        if(value > 10){
+            new MaterialDialog.Builder(getActivity())
+                    .title("Simulacao")
+                    .content("Voce nao tem mais condiçoes de ser aprovado!")
+                    .positiveText("Ok")
+                    .show();
+        }else{
+            new MaterialDialog.Builder(getActivity())
+                    .title("Simulacao")
+                    .content("Voce precisa obter uma Nota na Bimestral que seja maior ou igual a " + CommonUtils.roundFloatOneHouse(value))
+                    .positiveText("Ok")
+                    .show();
+        }
     }
 
     private TextWatcher notaFormatter = new TextWatcher() {

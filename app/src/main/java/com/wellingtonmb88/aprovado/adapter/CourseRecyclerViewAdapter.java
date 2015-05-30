@@ -5,8 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.wellingtonmb88.aprovado.R;
@@ -18,8 +16,6 @@ import java.util.List;
 
 public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecyclerViewAdapter.ViewHolder> {
 
-    private static final String DELETAR = "Deletar";
-    private final String EDITAR = "Editar";
     private Context mContext;
     private RecyclerViewCallBack mListener;
     private List<Course> mCourses;
@@ -36,7 +32,7 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_item_course, parent, false);
         // set the view's size, margins, paddings and layout parameters
-        ViewHolder vh = new ViewHolder(v, mListener);
+        ViewHolder vh = new ViewHolder(v);
         return vh;
     }
 
@@ -68,13 +64,14 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         private TextView mTextViewCourseMB2;
         private TextView mTextViewCourseMF;
 
-        public ViewHolder(View view,  RecyclerViewCallBack listener) {
+        public ViewHolder(View view) {
             super(view);
             mTextViewCourseName = (TextView) view.findViewById(R.id.txtName);
             mTextViewCourseProfessor = (TextView) view.findViewById(R.id.txtProfessor);
             mTextViewCourseMB1 = (TextView) view.findViewById(R.id.txtMB1);
             mTextViewCourseMB2 = (TextView) view.findViewById(R.id.txtMB2);
             mTextViewCourseMF = (TextView) view.findViewById(R.id.txtMF);
+
         }
     }
 
