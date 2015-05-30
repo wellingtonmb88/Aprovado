@@ -1,9 +1,10 @@
 package com.wellingtonmb88.aprovado.entity;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
+import com.wellingtonmb88.aprovado.database.table.CourseTable;
 
 /**
  * Created by Wellington on 27/05/2015.
@@ -26,6 +27,20 @@ public class Course implements Parcelable {
      * A constructor that initializes the Course object
      **/
     public Course(){}
+
+    public Course(Cursor cursor) {
+        this.id = cursor.getInt(cursor.getColumnIndex(CourseTable.ID));
+        this.name = cursor.getString(cursor.getColumnIndex(CourseTable.COURSE_NAME));
+        this.professor = cursor.getString(cursor.getColumnIndex(CourseTable.COURSE_TEACHER));
+        this.m1 = cursor.getLong(cursor.getColumnIndex(CourseTable.COURSE_M1));
+        this.b1 = cursor.getLong(cursor.getColumnIndex(CourseTable.COURSE_B1));
+        this.mediaB1 = cursor.getLong(cursor.getColumnIndex(CourseTable.COURSE_MB1));
+        this.m2 = cursor.getLong(cursor.getColumnIndex(CourseTable.COURSE_M2));
+        this.b2 = cursor.getLong(cursor.getColumnIndex(CourseTable.COURSE_B2));
+        this.mediaB2 = cursor.getLong(cursor.getColumnIndex(CourseTable.COURSE_MB2));
+        this.mediaFinal = cursor.getLong(cursor.getColumnIndex(CourseTable.COURSE_MF));
+    }
+
 
     @Override
     public int describeContents() {

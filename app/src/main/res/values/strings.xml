@@ -35,9 +35,6 @@
     <string name="fragment_calculator_simulate_score_b2">Simular Nota B2</string>
     <string name="fragment_calculator_simulate_score_final_average">Simular M.Final</string>
 
-
-
-
     <string-array name="semester_array">
         <item>1º Semestre</item>
         <item>2º Semestre</item>
