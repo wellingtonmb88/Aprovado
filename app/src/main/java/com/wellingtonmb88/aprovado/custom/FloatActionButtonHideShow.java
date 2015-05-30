@@ -12,12 +12,14 @@ import com.nineoldandroids.view.ViewPropertyAnimator;
  * Created by Wellington on 27/05/2015.
  */
 public class FloatActionButtonHideShow {
+
     private static final int TRANSLATE_DURATION_MILLIS = 300;
     private final Interpolator mInterpolator = new AccelerateDecelerateInterpolator();
     private View mView;
     private boolean mVisible;
+
     public FloatActionButtonHideShow(View view){
-          mView = view;
+        mView = view;
         mVisible = true;
     }
 

@@ -4,6 +4,40 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
+    <string name="tablebar_header_calculator">Calculadora</string>
+    <string name="tablebar_header_classes">Disciplinas</string>
+
+    <string name="recyclrview_label_teacher">Professor: </string>
+    <string name="recyclrview_label_mb1">MB1: </string>
+    <string name="recyclrview_label_mb2">MB2: </string>
+    <string name="recyclrview_label_mf">MF: </string>
+
+    <string name="calculator_dialog_title">Simulação</string>
+    <string name="calculator_edittext_error_message">Campo Obrigatório!</string>
+    <string name="calculator_dialog_unpassed">Você não tem mais condições de ser aprovado!</string>
+    <string name="calculator_dialog_to_approve">Você precisa obter uma Nota na Bimestral que seja maior ou igual a</string>
+
+    <string name="courselist_snackbar_title">foi removido!</string>
+    <string name="activity_course_class">Disciplina</string>
+    <string name="activity_course_teacher">Professor</string>
+
+    <string name="fragment_courses_list_undo">Desfazer</string>
+
+    <string name="fragment_calculator_score_m1">Nota M1</string>
+    <string name="fragment_calculator_score_m2">Nota M2</string>
+    <string name="fragment_calculator_score_b1">Nota B1</string>
+    <string name="fragment_calculator_score_b2">Nota B2</string>
+    <string name="fragment_calculator_average_b1">Média B1</string>
+    <string name="fragment_calculator_average_b2">Média B2</string>
+    <string name="fragment_calculator_final_average">Média Final</string>
+
+    <string name="fragment_calculator_simulate_score_b1">Simular Nota B1</string>
+    <string name="fragment_calculator_simulate_score_b2">Simular Nota B2</string>
+    <string name="fragment_calculator_simulate_score_final_average">Simular M.Final</string>
+
+
+
+
     <string-array name="semester_array">
         <item>1º Semestre</item>
         <item>2º Semestre</item>

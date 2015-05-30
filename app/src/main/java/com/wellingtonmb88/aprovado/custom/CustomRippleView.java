@@ -111,20 +111,6 @@ public class CustomRippleView extends Button {
             }
         } else if (event.getActionMasked() == MotionEvent.ACTION_MOVE
                 && this.isEnabled() && mHover) {
-          /*  mDownX = event.getX();
-            mDownY = event.getY();
-
-            // Cancel the ripple animation when moved outside
-            if (mAnimationIsCancel = !mRect.contains(
-                    getLeft() + (int) event.getX(),
-                    getTop() + (int) event.getY())) {
-                setRadius(0);
-            } else {
-                setRadius(dp(50));
-            }
-            if (!superResult) {
-                return true;
-            }*/
             setRadius(0);
             ViewHelper.setAlpha(CustomRippleView.this, 1);
             mIsAnimating = false;

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Approved</string>
+    <string name="calculator_dialog_unpassed">You have no conditions to be approved!</string>
+    <string name="calculator_dialog_title">Simulation</string>
+</resources>

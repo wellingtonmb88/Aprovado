@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="calculator_dialog_unpassed">Você não tem mais condições de ser aprovado!</string>
+    <string name="calculator_dialog_title">Simulação</string>
+    <string name="action_settings">Configurações</string>
+</resources>

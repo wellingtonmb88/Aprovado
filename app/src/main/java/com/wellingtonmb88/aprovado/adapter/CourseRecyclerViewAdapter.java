@@ -12,45 +12,38 @@ import com.wellingtonmb88.aprovado.entity.Course;
 
 import java.util.List;
 
-
-
 public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecyclerViewAdapter.ViewHolder> {
 
     private Context mContext;
-    private RecyclerViewCallBack mListener;
     private List<Course> mCourses;
 
-    public CourseRecyclerViewAdapter(Context context, RecyclerViewCallBack listener, List<Course> Course) {
+    public CourseRecyclerViewAdapter(Context context, List<Course> Course) {
         mContext = context;
-        mListener = listener;
         mCourses = Course;
     }
-    // Create new views (invoked by the layout manager)
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent,int viewType) {
-        // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_item_course, parent, false);
-        // set the view's size, margins, paddings and layout parameters
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+        return new ViewHolder(v);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
+        String teacher = mContext.getString(R.string.recyclrview_label_teacher);
+        String mb1 = mContext.getString(R.string.recyclrview_label_mb1);
+        String mb2 = mContext.getString(R.string.recyclrview_label_mb2);
+        String mf = mContext.getString(R.string.recyclrview_label_mf);
 
         holder.mTextViewCourseName.setText(mCourses.get(position).name);
-        holder.mTextViewCourseProfessor.setText("Professor: "+mCourses.get(position).professor);
-        holder.mTextViewCourseMB1.setText("MB1: "+String.valueOf(mCourses.get(position).mediaB1));
-        holder.mTextViewCourseMB2.setText("MB2: "+String.valueOf(mCourses.get(position).mediaB2));
-        holder.mTextViewCourseMF.setText("MF: "+String.valueOf(mCourses.get(position).mediaFinal));
+        holder.mTextViewCourseProfessor.setText(teacher+" "+mCourses.get(position).professor);
+        holder.mTextViewCourseMB1.setText(mb1+" "+String.valueOf(mCourses.get(position).mediaB1));
+        holder.mTextViewCourseMB2.setText(mb2+" "+String.valueOf(mCourses.get(position).mediaB2));
+        holder.mTextViewCourseMF.setText(mf+" "+String.valueOf(mCourses.get(position).mediaFinal));
     }
 
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mCourses.size();
@@ -71,11 +64,6 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
             mTextViewCourseMB1 = (TextView) view.findViewById(R.id.txtMB1);
             mTextViewCourseMB2 = (TextView) view.findViewById(R.id.txtMB2);
             mTextViewCourseMF = (TextView) view.findViewById(R.id.txtMF);
-
         }
-    }
-
-    public interface RecyclerViewCallBack{
-        void Operation(String operation, Course Course);
     }
 }

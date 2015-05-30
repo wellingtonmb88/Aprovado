@@ -1,6 +1,5 @@
 package com.wellingtonmb88.aprovado.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -16,47 +15,49 @@ import com.wellingtonmb88.aprovado.slidingtab.SlidingTabLayout;
 
 
 public class MainActivity extends AppCompatActivity {
-
-    ViewPager pager;
-    ViewPagerAdapter adapter;
-    SlidingTabLayout tabs;
-    CharSequence Titles[]={"Calculadora","Disciplinas"};
-    int Numboftabs = 2;
+   
+    private int mNumbofmTabs = 2;
+    private ViewPager mPager;
+    private ViewPagerAdapter mAdapter;
+    private SlidingTabLayout mTabs;
+    private Toolbar mToolbarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter =  new ViewPagerAdapter(getSupportFragmentManager(),Titles,Numboftabs);
 
-        // Assigning ViewPager View and setting the adapter
-        pager = (ViewPager) findViewById(R.id.pager);
-        pager.setAdapter(adapter);
+        loadUI();
+        loadDataUI();
+        setListener();
+    }
 
+    private void loadUI(){
         LinearLayout toolbar = (LinearLayout) findViewById(R.id.toolbar);
-        Toolbar toolbarLayout = (Toolbar) toolbar.findViewById(R.id.toolbar_layout); // Attaching the layout to the toolbar object
+        mToolbarLayout = (Toolbar) toolbar.findViewById(R.id.toolbar_layout);
+        mTabs = (SlidingTabLayout) toolbar.findViewById(R.id.tabs);
+        mPager = (ViewPager) findViewById(R.id.pager);
+    }
 
-        toolbarLayout.setTitleTextColor(getResources().getColor(R.color.white));
-        setSupportActionBar(toolbarLayout);
-        // Assiging the Sliding Tab Layout View
-        tabs = (SlidingTabLayout) toolbar.findViewById(R.id.tabs);
-        tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
+    private void loadDataUI(){
+        CharSequence mTitles[]={getString(R.string.tablebar_header_calculator), getString(R.string.tablebar_header_classes)};
+        mAdapter =  new ViewPagerAdapter(getSupportFragmentManager(),mTitles,mNumbofmTabs);
+        mPager.setAdapter(mAdapter);
+        mTabs.setDistributeEvenly(true);
+        mTabs.setViewPager(mPager);
+        mToolbarLayout.setTitleTextColor(getResources().getColor(R.color.white));
+        setSupportActionBar(mToolbarLayout);
+    }
 
-        // Setting Custom Color for the Scroll bar indicator of the Tab View
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+    private void setListener(){
+        mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
                 return getResources().getColor(android.R.color.white);
             }
         });
-
-        // Setting the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(pager);
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
     <RelativeLayout
         android:id="@+id/recycler_view_layout"
         android:layout_width="match_parent"
@@ -42,9 +41,6 @@
                 android:id="@+id/snackbar"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
                 android:background="#212121"
                 android:orientation="horizontal"
                 android:visibility="gone">
@@ -57,7 +53,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="Large Text"
+                    android:text="@string/hello_world"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="#E8EAF6" />
 
@@ -69,10 +65,11 @@
                     android:layout_marginStart="40dp"
                     android:layout_weight="0"
                     android:gravity="center"
-                    android:padding="10dp"
-                    android:text="Desfazer"
+                    android:paddingRight = "20dp"
+                    android:paddingLeft = "20dp"
+                    android:text="@string/fragment_courses_list_undo"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="#9FA8DA"
+                    android:textColor="@color/teal"
                     ripple:alphaFactor="0.7"
                     ripple:hover="true"
                     ripple:rippleColor="@color/white_pressed" />

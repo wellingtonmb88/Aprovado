@@ -38,9 +38,6 @@ public class TextChangeListener {
                     mEditText.setSelection(location);
                 }
             }
-
         }
     };
-
-
 }

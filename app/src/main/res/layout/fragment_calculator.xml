@@ -39,7 +39,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Nota M1" />
+                        android:text="@string/fragment_calculator_score_m1" />
 
                     <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/textView_b1"
@@ -47,7 +47,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Nota B1" />
+                        android:text="@string/fragment_calculator_score_b1" />
 
                     <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/textView_mb1"
@@ -55,7 +55,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Média B1" />
+                        android:text="@string/fragment_calculator_average_b1" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -73,7 +73,7 @@
                         android:maxLength="3"
                         android:gravity="center"
                         android:inputType="numberDecimal"
-                        android:hint="Nota M1"
+                        android:hint="@string/fragment_calculator_score_m1"
                         android:imeOptions="actionNext"
                         android:textColorSecondary="@color/ColorPrimary" />
 
@@ -84,7 +84,7 @@
                         android:layout_weight="1"
                         android:textSize="14sp"
                         android:gravity="center"
-                        android:hint="Nota B1"
+                        android:hint="@string/fragment_calculator_score_b1"
                         android:nextFocusDown = "@+id/editText_m2"
                         android:inputType="numberDecimal" />
 
@@ -96,7 +96,7 @@
                         android:textSize="14sp"
                         android:gravity="center"
                         android:inputType="numberDecimal"
-                        android:hint="Média B1"
+                        android:hint="@string/fragment_calculator_average_b1"
                         android:enabled="false"/>
 
                 </LinearLayout>
@@ -114,7 +114,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:padding="10dp"
-                        android:text="Simular Nota B1"
+                        android:text="@string/fragment_calculator_simulate_score_b1"
                         android:textColor="@color/ColorPrimaryDark"
                         ripple:rippleColor = "@color/rippleColor"
                         ripple:alphaFactor="0.7"
@@ -147,7 +147,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Nota M2" />
+                        android:text="@string/fragment_calculator_score_m2" />
 
                     <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/textView_b2"
@@ -155,7 +155,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Nota B2" />
+                        android:text="@string/fragment_calculator_score_b2" />
 
                     <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/textView_mb2"
@@ -163,7 +163,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Média B2" />
+                        android:text="@string/fragment_calculator_average_b2" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -180,7 +180,7 @@
                         android:textSize="14sp"
                         android:gravity="center"
                         android:inputType="numberDecimal"
-                        android:hint="Nota M2"
+                        android:hint="@string/fragment_calculator_score_m2"
                         android:imeOptions="actionNext" />
 
                     <android.support.v7.widget.AppCompatEditText
@@ -190,7 +190,7 @@
                         android:layout_weight="1"
                         android:textSize="14sp"
                         android:gravity="center"
-                        android:hint="Nota B2"
+                        android:hint="@string/fragment_calculator_score_b2"
                         android:imeOptions="actionDone"
                         android:inputType="numberDecimal" />
 
@@ -202,7 +202,7 @@
                         android:textSize="14sp"
                         android:gravity="center"
                         android:inputType="numberDecimal"
-                        android:hint="Média B2"
+                        android:hint="@string/fragment_calculator_average_b2"
                         android:enabled="false"/>
 
                 </LinearLayout>
@@ -220,7 +220,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:padding="10dp"
-                        android:text="Simular Nota B2"
+                        android:text="@string/fragment_calculator_simulate_score_b2"
                         android:textColor="@color/ColorPrimaryDark"
                         ripple:alphaFactor="0.7"
                         ripple:rippleColor = "@color/rippleColor"
@@ -250,7 +250,7 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="5dp"
                     android:gravity="center"
-                    android:text="Média Final" />
+                    android:text="@string/fragment_calculator_final_average" />
 
                 <android.support.v7.widget.AppCompatEditText
                     android:id="@+id/editText_mf"
@@ -260,7 +260,7 @@
                     android:textSize="14sp"
                     android:gravity="center"
                     android:inputType="numberDecimal"
-                    android:hint="Média Final"
+                    android:hint="@string/fragment_calculator_final_average"
                     android:enabled="false"/>
 
 
@@ -277,7 +277,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:padding="10dp"
-                        android:text="Simular Nota MF"
+                        android:text="@string/fragment_calculator_simulate_score_final_average"
                         android:textColor="@color/ColorPrimaryDark"
                         ripple:rippleColor = "@color/rippleColor"
                         ripple:alphaFactor="0.7"

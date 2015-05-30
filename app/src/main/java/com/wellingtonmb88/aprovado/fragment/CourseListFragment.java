@@ -25,6 +25,7 @@ import com.wellingtonmb88.aprovado.adapter.CourseRecyclerViewAdapter;
 import com.wellingtonmb88.aprovado.custom.FloatActionButtonHideShow;
 import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.listener.SwipeDismissRecyclerViewTouchListener;
+import com.wellingtonmb88.aprovado.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,84 +33,101 @@ import java.util.List;
 /**
  * Created by Wellington on 25/05/2015.
  */
-public class CourseListFragment extends Fragment implements CourseRecyclerViewAdapter.RecyclerViewCallBack {
-    private FloatingActionButton mAddCourseFAB;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private List<Course> mList;
+public class CourseListFragment extends Fragment {
+
+    private static final int WAIT_TIMEOUT = 5000;
+    private static final int ANIMATION_DURATION = 500;
+
+    private int selectedPosition = 0;
+    private boolean isUndo = false;
+
     private RelativeLayout mRecyclerViewLayout;
     private LinearLayout mSnackBar;
     private TextView snakBarText;
     private TextView snakBarButton;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private FloatingActionButton mAddCourseFAB;
+
+    private SwipeDismissRecyclerViewTouchListener mTouchListener;
+    private FloatActionButtonHideShow mFloatActionButtonHideShow;
+    private Runnable mWorkRunnable;
     private Course mLastCourseDeleted;
-    private boolean isUndo;
     private Handler mWorkHnalder;
-
-    int selectedPosition = 0;
-
-    private static final int WAIT_TIMEOUT = 5000;
+    private List<Course> mList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.courses_list, container, false);
+        final View v = inflater.inflate(R.layout.fragment_courses_list, container, false);
 
-        mWorkHnalder = new Handler();
-        mRecyclerViewLayout = (RelativeLayout) v.findViewById(R.id.recycler_view_layout);
-        mSnackBar = (LinearLayout) v.findViewById(R.id.snackbar);
-        mAddCourseFAB = (FloatingActionButton) v.findViewById(R.id.floatingActionButton_add);
-        mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
+        loadUI(v);
+        loadDataUI();
+        setListener();
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
+        return v;
+    }
 
-        // use a linear layout manager
+    private void loadUI(View v){
+
         mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerViewLayout = (RelativeLayout) v.findViewById(R.id.recycler_view_layout);
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
+        mSnackBar = (LinearLayout) v.findViewById(R.id.snackbar);
+        snakBarButton = (TextView) mSnackBar.findViewById(R.id.textView_snackbar_button);
+        snakBarText = (TextView) mSnackBar.findViewById(R.id.textView_snackbar_text);
+        mAddCourseFAB = (FloatingActionButton) v.findViewById(R.id.floatingActionButton_add);
+
+        mSnackBar.setVisibility(View.GONE);
+    }
+    private void loadDataUI(){
+
         mList = bulkInsert();
+        createTouchListener();
+        createRunnable();
 
-        // specify an adapter (see also next example)
-        mAdapter = new CourseRecyclerViewAdapter(getActivity().getApplicationContext(), this, mList);
+        mFloatActionButtonHideShow = new FloatActionButtonHideShow(mAddCourseFAB);
+        mWorkHnalder = new Handler();
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter = new CourseRecyclerViewAdapter(getActivity().getApplicationContext(), mList);
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setOnTouchListener(mTouchListener);
+        mRecyclerView.addOnScrollListener(mTouchListener.makeScrollListener());
 
-        final FloatActionButtonHideShow fb = new FloatActionButtonHideShow(mAddCourseFAB);
+    }
+
+    private void setListener(){
 
         mAddCourseFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Intent intent = new Intent(getActivity().getApplicationContext(), CourseActivity.class);
+                final Intent intent = new Intent(getActivity().getApplicationContext(), CourseActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putParcelable("disiclina", new Course());
-                intent.putExtra("disciplinaExtra", bundle);
-
+                bundle.putParcelable(Constants.CourseExtra.BUNDLE_EXTRA, new Course());
+                intent.putExtra(Constants.CourseExtra.INTENT_EXTRA, bundle);
                 startActivity(intent);
             }
         });
 
-        snakBarButton = (TextView) mSnackBar.findViewById(R.id.textView_snackbar_button);
-        snakBarText = (TextView) mSnackBar.findViewById(R.id.textView_snackbar_text);
-
-        mSnackBar.setVisibility(View.GONE);
-
-        isUndo = false;
         snakBarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!isUndo){
+                if (!isUndo) {
                     isUndo = true;
-                    if(selectedPosition == 0){
+                    if (selectedPosition == 0) {
                         mRecyclerView.scrollToPosition(selectedPosition);
                     }
                     mList.add(selectedPosition, mLastCourseDeleted);
                     mAdapter.notifyItemInserted(selectedPosition);
-                    final Animation anim = AnimationUtils.loadAnimation(getActivity(),  R.anim.abc_slide_out_bottom);
-                    anim.setDuration(500);
+                    final Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.abc_slide_out_bottom);
+                    anim.setDuration(ANIMATION_DURATION);
                     mSnackBar.startAnimation(anim);
                     anim.setAnimationListener(new Animation.AnimationListener() {
                         @Override
-                        public void onAnimationStart(Animation animation) { }
+                        public void onAnimationStart(Animation animation) {
+                        }
 
                         @Override
                         public void onAnimationEnd(Animation animation) {
@@ -118,14 +136,38 @@ public class CourseListFragment extends Fragment implements CourseRecyclerViewAd
                         }
 
                         @Override
-                        public void onAnimationRepeat(Animation animation) { }
+                        public void onAnimationRepeat(Animation animation) {
+                        }
                     });
                 }
             }
         });
 
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(mRecyclerView,
+                new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        Intent intent = new Intent(getActivity().getApplicationContext(), CourseActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable(Constants.CourseExtra.BUNDLE_EXTRA, mList.get(position));
+                        intent.putExtra(Constants.CourseExtra.INTENT_EXTRA, bundle);
+                        startActivity(intent);
+                    }
+                }));
 
-        SwipeDismissRecyclerViewTouchListener touchListener =
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0) {
+                    mFloatActionButtonHideShow.hide();
+                } else if (dy < 1) {
+                    mFloatActionButtonHideShow.show();
+                }
+            }
+        });
+    }
+
+    private void createTouchListener(){
+         mTouchListener =
                 new SwipeDismissRecyclerViewTouchListener(
                         mRecyclerView,
                         new SwipeDismissRecyclerViewTouchListener.DismissCallbacks() {
@@ -136,145 +178,74 @@ public class CourseListFragment extends Fragment implements CourseRecyclerViewAd
 
                             @Override
                             public void onDismiss(RecyclerView recyclerView, final int[] reverseSortedPositions) {
-
-
                                 for (int position : reverseSortedPositions) {
                                     selectedPosition = position;
                                     break;
                                 }
                                 isUndo = false;
                                 mLastCourseDeleted = (Course)mList.get(selectedPosition);
-                                snakBarText.setText(mLastCourseDeleted.name +" item removido.");
+                                snakBarText.setText(mLastCourseDeleted.name +" "+ getString(R.string.courselist_snackbar_title));
                                 mList.remove(selectedPosition);
-                                // do not call notifyItemRemoved for every item, it will cause gaps on deleting items
                                 mAdapter.notifyDataSetChanged();
                                 mSnackBar.setVisibility(View.VISIBLE);
                                 mWorkHnalder.postDelayed(mWorkRunnable, WAIT_TIMEOUT);
                             }
                         });
-        mRecyclerView.setOnTouchListener(touchListener);
 
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            /**
-             * Callback method to be invoked when the RecyclerView has been scrolled. This will be
-             * called after the scroll has completed.
-             *
-             * @param recyclerView The RecyclerView which scrolled.
-             * @param dx The amount of horizontal scroll.
-             * @param dy The amount of vertical scroll.
-             */
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy > 0) {
-                    fb.hide();
-                } else if (dy < 1) {
-                    fb.show();
+
+    }
+
+    private void createRunnable(){
+        mWorkRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if(!isUndo && getActivity() != null){
+                    final Animation anim = AnimationUtils.loadAnimation(getActivity(),  R.anim.abc_slide_out_bottom);
+                    anim.setDuration(ANIMATION_DURATION);
+                    mSnackBar.startAnimation(anim);
+                    anim.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            mSnackBar.setVisibility(View.GONE);
+                            mWorkHnalder.removeCallbacks(mWorkRunnable);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+                        }
+                    });
                 }
             }
-        });
-
-        // Setting this scroll listener is required to ensure that during ListView scrolling,
-        // we don't look for swipes.
-        mRecyclerView.addOnScrollListener(touchListener.makeScrollListener());
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(mRecyclerView,
-                new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-
-                        Intent intent = new Intent(getActivity().getApplicationContext(), CourseActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("disiclina", mList.get(position));
-                        intent.putExtra("disciplinaExtra", bundle);
-                        startActivity(intent);
-
-                        //Toast.makeText(getActivity().getApplicationContext(), "Clicked " + mList.get(position).name, Toast.LENGTH_SHORT).show();
-                    }
-                }));
-
-
-        return v;
+        };
     }
-
-    private Runnable mWorkRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if(!isUndo && getActivity() != null){
-                final Animation anim = AnimationUtils.loadAnimation(getActivity(),  R.anim.abc_slide_out_bottom);
-                anim.setDuration(500);
-                mSnackBar.startAnimation(anim); anim.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        mSnackBar.setVisibility(View.GONE);
-                        mWorkHnalder.removeCallbacks(mWorkRunnable);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-                });
-            }
-        }
-    };
-    private List<Course> bulkInsert() {
-        List<Course> listCourses = new ArrayList<>();
-
-        for (int i = 1; i < 20; i++) {
-            Course course = new Course();
-            course.name = "nome" + i;
-            course.professor = "professor" + i;
-            if (i < 11) {
-
-                course.semester = i - 1;
-            } else {
-
-                course.semester = 6;
-            }
-            course.m1 = i;
-            course.b1 = i + 5;
-            course.m2 = i + 10;
-            course.b2 = i + 15;
-
-            listCourses.add(course);
-        }
-
-        return listCourses;
-    }
-
-    @Override
-    public void Operation(String operation, Course course) {
-
-        Intent intent = new Intent(getActivity().getApplicationContext(), CourseActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("disiclina", course);
-        intent.putExtra("disciplinaExtra", bundle);
-
-        startActivity(intent);
-    }
-
-
 
     public interface OnItemClickListener {
-        public void onItemClick(View view, int position);
+        void onItemClick(View view, int position);
     }
 
-    public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
-        private OnItemClickListener mListener;
+    private class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
 
         private static final long DELAY_MILLIS = 100;
 
+        private View mPressedView = null;
         private RecyclerView mRecyclerView;
-        private GestureDetector mGestureDetector;
         private boolean mIsPrepressed = false;
         private boolean mIsShowPress = false;
-        private View mPressedView = null;
+        private GestureDetector mGestureDetector;
+        private OnItemClickListener mListener;
 
         public RecyclerItemClickListener(RecyclerView recyclerView, OnItemClickListener listener) {
             mListener = listener;
             mRecyclerView = recyclerView;
-            mGestureDetector = new GestureDetector(recyclerView.getContext(), new GestureDetector.SimpleOnGestureListener() {
+            setGestureDetector();
+        }
+
+        private void setGestureDetector(){
+            mGestureDetector = new GestureDetector(mRecyclerView.getContext(), new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onDown(MotionEvent e) {
                     mIsPrepressed = true;
@@ -328,5 +299,33 @@ public class CourseListFragment extends Fragment implements CourseRecyclerViewAd
         @Override
         public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) {
         }
+    }
+
+    private List<Course> bulkInsert() {
+        List<Course> listCourses = new ArrayList<>();
+
+        for (int i = 1; i < 20; i++) {
+            Course course = new Course();
+            course.name = "nome" + i;
+            course.professor = "professor" + i;
+            if (i < 11) {
+
+                course.semester = i - 1;
+            } else {
+
+                course.semester = 6;
+            }
+            course.m1 = i;
+            course.b1 = i + 5;
+            course.m2 = i + 10;
+            course.b2 = i + 15;
+            course.mediaB1 = i +2;
+            course.mediaB2 = i +3;
+            course.mediaFinal= i +8;
+
+            listCourses.add(course);
+        }
+
+        return listCourses;
     }
 }

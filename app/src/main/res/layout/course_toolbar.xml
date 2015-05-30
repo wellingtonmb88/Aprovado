@@ -32,7 +32,6 @@
 
     </FrameLayout>
 
-
     <com.getbase.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton_save"
         android:layout_width="wrap_content"

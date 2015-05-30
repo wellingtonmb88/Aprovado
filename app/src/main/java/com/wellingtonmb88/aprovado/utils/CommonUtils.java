@@ -12,6 +12,8 @@ import java.util.Locale;
  */
 public class CommonUtils {
 
+    private static final String TAG = CommonUtils.class.getSimpleName();
+
     public static float parseFloatLocaleSensitive(String str) throws ParseException {
         String st = str.replace(",.", ".");
         st = st.replace(".,", ".");
@@ -40,13 +42,13 @@ public class CommonUtils {
     public static boolean isValidFloatFormatterValue(String value) {
         boolean isValid = false;
         try {
-            if(  Float.valueOf(parseFloatLocaleSensitive(value))  >=0 &&
-                    Float.valueOf(parseFloatLocaleSensitive(value)) <= 10
+            if(parseFloatLocaleSensitive(value) >=0 &&
+                    parseFloatLocaleSensitive(value) <= 10
                     ){
                 isValid = true;
             }
         } catch (Exception e) {
-            Log.d("CalulatorFragment", "" + e);
+            Log.e(TAG, "" + e.getLocalizedMessage());
         }
         return isValid;
     }
@@ -64,6 +66,7 @@ public class CommonUtils {
         final String COMMA = ",";
 
         String currentInput = editText.getText().toString();
+
         if (!currentInput.isEmpty()) {
 
             editText.removeTextChangedListener(textWatcher);
@@ -76,7 +79,7 @@ public class CommonUtils {
 
                 String characterFound = String.valueOf(currentInput.charAt(selectionStart));
 
-                StringBuilder stringBuilder = new StringBuilder(currentInput.toString());
+                StringBuilder stringBuilder = new StringBuilder(currentInput);
 
                 if(isValidFloatFormatterValue(currentInput) && !(currentInput.startsWith("0") && currentInput.length() >1) && !currentInput.startsWith(".") ) {
                     /** Remove Comma or Period if there's already one.**/
@@ -109,9 +112,8 @@ public class CommonUtils {
             }else{
                 try {
                     float value = parseFloatLocaleSensitive(currentInput);
-                    StringBuilder stringBuilder = new StringBuilder(currentInput.toString());
+                    StringBuilder stringBuilder = new StringBuilder(currentInput);
                     if(value > 10 || currentInput.startsWith(".")){
-                        //editText.setText("");
                         if(selectionStart > -1){
                             stringBuilder.deleteCharAt(selectionStart);
                         }else {
@@ -121,7 +123,7 @@ public class CommonUtils {
                         cursorLocation = editText.length();
                     }
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "" + e.getLocalizedMessage());
                 }
             }
 
