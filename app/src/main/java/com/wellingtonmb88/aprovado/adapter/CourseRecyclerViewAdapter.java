@@ -31,16 +31,45 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        String teacher = mContext.getString(R.string.recyclrview_label_teacher);
-        String mb1 = mContext.getString(R.string.recyclrview_label_mb1);
-        String mb2 = mContext.getString(R.string.recyclrview_label_mb2);
-        String mf = mContext.getString(R.string.recyclrview_label_mf);
+
+        Course course = mCourses.get(position);
+        float mediaB1 = course.mediaB1;
+        float mediaB2 = course.mediaB2;
+        float mediaFinal = course.mediaFinal;
+
+        String mb1 = String.valueOf(mediaB1);
+        String mb2 = String.valueOf(mediaB2);
+        String mf = String.valueOf(mediaFinal);
+
+        holder.mTextViewCourseMB1.setText("");
+        holder.mTextViewCourseMB2.setText("");
+        holder.mTextViewCourseMF.setText("");
+
+        String ZERO = "0.0";
+        if(!ZERO.equals(mb1)){
+            holder.mTextViewCourseMB1.setText(mb1);
+        }if(!ZERO.equals(mb2)){
+            holder.mTextViewCourseMB2.setText(mb2);
+        }if(!ZERO.equals(mf)){
+            holder.mTextViewCourseMF.setText(mf);
+        }
 
         holder.mTextViewCourseName.setText(mCourses.get(position).name);
-        holder.mTextViewCourseProfessor.setText(teacher+" "+mCourses.get(position).professor);
-        holder.mTextViewCourseMB1.setText(mb1+" "+String.valueOf(mCourses.get(position).mediaB1));
-        holder.mTextViewCourseMB2.setText(mb2+" "+String.valueOf(mCourses.get(position).mediaB2));
-        holder.mTextViewCourseMF.setText(mf+" "+String.valueOf(mCourses.get(position).mediaFinal));
+        holder.mTextViewCourseProfessor.setText(mCourses.get(position).professor);
+
+        holder.mTextViewCourseMB1.setTextColor(mContext.getResources().getColor(android.R.color.holo_blue_dark));
+        holder.mTextViewCourseMB2.setTextColor(mContext.getResources().getColor(android.R.color.holo_blue_dark));
+        holder.mTextViewCourseMF.setTextColor(mContext.getResources().getColor(android.R.color.holo_blue_dark));
+
+        if(mediaB1 < 5){
+            holder.mTextViewCourseMB1.setTextColor(mContext.getResources().getColor(android.R.color.holo_red_dark));
+        }
+        if(mediaB2 < 5){
+            holder.mTextViewCourseMB2.setTextColor(mContext.getResources().getColor(android.R.color.holo_red_dark));
+        }
+        if(mediaFinal < 5){
+            holder.mTextViewCourseMF.setTextColor(mContext.getResources().getColor(android.R.color.holo_red_dark));
+        }
     }
 
 

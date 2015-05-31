@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -109,6 +111,9 @@ public class CourseActivity extends AppCompatActivity {
     }
 
     private void setListener(){
+
+        mDisciplina.addTextChangedListener(mTextWatcher);
+
         mSaveFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -173,5 +178,24 @@ public class CourseActivity extends AppCompatActivity {
             mEditTextMF.setText(mf);
         }
     }
+
+    public TextWatcher mTextWatcher = new TextWatcher() {
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+            if (!(s.toString().isEmpty() && s.toString().equals("") && s.length() < 0)) {
+                mDisciplina.setError(null);
+            }
+        }
+    };
 
 }
