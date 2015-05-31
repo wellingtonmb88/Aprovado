@@ -83,7 +83,7 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
             holder.mTextViewCourseApproved.setBackgroundColor(mContext.getResources().getColor(android.R.color.holo_red_dark));
         }else{
 
-            holder.mImageViewCourse.setImageDrawable(mContext.getResources().getDrawable(R.mipmap.liked));
+            holder.mImageViewCourse.setImageDrawable(mContext.getResources().getDrawable(R.mipmap.approved));
 
             holder.mTextViewCourseApproved.setText(mContext.getResources().getString(R.string.card_item_label_approved));
             holder.mTextViewCourseApproved.setBackgroundColor(mContext.getResources().getColor(R.color.ColorPrimary));
