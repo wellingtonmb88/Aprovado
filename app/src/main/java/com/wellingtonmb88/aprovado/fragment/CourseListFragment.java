@@ -18,6 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersAdapter;
+import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersDecoration;
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.activity.CourseActivity;
 import com.wellingtonmb88.aprovado.adapter.CourseRecyclerViewAdapter;
@@ -26,8 +28,10 @@ import com.wellingtonmb88.aprovado.custom.FloatActionButtonHideShow;
 import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.listener.SwipeDismissRecyclerViewTouchListener;
 import com.wellingtonmb88.aprovado.utils.Constants;
+import com.wellingtonmb88.aprovado.utils.CourseSemesterComparator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -106,6 +110,16 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
 
         mAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.abc_slide_out_bottom);
         mAnimation.setDuration(ANIMATION_DURATION);
+
+        // Add the sticky headers decoration
+        final StickyRecyclerHeadersDecoration headersDecor = new StickyRecyclerHeadersDecoration((StickyRecyclerHeadersAdapter) mAdapter);
+        mRecyclerView.addItemDecoration(headersDecor);
+        mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                headersDecor.invalidateHeaders();
+            }
+        });
 
     }
 
@@ -235,6 +249,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
     public void getAllCourses(List<Course> courseList) {
         mList.clear();
         mList.addAll(courseList);
+        Collections.sort(mList, new CourseSemesterComparator());
         mAdapter.notifyDataSetChanged();
     }
 

@@ -1,6 +1,7 @@
 package com.wellingtonmb88.aprovado.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,12 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersAdapter;
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.entity.Course;
 
 import java.util.List;
 
-public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecyclerViewAdapter.ViewHolder> {
+public class CourseRecyclerViewAdapter  extends RecyclerView.Adapter<CourseRecyclerViewAdapter.ViewHolder>
+        implements StickyRecyclerHeadersAdapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
     private List<Course> mCourses;
@@ -30,8 +33,11 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         return new ViewHolder(v);
     }
 
+
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder recyclerView, int position) {
+
+        ViewHolder holder = (ViewHolder)recyclerView;
 
         Course course = mCourses.get(position);
         float mediaB1 = course.mediaB1;
@@ -59,7 +65,6 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
             holder.mTextViewCourseApproved.setVisibility(View.VISIBLE);
             holder.mImageViewCourse.setVisibility(View.VISIBLE);
         }
-
 
         holder.mTextViewCourseName.setText(mCourses.get(position).name);
         holder.mTextViewCourseProfessor.setText(mCourses.get(position).professor);
@@ -90,6 +95,29 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         }
     }
 
+
+    @Override
+    public long getHeaderId(int position) {
+        return mCourses.get(position).semester;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.view_header, parent, false);
+        return new RecyclerView.ViewHolder(view) {
+        };
+    }
+
+    @Override
+    public void onBindHeaderViewHolder(RecyclerView.ViewHolder holder, int position) {
+        TextView textView = (TextView) holder.itemView;
+        String semester = mContext.getResources().getStringArray(R.array.semester_array)[mCourses.get(position).semester];
+        textView.setText(semester);
+        int color = mContext.getResources().getColor(R.color.teal);
+        int colorTranparency = Color.HSVToColor(150, new float[]{0, 150, 136});
+        //holder.itemView.setBackgroundColor(colorTranparency);
+    }
 
     @Override
     public int getItemCount() {
