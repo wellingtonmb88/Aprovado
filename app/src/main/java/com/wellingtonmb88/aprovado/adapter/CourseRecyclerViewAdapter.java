@@ -1,7 +1,6 @@
 package com.wellingtonmb88.aprovado.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,23 +68,23 @@ public class CourseRecyclerViewAdapter  extends RecyclerView.Adapter<CourseRecyc
         holder.mTextViewCourseName.setText(mCourses.get(position).name);
         holder.mTextViewCourseProfessor.setText(mCourses.get(position).professor);
 
-        holder.mTextViewCourseMB1.setTextColor(mContext.getResources().getColor(android.R.color.holo_blue_dark));
-        holder.mTextViewCourseMB2.setTextColor(mContext.getResources().getColor(android.R.color.holo_blue_dark));
-        holder.mTextViewCourseMF.setTextColor(mContext.getResources().getColor(android.R.color.holo_blue_dark));
+        holder.mTextViewCourseMB1.setTextColor(mContext.getResources().getColor(R.color.ColorPrimary));
+        holder.mTextViewCourseMB2.setTextColor(mContext.getResources().getColor(R.color.ColorPrimary));
+        holder.mTextViewCourseMF.setTextColor(mContext.getResources().getColor(R.color.ColorPrimary));
 
         if(mediaB1 < 5){
-            holder.mTextViewCourseMB1.setTextColor(mContext.getResources().getColor(android.R.color.holo_red_dark));
+            holder.mTextViewCourseMB1.setTextColor(mContext.getResources().getColor(R.color.red_dark));
         }
         if(mediaB2 < 5){
-            holder.mTextViewCourseMB2.setTextColor(mContext.getResources().getColor(android.R.color.holo_red_dark));
+            holder.mTextViewCourseMB2.setTextColor(mContext.getResources().getColor(R.color.red_dark));
         }
         if(mediaFinal < 5){
-            holder.mTextViewCourseMF.setTextColor(mContext.getResources().getColor(android.R.color.holo_red_dark));
+            holder.mTextViewCourseMF.setTextColor(mContext.getResources().getColor(R.color.red_dark));
 
             holder.mImageViewCourse.setImageDrawable(mContext.getResources().getDrawable(R.mipmap.unapproved));
 
             holder.mTextViewCourseApproved.setText(mContext.getResources().getString(R.string.card_item_label_unapproved));
-            holder.mTextViewCourseApproved.setBackgroundColor(mContext.getResources().getColor(android.R.color.holo_red_dark));
+            holder.mTextViewCourseApproved.setBackgroundColor(mContext.getResources().getColor(R.color.red_dark));
         }else{
 
             holder.mImageViewCourse.setImageDrawable(mContext.getResources().getDrawable(R.mipmap.approved));
@@ -114,9 +113,6 @@ public class CourseRecyclerViewAdapter  extends RecyclerView.Adapter<CourseRecyc
         TextView textView = (TextView) holder.itemView;
         String semester = mContext.getResources().getStringArray(R.array.semester_array)[mCourses.get(position).semester];
         textView.setText(semester);
-        int color = mContext.getResources().getColor(R.color.teal);
-        int colorTranparency = Color.HSVToColor(150, new float[]{0, 150, 136});
-        //holder.itemView.setBackgroundColor(colorTranparency);
     }
 
     @Override

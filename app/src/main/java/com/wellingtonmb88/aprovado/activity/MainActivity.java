@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         mTabs.setViewPager(mPager);
         mToolbarLayout.setTitleTextColor(getResources().getColor(R.color.white));
         setSupportActionBar(mToolbarLayout);
+        getSupportActionBar().setLogo(R.mipmap.actionbar_approved_logo);
     }
 
     private void setListener(){
