@@ -32,13 +32,14 @@ public class Course implements Parcelable {
         this.id = cursor.getInt(cursor.getColumnIndex(CourseTable.ID));
         this.name = cursor.getString(cursor.getColumnIndex(CourseTable.COURSE_NAME));
         this.professor = cursor.getString(cursor.getColumnIndex(CourseTable.COURSE_TEACHER));
-        this.m1 = cursor.getLong(cursor.getColumnIndex(CourseTable.COURSE_M1));
-        this.b1 = cursor.getLong(cursor.getColumnIndex(CourseTable.COURSE_B1));
-        this.mediaB1 = cursor.getLong(cursor.getColumnIndex(CourseTable.COURSE_MB1));
-        this.m2 = cursor.getLong(cursor.getColumnIndex(CourseTable.COURSE_M2));
-        this.b2 = cursor.getLong(cursor.getColumnIndex(CourseTable.COURSE_B2));
-        this.mediaB2 = cursor.getLong(cursor.getColumnIndex(CourseTable.COURSE_MB2));
-        this.mediaFinal = cursor.getLong(cursor.getColumnIndex(CourseTable.COURSE_MF));
+        this.semester = cursor.getInt(cursor.getColumnIndex(CourseTable.COURSE_SEMESTER));
+        this.m1 = cursor.getFloat(cursor.getColumnIndex(CourseTable.COURSE_M1));
+        this.b1 = cursor.getFloat(cursor.getColumnIndex(CourseTable.COURSE_B1));
+        this.mediaB1 = cursor.getFloat(cursor.getColumnIndex(CourseTable.COURSE_MB1));
+        this.m2 = cursor.getFloat(cursor.getColumnIndex(CourseTable.COURSE_M2));
+        this.b2 = cursor.getFloat(cursor.getColumnIndex(CourseTable.COURSE_B2));
+        this.mediaB2 = cursor.getFloat(cursor.getColumnIndex(CourseTable.COURSE_MB2));
+        this.mediaFinal = cursor.getFloat(cursor.getColumnIndex(CourseTable.COURSE_MF));
     }
 
 
@@ -52,7 +53,7 @@ public class Course implements Parcelable {
      **/
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        //dest.writeLong(id);
+        dest.writeLong(id);
         dest.writeString(name);
         dest.writeString(professor);
         dest.writeInt(semester);
@@ -71,15 +72,15 @@ public class Course implements Parcelable {
      * the object CREATOR
      **/
     private Course(Parcel in){
-        //this.id = in.readInt();
+        this.id = in.readLong();
         this.name = in.readString();
         this.professor = in.readString();
         this.semester = in.readInt();
         this.m1 = in.readFloat();
-        this.m2 = in.readFloat();
         this.b1 = in.readFloat();
-        this.b2 = in.readFloat();
         this.mediaB1 = in.readFloat();
+        this.m2 = in.readFloat();
+        this.b2 = in.readFloat();
         this.mediaB2 = in.readFloat();
         this.mediaFinal = in.readFloat();
     }

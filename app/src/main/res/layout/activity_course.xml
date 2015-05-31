@@ -37,7 +37,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/activity_course_class"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:imeOptions="actionNext"/>
         </LinearLayout>
 
         <LinearLayout
@@ -58,7 +59,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/activity_course_teacher"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:imeOptions="actionNext" />
         </LinearLayout>
 
         <Spinner

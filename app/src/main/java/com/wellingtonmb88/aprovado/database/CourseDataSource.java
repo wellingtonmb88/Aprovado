@@ -38,6 +38,7 @@ public class CourseDataSource {
 
         values.put(CourseTable.COURSE_NAME, course.name);
         values.put(CourseTable.COURSE_TEACHER, course.professor);
+        values.put(CourseTable.COURSE_SEMESTER, course.semester);
         values.put(CourseTable.COURSE_M1, course.m1);
         values.put(CourseTable.COURSE_B1, course.b1);
         values.put(CourseTable.COURSE_MB1, course.mediaB1);
@@ -54,6 +55,7 @@ public class CourseDataSource {
 
         values.put(CourseTable.COURSE_NAME, course.name);
         values.put(CourseTable.COURSE_TEACHER, course.professor);
+        values.put(CourseTable.COURSE_SEMESTER, course.semester);
         values.put(CourseTable.COURSE_M1, course.m1);
         values.put(CourseTable.COURSE_B1, course.b1);
         values.put(CourseTable.COURSE_MB1, course.mediaB1);
@@ -76,26 +78,16 @@ public class CourseDataSource {
         Cursor cursor = database.query(CourseTable.TABLE_NAME,
                 CourseTable.ALL_COLUMNS, null, null, null, null, null);
 
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            Course course = new Course(cursor);
-            courseList.add(course);
-            cursor.moveToNext();
+        if(cursor != null && cursor.moveToFirst()){
+
+            do{
+                Course course = new Course(cursor);
+                courseList.add(course);
+            }while (cursor.moveToNext());
+
+            cursor.close();
         }
-        // make sure to close the cursor
-        cursor.close();
+
         return courseList;
-    }
-
-    public Course getCourse(long id) {
-
-        Cursor cursor = database.query(CourseTable.TABLE_NAME,
-                CourseTable.ALL_COLUMNS, CourseTable.WHERE_ID_EQUALS, new String[]{String.valueOf(id)}, null, null, null);
-
-        cursor.moveToFirst();
-        Course course = new Course(cursor);
-        cursor.close();
-
-        return course;
     }
 }

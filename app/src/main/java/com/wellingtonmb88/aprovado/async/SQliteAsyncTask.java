@@ -31,11 +31,11 @@ public class SQliteAsyncTask extends AsyncTask<String, Void, List<Course> > {
         String action = act[0];
         mCourseDataSource.open();
 
-        if(Constants.CourseDatabaseAction.INSERT_COURSE.equals(action)){
+        if(mCourse != null && Constants.CourseDatabaseAction.INSERT_COURSE.equals(action)){
             mCourseDataSource.insert(mCourse);
-        }else if(Constants.CourseDatabaseAction.UPDATE_COURSE.equals(action)){
+        }else if(mCourse != null && Constants.CourseDatabaseAction.UPDATE_COURSE.equals(action)){
             mCourseDataSource.update(mCourse);
-        }else if(Constants.CourseDatabaseAction.DELETE_COURSE.equals(action)){
+        }else if(mCourse != null && Constants.CourseDatabaseAction.DELETE_COURSE.equals(action)){
             mCourseDataSource.delete(mCourse);
         }else if(Constants.CourseDatabaseAction.GET_ALL_COURSES.equals(action)){
             return mCourseDataSource.getAllCourses();
@@ -48,12 +48,13 @@ public class SQliteAsyncTask extends AsyncTask<String, Void, List<Course> > {
     protected void onPostExecute(List<Course>  courseList) {
         super.onPostExecute(courseList);
 
-        if(courseList != null && !courseList.isEmpty()){
+        if(courseList != null && !courseList.isEmpty() && mListener != null){
             mListener.getAllCourses(courseList);
         }
+        mCourseDataSource.close();
     }
 
     public interface SQliteCallBack{
-        void getAllCourses(List<Course> courseList); 
+        void getAllCourses(List<Course> courseList);
     }
 }

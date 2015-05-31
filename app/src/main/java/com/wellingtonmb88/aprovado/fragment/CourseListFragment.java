@@ -15,13 +15,13 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.activity.CourseActivity;
 import com.wellingtonmb88.aprovado.adapter.CourseRecyclerViewAdapter;
+import com.wellingtonmb88.aprovado.async.SQliteAsyncTask;
 import com.wellingtonmb88.aprovado.custom.FloatActionButtonHideShow;
 import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.listener.SwipeDismissRecyclerViewTouchListener;
@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Created by Wellington on 25/05/2015.
  */
-public class CourseListFragment extends Fragment {
+public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQliteCallBack {
 
     private static final int WAIT_TIMEOUT = 5000;
     private static final int ANIMATION_DURATION = 500;
@@ -41,7 +41,6 @@ public class CourseListFragment extends Fragment {
     private int selectedPosition = 0;
     private boolean isUndo = false;
 
-    private RelativeLayout mRecyclerViewLayout;
     private LinearLayout mSnackBar;
     private TextView snakBarText;
     private TextView snakBarButton;
@@ -57,6 +56,7 @@ public class CourseListFragment extends Fragment {
     private Course mLastCourseDeleted;
     private Handler mWorkHnalder;
     private List<Course> mList;
+    private Animation mAnimation;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -69,10 +69,15 @@ public class CourseListFragment extends Fragment {
         return v;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getAllCourses();
+    }
+
     private void loadUI(View v){
 
         mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-        mRecyclerViewLayout = (RelativeLayout) v.findViewById(R.id.recycler_view_layout);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         mSnackBar = (LinearLayout) v.findViewById(R.id.snackbar);
         snakBarButton = (TextView) mSnackBar.findViewById(R.id.textView_snackbar_button);
@@ -81,9 +86,12 @@ public class CourseListFragment extends Fragment {
 
         mSnackBar.setVisibility(View.GONE);
     }
+
     private void loadDataUI(){
 
-        mList = bulkInsert();
+        //mList = bulkInsert();
+        mList = new ArrayList<>();
+        getAllCourses();
         createTouchListener();
         createRunnable();
 
@@ -95,6 +103,9 @@ public class CourseListFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setOnTouchListener(mTouchListener);
         mRecyclerView.addOnScrollListener(mTouchListener.makeScrollListener());
+
+        mAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.abc_slide_out_bottom);
+        mAnimation.setDuration(ANIMATION_DURATION);
 
     }
 
@@ -121,10 +132,8 @@ public class CourseListFragment extends Fragment {
                     }
                     mList.add(selectedPosition, mLastCourseDeleted);
                     mAdapter.notifyItemInserted(selectedPosition);
-                    final Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.abc_slide_out_bottom);
-                    anim.setDuration(ANIMATION_DURATION);
-                    mSnackBar.startAnimation(anim);
-                    anim.setAnimationListener(new Animation.AnimationListener() {
+                    mSnackBar.startAnimation(mAnimation);
+                    mAnimation.setAnimationListener(new Animation.AnimationListener() {
                         @Override
                         public void onAnimationStart(Animation animation) {
                         }
@@ -200,10 +209,8 @@ public class CourseListFragment extends Fragment {
             @Override
             public void run() {
                 if(!isUndo && getActivity() != null){
-                    final Animation anim = AnimationUtils.loadAnimation(getActivity(),  R.anim.abc_slide_out_bottom);
-                    anim.setDuration(ANIMATION_DURATION);
-                    mSnackBar.startAnimation(anim);
-                    anim.setAnimationListener(new Animation.AnimationListener() {
+                    mSnackBar.startAnimation(mAnimation);
+                    mAnimation.setAnimationListener(new Animation.AnimationListener() {
                         @Override
                         public void onAnimationStart(Animation animation) {
                         }
@@ -212,6 +219,7 @@ public class CourseListFragment extends Fragment {
                         public void onAnimationEnd(Animation animation) {
                             mSnackBar.setVisibility(View.GONE);
                             mWorkHnalder.removeCallbacks(mWorkRunnable);
+                            deleteCourse();
                         }
 
                         @Override
@@ -221,6 +229,27 @@ public class CourseListFragment extends Fragment {
                 }
             }
         };
+    }
+
+    @Override
+    public void getAllCourses(List<Course> courseList) {
+        mList.clear();
+        mList.addAll(courseList);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private void getAllCourses(){
+        if(getActivity() != null){
+            SQliteAsyncTask task = new SQliteAsyncTask(getActivity().getApplicationContext(), this, null);
+            task.execute(Constants.CourseDatabaseAction.GET_ALL_COURSES);
+        }
+    }
+
+    private void deleteCourse(){
+        if(getActivity() != null){
+            SQliteAsyncTask task = new SQliteAsyncTask(getActivity().getApplicationContext(), this, mLastCourseDeleted);
+            task.execute(Constants.CourseDatabaseAction.DELETE_COURSE);
+        }
     }
 
     public interface OnItemClickListener {
@@ -300,6 +329,8 @@ public class CourseListFragment extends Fragment {
         public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) {
         }
     }
+
+
 
     private List<Course> bulkInsert() {
         List<Course> listCourses = new ArrayList<>();
