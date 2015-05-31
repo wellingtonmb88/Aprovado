@@ -35,109 +35,150 @@
             android:background="@android:color/darker_gray" />
 
         <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="80dp">
 
-            <TextView
-                android:id="@+id/labelProfessor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/recyclrview_label_teacher"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#aaa" />
-
-            <TextView
-                android:id="@+id/txtProfessor"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="@string/imageview_card_item_approved"
+                android:id="@+id/imageView_card_item"
+                android:layout_weight="0"
+                android:layout_gravity="center_vertical"
                 android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/hello_world"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#aaa" />
+                android:layout_marginStart="5dp"  />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/labelProfessor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/recyclrview_label_teacher"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#aaa" />
+
+                    <TextView
+                        android:id="@+id/txtProfessor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/hello_world"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#aaa" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/labelMB1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/recyclrview_label_mb1"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#aaa" />
+
+                    <TextView
+                        android:id="@+id/txtMB1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/hello_world"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#aaa" />
+
+                    <TextView
+                        android:id="@+id/labelMB2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/recyclrview_label_mb2"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#aaa" />
+
+                    <TextView
+                        android:id="@+id/txtMB2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/hello_world"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#aaa" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/labelMF"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/recyclrview_label_mf"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#aaa" />
+
+                    <TextView
+                        android:id="@+id/txtMF"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/hello_world"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#aaa" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/card_item_label_approved"
+                android:padding="2dp"
+                android:id="@+id/textView_card_item_approved"
+                android:layout_weight="1"
+                android:textColor="@android:color/white"
+                android:background="@color/ColorPrimary"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"  />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/labelMB1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="5dp"
-                android:text="@string/recyclrview_label_mb1"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#aaa" />
-
-            <TextView
-                android:id="@+id/txtMB1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:text="@string/hello_world"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#aaa" />
-
-            <TextView
-                android:id="@+id/labelMB2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="5dp"
-                android:text="@string/recyclrview_label_mb2"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#aaa" />
-
-            <TextView
-                android:id="@+id/txtMB2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:text="@string/hello_world"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#aaa" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/labelMF"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="5dp"
-                android:text="@string/recyclrview_label_mf"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#aaa" />
-
-            <TextView
-                android:id="@+id/txtMF"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:text="@string/hello_world"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#aaa" />
-        </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

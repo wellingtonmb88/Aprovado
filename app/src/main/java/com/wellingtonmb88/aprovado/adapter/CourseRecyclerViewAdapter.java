@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wellingtonmb88.aprovado.R;
@@ -45,6 +46,9 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         holder.mTextViewCourseMB2.setText("");
         holder.mTextViewCourseMF.setText("");
 
+        holder.mTextViewCourseApproved.setVisibility(View.GONE);
+        holder.mImageViewCourse.setVisibility(View.GONE);
+
         String MINUS_ONE = "-1.0";
         if(!MINUS_ONE.equals(mb1)){
             holder.mTextViewCourseMB1.setText(mb1);
@@ -52,7 +56,10 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
             holder.mTextViewCourseMB2.setText(mb2);
         }if(!MINUS_ONE.equals(mf)){
             holder.mTextViewCourseMF.setText(mf);
+            holder.mTextViewCourseApproved.setVisibility(View.VISIBLE);
+            holder.mImageViewCourse.setVisibility(View.VISIBLE);
         }
+
 
         holder.mTextViewCourseName.setText(mCourses.get(position).name);
         holder.mTextViewCourseProfessor.setText(mCourses.get(position).professor);
@@ -69,6 +76,17 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         }
         if(mediaFinal < 5){
             holder.mTextViewCourseMF.setTextColor(mContext.getResources().getColor(android.R.color.holo_red_dark));
+
+            holder.mImageViewCourse.setImageDrawable(mContext.getResources().getDrawable(R.mipmap.unapproved));
+
+            holder.mTextViewCourseApproved.setText(mContext.getResources().getString(R.string.card_item_label_unapproved));
+            holder.mTextViewCourseApproved.setBackgroundColor(mContext.getResources().getColor(android.R.color.holo_red_dark));
+        }else{
+
+            holder.mImageViewCourse.setImageDrawable(mContext.getResources().getDrawable(R.mipmap.liked));
+
+            holder.mTextViewCourseApproved.setText(mContext.getResources().getString(R.string.card_item_label_approved));
+            holder.mTextViewCourseApproved.setBackgroundColor(mContext.getResources().getColor(R.color.ColorPrimary));
         }
     }
 
@@ -85,6 +103,8 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         private TextView mTextViewCourseMB1;
         private TextView mTextViewCourseMB2;
         private TextView mTextViewCourseMF;
+        private TextView mTextViewCourseApproved;
+        private ImageView mImageViewCourse;
 
         public ViewHolder(View view) {
             super(view);
@@ -93,6 +113,8 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
             mTextViewCourseMB1 = (TextView) view.findViewById(R.id.txtMB1);
             mTextViewCourseMB2 = (TextView) view.findViewById(R.id.txtMB2);
             mTextViewCourseMF = (TextView) view.findViewById(R.id.txtMF);
+            mTextViewCourseApproved = (TextView) view.findViewById(R.id.textView_card_item_approved);
+            mImageViewCourse = (ImageView) view.findViewById(R.id.imageView_card_item);
         }
     }
 }
