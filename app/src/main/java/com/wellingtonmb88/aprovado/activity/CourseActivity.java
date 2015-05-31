@@ -142,13 +142,46 @@ public class CourseActivity extends AppCompatActivity {
         mCourse.name = mDisciplina.getText().toString();
         mCourse.professor = mProfessor.getText().toString();
         mCourse.semester = mSpinnerSemestre.getSelectedItemPosition();
-        mCourse.m1 = CommonUtils.parseFloatLocaleSensitive(mEditTextM1.getText().toString());
-        mCourse.b1 = CommonUtils.parseFloatLocaleSensitive(mEditTextB1.getText().toString());
-        mCourse.mediaB1 = CommonUtils.parseFloatLocaleSensitive(mEditTextMB1.getText().toString());
-        mCourse.m2 = CommonUtils.parseFloatLocaleSensitive(mEditTextM2.getText().toString());
-        mCourse.b2 = CommonUtils.parseFloatLocaleSensitive(mEditTextB2.getText().toString());
-        mCourse.mediaB2 = CommonUtils.parseFloatLocaleSensitive(mEditTextMB2.getText().toString());
-        mCourse.mediaFinal = CommonUtils.parseFloatLocaleSensitive(mEditTextMF.getText().toString());
+        validateNullFields();
+    }
+
+    private void validateNullFields() throws ParseException{
+
+        if(mEditTextM1.getText().length() < 1){
+            mCourse.m1 = -1;
+        }else{
+            mCourse.m1 = CommonUtils.parseFloatLocaleSensitive(mEditTextM1.getText().toString());
+        }
+        if(mEditTextB1.getText().length() < 1){
+            mCourse.b1 = -1;
+        }else{
+            mCourse.b1 = CommonUtils.parseFloatLocaleSensitive(mEditTextB1.getText().toString());
+        }
+        if(mEditTextMB1.getText().length() < 1){
+            mCourse.mediaB1 = -1;
+        }else{
+            mCourse.mediaB1 = CommonUtils.parseFloatLocaleSensitive(mEditTextMB1.getText().toString());
+        }
+        if(mEditTextM2.getText().length() < 1){
+            mCourse.m2 = -1;
+        }else{
+            mCourse.m2 = CommonUtils.parseFloatLocaleSensitive(mEditTextM2.getText().toString());
+        }
+        if(mEditTextB2.getText().length() < 1){
+            mCourse.b2 = -1;
+        }else{
+            mCourse.b2 = CommonUtils.parseFloatLocaleSensitive(mEditTextB2.getText().toString());
+        }
+        if(mEditTextMB2.getText().length() < 1){
+            mCourse.mediaB2 = -1;
+        }else{
+            mCourse.mediaB2 = CommonUtils.parseFloatLocaleSensitive(mEditTextMB2.getText().toString());
+        }
+        if(mEditTextMF.getText().length() < 1){
+            mCourse.mediaFinal = -1;
+        }else{
+            mCourse.mediaFinal = CommonUtils.parseFloatLocaleSensitive(mEditTextMF.getText().toString());
+        }
     }
 
     private void validateFields(){
@@ -160,21 +193,21 @@ public class CourseActivity extends AppCompatActivity {
         String mb2 = String.valueOf(mCourse.mediaB2);
         String mf = String.valueOf(mCourse.mediaFinal);
 
-        String ZERO = "0.0";
+        String MINUS_ONE = "-1.0";
 
-        if(!ZERO.equals(m1)){
+        if(!MINUS_ONE.equals(m1)){
             mEditTextM1.setText(m1);
-        }if(!ZERO.equals(m2)){
+        }if(!MINUS_ONE.equals(m2)){
             mEditTextM2.setText(m2);
-        }if(!ZERO.equals(b1)){
+        }if(!MINUS_ONE.equals(b1)){
             mEditTextB1.setText(b1);
-        }if(!ZERO.equals(b2)){
+        }if(!MINUS_ONE.equals(b2)){
             mEditTextB2.setText(b2);
-        }if(!ZERO.equals(mb1)){
+        }if(!MINUS_ONE.equals(mb1)){
             mEditTextMB1.setText(mb1);
-        }if(!ZERO.equals(mb2)){
+        }if(!MINUS_ONE.equals(mb2)){
             mEditTextMB2.setText(mb2);
-        }if(!ZERO.equals(mf)){
+        }if(!MINUS_ONE.equals(mf)){
             mEditTextMF.setText(mf);
         }
     }

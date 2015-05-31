@@ -38,9 +38,6 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
     private static final int WAIT_TIMEOUT = 5000;
     private static final int ANIMATION_DURATION = 500;
 
-    private int selectedPosition = 0;
-    private boolean isUndo = false;
-
     private LinearLayout mSnackBar;
     private TextView snakBarText;
     private TextView snakBarButton;
@@ -53,9 +50,10 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
     private SwipeDismissRecyclerViewTouchListener mTouchListener;
     private FloatActionButtonHideShow mFloatActionButtonHideShow;
     private Runnable mWorkRunnable;
-    private Course mLastCourseDeleted;
     private Handler mWorkHnalder;
     private List<Course> mList;
+    private List<Course> mDeletedCourseList;
+    private List<Integer> mDeletedPositionList;
     private Animation mAnimation;
 
     @Override
@@ -91,6 +89,8 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
 
         //mList = bulkInsert();
         mList = new ArrayList<>();
+        mDeletedCourseList = new ArrayList<>();
+        mDeletedPositionList = new ArrayList<>();
         getAllCourses();
         createTouchListener();
         createRunnable();
@@ -125,29 +125,23 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
         snakBarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!isUndo) {
-                    isUndo = true;
-                    if (selectedPosition == 0) {
-                        mRecyclerView.scrollToPosition(selectedPosition);
+                if (!mDeletedCourseList.isEmpty()) {
+                    Integer deletedPosition = mDeletedPositionList.get(0);
+                    Course deletedCourse = mDeletedCourseList.get(0);
+                    if (deletedPosition == 0) {
+                        mRecyclerView.scrollToPosition(deletedPosition);
                     }
-                    mList.add(selectedPosition, mLastCourseDeleted);
-                    mAdapter.notifyItemInserted(selectedPosition);
-                    mSnackBar.startAnimation(mAnimation);
-                    mAnimation.setAnimationListener(new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            mSnackBar.setVisibility(View.GONE);
-                            mWorkHnalder.removeCallbacks(mWorkRunnable);
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-                        }
-                    });
+                    if(mList.size() <= deletedPosition){
+                        mList.add(deletedCourse);
+                    }else{
+                        mList.add(deletedPosition, deletedCourse);
+                    }
+                    mAdapter.notifyItemInserted(deletedPosition);
+                    mDeletedCourseList.remove(deletedCourse);
+                    mDeletedPositionList.remove(deletedPosition);
+                    if(mDeletedCourseList.size() > 0){
+                        snakBarText.setText(mDeletedCourseList.get(0).name + " " + getString(R.string.courselist_snackbar_title));
+                    }
                 }
             }
         });
@@ -187,13 +181,17 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
 
                             @Override
                             public void onDismiss(RecyclerView recyclerView, final int[] reverseSortedPositions) {
-                                for (int position : reverseSortedPositions) {
-                                    selectedPosition = position;
-                                    break;
+                                int selectedPosition = 0 ;
+                                mWorkHnalder.removeCallbacks(mWorkRunnable);
+
+                                if(reverseSortedPositions.length > 0){
+                                    selectedPosition = reverseSortedPositions[0];
                                 }
-                                isUndo = false;
-                                mLastCourseDeleted = (Course)mList.get(selectedPosition);
-                                snakBarText.setText(mLastCourseDeleted.name +" "+ getString(R.string.courselist_snackbar_title));
+
+                                Course deletedCourse = mList.get(selectedPosition);
+                                mDeletedPositionList.add(0,selectedPosition);
+                                mDeletedCourseList.add(0,deletedCourse);
+                                snakBarText.setText(deletedCourse.name+ " " + getString(R.string.courselist_snackbar_title));
                                 mList.remove(selectedPosition);
                                 mAdapter.notifyDataSetChanged();
                                 mSnackBar.setVisibility(View.VISIBLE);
@@ -208,7 +206,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
         mWorkRunnable = new Runnable() {
             @Override
             public void run() {
-                if(!isUndo && getActivity() != null){
+                if(getActivity() != null){
                     mSnackBar.startAnimation(mAnimation);
                     mAnimation.setAnimationListener(new Animation.AnimationListener() {
                         @Override
@@ -219,7 +217,9 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
                         public void onAnimationEnd(Animation animation) {
                             mSnackBar.setVisibility(View.GONE);
                             mWorkHnalder.removeCallbacks(mWorkRunnable);
-                            deleteCourse();
+                            for(Course course : mDeletedCourseList){
+                                deleteCourse(course);
+                            }
                         }
 
                         @Override
@@ -245,9 +245,9 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
         }
     }
 
-    private void deleteCourse(){
+    private void deleteCourse(Course course){
         if(getActivity() != null){
-            SQliteAsyncTask task = new SQliteAsyncTask(getActivity().getApplicationContext(), this, mLastCourseDeleted);
+            SQliteAsyncTask task = new SQliteAsyncTask(getActivity().getApplicationContext(), this, course);
             task.execute(Constants.CourseDatabaseAction.DELETE_COURSE);
         }
     }
@@ -330,33 +330,4 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
         }
     }
 
-
-
-    private List<Course> bulkInsert() {
-        List<Course> listCourses = new ArrayList<>();
-
-        for (int i = 1; i < 20; i++) {
-            Course course = new Course();
-            course.name = "nome" + i;
-            course.professor = "professor" + i;
-            if (i < 11) {
-
-                course.semester = i - 1;
-            } else {
-
-                course.semester = 6;
-            }
-            course.m1 = i;
-            course.b1 = i + 5;
-            course.m2 = i + 10;
-            course.b2 = i + 15;
-            course.mediaB1 = i +2;
-            course.mediaB2 = i +3;
-            course.mediaFinal= i +8;
-
-            listCourses.add(course);
-        }
-
-        return listCourses;
-    }
 }

@@ -45,12 +45,12 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         holder.mTextViewCourseMB2.setText("");
         holder.mTextViewCourseMF.setText("");
 
-        String ZERO = "0.0";
-        if(!ZERO.equals(mb1)){
+        String MINUS_ONE = "-1.0";
+        if(!MINUS_ONE.equals(mb1)){
             holder.mTextViewCourseMB1.setText(mb1);
-        }if(!ZERO.equals(mb2)){
+        }if(!MINUS_ONE.equals(mb2)){
             holder.mTextViewCourseMB2.setText(mb2);
-        }if(!ZERO.equals(mf)){
+        }if(!MINUS_ONE.equals(mf)){
             holder.mTextViewCourseMF.setText(mf);
         }
 
