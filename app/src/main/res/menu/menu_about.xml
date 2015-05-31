@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.wellingtonmb88.aprovado.activity.AboutActivity">
+    <item
+        android:id="@+id/action_rate"
+        android:orderInCategory="100"
+        android:title="@string/about_action_rate"
+        android:icon="@mipmap/ic_action_rate"
+        app:showAsAction="ifRoom" />
+</menu>

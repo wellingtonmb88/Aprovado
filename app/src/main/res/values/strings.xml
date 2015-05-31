@@ -1,8 +1,12 @@
 <resources>
     <string name="app_name">Aprovado</string>
+    <string name="title_activity_about">Aprovado</string>
+
+    <string name="url_activity_about">"file:///android_asset/about_pt.html"</string>
+    <string name="about_action_rate">Avaliar</string>
 
     <string name="hello_world">Hello</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Sobre</string>
 
     <string name="tablebar_header_calculator">Calculadora</string>
     <string name="tablebar_header_classes">Disciplinas</string>
