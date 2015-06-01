@@ -36,7 +36,7 @@ public class AboutActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-    } 
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

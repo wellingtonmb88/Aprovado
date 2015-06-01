@@ -17,4 +17,9 @@ public interface Constants {
         String GET_ALL_COURSES = "get_all_courses";
         String GET_COURSE = "get_course";
     }
+
+    interface TabSharedPreferences{
+        String SELECTED_TAB = "seclected_tab";
+        String SHARED_PREFERENCES_TAB = "shared_preferences_tab";
+    }
 }

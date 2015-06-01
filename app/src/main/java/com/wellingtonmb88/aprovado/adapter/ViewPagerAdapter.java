@@ -3,6 +3,8 @@ package com.wellingtonmb88.aprovado.adapter;
 /**
  * Created by Wellington on 25/05/2015.
  */
+
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -15,11 +17,11 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private CharSequence mTitles[];
     private int mNumbOfTabs;
 
-    public ViewPagerAdapter(FragmentManager fm, CharSequence titles[], int numbOfTabs) {
+    public ViewPagerAdapter(Context context, FragmentManager fm, CharSequence titles[], int numbOfTabs) {
         super(fm);
         this.mTitles = titles;
         this.mNumbOfTabs = numbOfTabs;
-    }
+     }
 
     @Override
     public Fragment getItem(int position) {

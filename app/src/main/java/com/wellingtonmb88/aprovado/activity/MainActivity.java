@@ -1,6 +1,8 @@
 package com.wellingtonmb88.aprovado.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +15,7 @@ import android.widget.LinearLayout;
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.adapter.ViewPagerAdapter;
 import com.wellingtonmb88.aprovado.slidingtab.SlidingTabLayout;
+import com.wellingtonmb88.aprovado.utils.Constants;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -22,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPagerAdapter mAdapter;
     private SlidingTabLayout mTabs;
     private Toolbar mToolbarLayout;
+    private SharedPreferences mSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +38,14 @@ public class MainActivity extends AppCompatActivity {
         setListener();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mSharedPreferences = getSharedPreferences(Constants.TabSharedPreferences.SHARED_PREFERENCES_TAB, Context.MODE_PRIVATE);
+        int selectedTab = mSharedPreferences.getInt(Constants.TabSharedPreferences.SELECTED_TAB, 0);
+        mPager.setCurrentItem(selectedTab);
+    }
+
     private void loadUI(){
         LinearLayout toolbar = (LinearLayout) findViewById(R.id.toolbar);
         mToolbarLayout = (Toolbar) toolbar.findViewById(R.id.toolbar_layout);
@@ -43,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadDataUI(){
         CharSequence mTitles[]={getString(R.string.tablebar_header_calculator), getString(R.string.tablebar_header_classes)};
-        mAdapter =  new ViewPagerAdapter(getSupportFragmentManager(),mTitles,mNumbofmTabs);
+        mAdapter =  new ViewPagerAdapter(getApplicationContext(), getSupportFragmentManager(), mTitles, mNumbofmTabs);
         mPager.setAdapter(mAdapter);
         mTabs.setDistributeEvenly(true);
         mTabs.setViewPager(mPager);
@@ -56,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
         mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
+                SharedPreferences.Editor editor = mSharedPreferences.edit();
+                editor.putInt(Constants.TabSharedPreferences.SELECTED_TAB, position);
+                editor.apply();
                 return getResources().getColor(android.R.color.white);
             }
         });
