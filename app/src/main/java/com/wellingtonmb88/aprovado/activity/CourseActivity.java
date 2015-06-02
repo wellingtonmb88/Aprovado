@@ -104,7 +104,7 @@ public class CourseActivity extends AppCompatActivity {
         if(intent != null && intent.hasExtra(Constants.CourseExtra.INTENT_EXTRA)){
             Bundle bundle = intent.getBundleExtra(Constants.CourseExtra.INTENT_EXTRA);
             if(bundle != null){
-                mCourse = (Course)bundle.getParcelable(Constants.CourseExtra.BUNDLE_EXTRA);
+                mCourse = bundle.getParcelable(Constants.CourseExtra.BUNDLE_EXTRA);
                 if(mCourse != null){
 
                     if(mCourse.name != null){
@@ -241,9 +241,6 @@ public class CourseActivity extends AppCompatActivity {
     };
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if(id == android.R.id.home){
             backForResult();

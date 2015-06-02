@@ -1,8 +1,6 @@
 package com.wellingtonmb88.aprovado.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -25,8 +23,6 @@ public class MainActivity extends AppCompatActivity {
     private ViewPagerAdapter mAdapter;
     private SlidingTabLayout mTabs;
     private Toolbar mToolbarLayout;
-    private SharedPreferences mSharedPreferences;
-    private SharedPreferences.Editor mEditorSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,17 +36,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-       /// mEditorSharedPreferences.putInt(Constants.TabSharedPreferences.SELECTED_TAB, 0);
-        //mEditorSharedPreferences.apply();
-    }
-
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if(resultCode == RESULT_OK){
@@ -58,24 +44,6 @@ public class MainActivity extends AppCompatActivity {
                 mPager.setCurrentItem(selectedTab);
             }
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        // Save the user's current game state
-        savedInstanceState.putInt(Constants.TabSharedPreferences.SELECTED_TAB, mPager.getCurrentItem());
-        // Always call the superclass so it can save the view hierarchy state
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        // Always call the superclass so it can restore the view hierarchy
-        super.onRestoreInstanceState(savedInstanceState);
-
-        // Restore state members from saved instance
-        int selectedTab = savedInstanceState.getInt(Constants.TabSharedPreferences.SELECTED_TAB);
-        mPager.setCurrentItem(selectedTab);
     }
 
     private void loadUI(){
@@ -86,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadDataUI(){
-        mSharedPreferences = getSharedPreferences(Constants.TabSharedPreferences.SHARED_PREFERENCES_TAB, Context.MODE_PRIVATE);
-        mEditorSharedPreferences = mSharedPreferences.edit();
         CharSequence mTitles[]={getString(R.string.tablebar_header_calculator), getString(R.string.tablebar_header_classes)};
         mAdapter =  new ViewPagerAdapter(getApplicationContext(), getSupportFragmentManager(), mTitles, mNumbofmTabs);
         mPager.setAdapter(mAdapter);
@@ -122,8 +88,7 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
+ 
         if (id == R.id.action_settings) {
             Intent intent = new Intent(MainActivity.this, AboutActivity.class);
             intent.putExtra(Constants.TabSharedPreferences.SELECTED_TAB, mPager.getCurrentItem());

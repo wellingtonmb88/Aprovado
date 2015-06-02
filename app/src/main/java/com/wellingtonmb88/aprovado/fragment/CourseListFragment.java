@@ -1,8 +1,6 @@
 package com.wellingtonmb88.aprovado.fragment;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -61,8 +59,6 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
     private List<Course> mDeletedCourseList;
     private List<Integer> mDeletedPositionList;
     private Animation mAnimation;
-    private SharedPreferences mSharedPreferences;
-    private SharedPreferences.Editor mEditorSharedPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -95,9 +91,6 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
 
     private void loadDataUI(){
 
-        mSharedPreferences = getActivity().getApplicationContext().
-                getSharedPreferences(Constants.TabSharedPreferences.SHARED_PREFERENCES_TAB, Context.MODE_PRIVATE);
-        mEditorSharedPreferences = mSharedPreferences.edit();
         mList = new ArrayList<>();
         mDeletedCourseList = new ArrayList<>();
         mDeletedPositionList = new ArrayList<>();
