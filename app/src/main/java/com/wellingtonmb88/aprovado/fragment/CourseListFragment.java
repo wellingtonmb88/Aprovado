@@ -1,6 +1,8 @@
 package com.wellingtonmb88.aprovado.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -59,6 +61,8 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
     private List<Course> mDeletedCourseList;
     private List<Integer> mDeletedPositionList;
     private Animation mAnimation;
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditorSharedPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -91,7 +95,9 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
 
     private void loadDataUI(){
 
-        //mList = bulkInsert();
+        mSharedPreferences = getActivity().getApplicationContext().
+                getSharedPreferences(Constants.TabSharedPreferences.SHARED_PREFERENCES_TAB, Context.MODE_PRIVATE);
+        mEditorSharedPreferences = mSharedPreferences.edit();
         mList = new ArrayList<>();
         mDeletedCourseList = new ArrayList<>();
         mDeletedPositionList = new ArrayList<>();
@@ -145,16 +151,31 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
                     if (deletedPosition == 0) {
                         mRecyclerView.scrollToPosition(deletedPosition);
                     }
-                    if(mList.size() <= deletedPosition){
-                        mList.add(deletedCourse);
-                    }else{
-                        mList.add(deletedPosition, deletedCourse);
-                    }
-                    mAdapter.notifyItemInserted(deletedPosition);
-                    mDeletedCourseList.remove(deletedCourse);
-                    mDeletedPositionList.remove(deletedPosition);
-                    if(mDeletedCourseList.size() > 0){
-                        snakBarText.setText(mDeletedCourseList.get(0).name + " " + getString(R.string.courselist_snackbar_title));
+                    if (mDeletedCourseList.size() == 1) {
+                        if (mList.size() <= deletedPosition) {
+                            mList.add(deletedCourse);
+                        } else {
+                            mList.add(deletedPosition, deletedCourse);
+                        }
+                        mAdapter.notifyItemInserted(deletedPosition);
+                        mDeletedCourseList.remove(deletedCourse);
+                        mDeletedPositionList.remove(deletedPosition);
+                    }else if(mDeletedCourseList.size() > 1){
+                        int index = 0;
+                        for(Course course : mDeletedCourseList){
+
+                            if (mList.size() <= deletedPosition) {
+                                mList.add(course);
+                            } else {
+                                mList.add(mDeletedPositionList.get(index), mDeletedCourseList.get(index));
+                            }
+                            mAdapter.notifyItemInserted(mDeletedPositionList.get(index));
+                            index++;
+                        }
+                        mDeletedCourseList.clear();
+                        mDeletedPositionList.clear();
+                        mSnackBar.setVisibility(View.GONE);
+                        mWorkHnalder.removeCallbacks(mWorkRunnable);
                     }
                 }
             }
@@ -168,7 +189,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
                         Bundle bundle = new Bundle();
                         bundle.putParcelable(Constants.CourseExtra.BUNDLE_EXTRA, mList.get(position));
                         intent.putExtra(Constants.CourseExtra.INTENT_EXTRA, bundle);
-                        startActivity(intent);
+                        startActivityForResult(intent, 1);
                     }
                 }));
 
@@ -204,8 +225,12 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
 
                                 Course deletedCourse = mList.get(selectedPosition);
                                 mDeletedPositionList.add(0,selectedPosition);
-                                mDeletedCourseList.add(0,deletedCourse);
-                                snakBarText.setText(deletedCourse.name+ " " + getString(R.string.courselist_snackbar_title));
+                                mDeletedCourseList.add(0, deletedCourse);
+                                if(mDeletedCourseList.size() > 1){
+                                    snakBarText.setText(mDeletedCourseList.size()+ " " + getString(R.string.courselist_snackbar_itens));
+                                }else{
+                                    snakBarText.setText(deletedCourse.name+ " " + getString(R.string.courselist_snackbar_title));
+                                }
                                 mList.remove(selectedPosition);
                                 mAdapter.notifyDataSetChanged();
                                 mSnackBar.setVisibility(View.VISIBLE);

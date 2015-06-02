@@ -9,10 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.wellingtonmb88.aprovado.R;
-import com.wellingtonmb88.aprovado.custom.CustomRippleView;
 import com.wellingtonmb88.aprovado.listener.TextChangeListener;
 import com.wellingtonmb88.aprovado.utils.CommonUtils;
 
@@ -33,9 +32,9 @@ public class CalculatorFragment extends Fragment {
     private EditText mEditTextCourseMB2;
     private EditText mEditTextCourseMF;
 
-    private CustomRippleView mSimulateB1;
-    private CustomRippleView mSimulateB2;
-    private CustomRippleView mSimulateMF;
+    private TextView mSimulateB1;
+    private TextView mSimulateB2;
+    private TextView mSimulateMF;
 
 
     @Override
@@ -57,9 +56,9 @@ public class CalculatorFragment extends Fragment {
         mEditTextCourseMB2 = (EditText) view.findViewById(R.id.editText_mb2);
         mEditTextCourseMF = (EditText) view.findViewById(R.id.editText_mf);
 
-        mSimulateB1 = (CustomRippleView) view.findViewById(R.id.button_simulate_mb1);
-        mSimulateB2 = (CustomRippleView) view.findViewById(R.id.button_simulate_mb2);
-        mSimulateMF = (CustomRippleView) view.findViewById(R.id.button_simulate_mf);
+        mSimulateB1 = (TextView) view.findViewById(R.id.textview_simulate_b1);
+        mSimulateB2 = (TextView) view.findViewById(R.id.textview_simulate_b2);
+        mSimulateMF = (TextView) view.findViewById(R.id.textview_simulate_mf);
     }
 
     private  void loadDataUI(){
@@ -85,7 +84,7 @@ public class CalculatorFragment extends Fragment {
                 if (mEditTextCourseM1.getText().length() < 1 ) {
                     mEditTextCourseM1.setError(mEditTextErrorMessage);
                 } else {
-                    builderDialogBimestral(mEditTextCourseM1.getText().toString());
+                   // builderDialogBimestral(mEditTextCourseM1.getText().toString());
                 }
 
             }
@@ -98,7 +97,7 @@ public class CalculatorFragment extends Fragment {
                 if (mEditTextCourseM2.getText().length() < 1 ) {
                     mEditTextCourseM2.setError(mEditTextErrorMessage);
                 } else {
-                    builderDialogBimestral(mEditTextCourseM2.getText().toString());
+                   // builderDialogBimestral(mEditTextCourseM2.getText().toString());
                 }
 
             }
@@ -127,68 +126,57 @@ public class CalculatorFragment extends Fragment {
                         mEditTextCourseM2.setError(mEditTextErrorMessage);
                     }
                 } else {
-                    builderDialogMediaFinal(mEditTextCourseM2.getText().toString(), mEditTextCourseMB1.getText().toString());
+                    //builderDialogMediaFinal(mEditTextCourseM2.getText().toString(), mEditTextCourseMB1.getText().toString());
                 }
             }
         });
     }
 
-    private void builderDialogBimestral(String mensal) {
-        float m2 = 0;
+    private void builderDialogBimestral(TextView textView, String mensal) {
+        float notaMensal = 0;
         try {
-            m2 = CommonUtils.parseFloatLocaleSensitive(mensal);
+            notaMensal = CommonUtils.parseFloatLocaleSensitive(mensal);
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        double b2 = CommonUtils.roundFloatOneHouse((5 - (m2 * 0.4)) / 0.6);
-        double result = (m2 * 0.4)+(b2*0.6);
+        double notaBimestral = CommonUtils.roundFloatOneHouse((5 - (notaMensal * 0.4)) / 0.6);
+        double result = (notaMensal * 0.4)+(notaBimestral * 0.6);
 
         if(result < 5){
-            b2  = Math.round(b2 + 0.40);
+            notaBimestral  = Math.abs(notaBimestral + 0.37);
         }
 
-        new MaterialDialog.Builder(getActivity())
-                .title(getString(R.string.calculator_dialog_title))
-                .content(getString(R.string.calculator_dialog_to_approve) + " " + CommonUtils.roundFloatOneHouse(b2))
-                .positiveText("Ok")
-                .show();
+        textView.setText(getString(R.string.calculator_dialog_to_approve)+" "+String.valueOf(CommonUtils.roundFloatOneHouse(notaBimestral)));
     }
 
-    private void builderDialogMediaFinal(String mensal, String bimestral) {
+    private void builderDialogMediaFinal(TextView textView,String mensal, String bimestral) {
         double mb1 = 0;
-        double m2 = 0;
+        double notaMensal2 = 0;
 
         try {
             mb1 = CommonUtils.parseFloatLocaleSensitive(bimestral);
-            m2 = CommonUtils.parseFloatLocaleSensitive(mensal);
+            notaMensal2 = CommonUtils.parseFloatLocaleSensitive(mensal);
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
         double mb2 = CommonUtils.roundFloatOneHouse((((((mb1 * 2) - 25) / 5) * 5) / 3) * -1);
-        double b2 = (mb2 - (m2 * 0.4))/0.6;
+        double notaBimestral = (mb2 - (notaMensal2 * 0.4))/0.6;
         double result = ((mb1 * 2)+(mb2 * 3))/5;
 
-        if(result < 5){
-            b2  = Math.round(b2 + 0.40);
-        }
-        if(b2 < 0){
-            b2  = 0;
+        if(notaBimestral <= 0){
+            notaBimestral = 0;
+        }else if(notaBimestral > 0 && notaBimestral < 1 ){
+            notaBimestral = 1;
+        }else if(result < 5){
+            notaBimestral = Math.abs(notaBimestral + 0.36);
         }
 
-        if(b2 > 10){
-            new MaterialDialog.Builder(getActivity())
-                    .title(getString(R.string.calculator_dialog_title))
-                    .content(getString(R.string.calculator_dialog_unpassed))
-                    .positiveText("Ok")
-                    .show();
+        if(notaBimestral > 10){
+            textView.setText(getString(R.string.calculator_dialog_unpassed));
         }else{
-            new MaterialDialog.Builder(getActivity())
-                    .title(getString(R.string.calculator_dialog_title))
-                    .content(getString(R.string.calculator_dialog_to_approve)+" " + CommonUtils.roundFloatOneHouse(b2))
-                    .positiveText("Ok")
-                    .show();
+            textView.setText(getString(R.string.calculator_dialog_to_approve_final)+" "+String.valueOf(CommonUtils.roundFloatOneHouse(notaBimestral)));
         }
     }
 
@@ -205,7 +193,7 @@ public class CalculatorFragment extends Fragment {
         @Override
         public void afterTextChanged(Editable editable) {
 
-            if (mEditTextCourseB1.getText().length() > 0 && mEditTextCourseM1.getText().length() > 0) {
+            if (mEditTextCourseB1.getText().length() > 0 || mEditTextCourseM1.getText().length() > 0) {
                 float m1 = 0;
                 float b1 = 0;
                 try {
@@ -215,12 +203,16 @@ public class CalculatorFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                float media = CommonUtils.roundFloatTwoHouse(((m1 * 4) + (b1 * 6)) / 10);
-                mEditTextCourseMB1.setError(null);
-                mEditTextCourseMB1.setText(String.valueOf(media));
+                if(mEditTextCourseB1.getText().length() < 1 && mEditTextCourseM1.getText().length() > 0){
+                    builderDialogBimestral(mSimulateB1, mEditTextCourseM1.getText().toString());
+                }else if(mEditTextCourseB1.getText().length() > 0 && mEditTextCourseM1.getText().length() > 0){
+                    float media = CommonUtils.roundFloatTwoHouse(((m1 * 4) + (b1 * 6)) / 10);
+                    mEditTextCourseMB1.setError(null);
+                    mEditTextCourseMB1.setText(String.valueOf(media));
+                }
             }
 
-            if (mEditTextCourseB2.getText().length() > 0 && mEditTextCourseM2.getText().length() > 0) {
+            if (mEditTextCourseB2.getText().length() > 0 || mEditTextCourseM2.getText().length() > 0) {
                 float m2 = 0;
                 float b2 = 0;
                 try {
@@ -230,8 +222,17 @@ public class CalculatorFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                float media = CommonUtils.roundFloatTwoHouse(((m2 * 4) + (b2 * 6)) / 10);
-                mEditTextCourseMB2.setText(String.valueOf(media));
+                if(mEditTextCourseB2.getText().length() < 1 && mEditTextCourseM2.getText().length() > 0){
+                    builderDialogBimestral(mSimulateB2, mEditTextCourseM2.getText().toString());
+                }else if(mEditTextCourseB2.getText().length() > 0 && mEditTextCourseM2.getText().length() > 0){
+                    float media = CommonUtils.roundFloatTwoHouse(((m2 * 4) + (b2 * 6)) / 10);
+                    mEditTextCourseMB2.setText(String.valueOf(media));
+                }
+            }
+
+            if (mEditTextCourseMB1.getText().length() > 0 && mEditTextCourseM2.getText().length() > 0) {
+
+                builderDialogMediaFinal(mSimulateMF, mEditTextCourseM2.getText().toString(), mEditTextCourseMB1.getText().toString());
             }
 
             if (mEditTextCourseMB1.getText().length() > 0 && mEditTextCourseMB2.getText().length() > 0) {
@@ -248,6 +249,15 @@ public class CalculatorFragment extends Fragment {
                 mEditTextCourseMF.setText(String.valueOf(media));
             }
 
+            if (mEditTextCourseM1.getText().length() < 1 || mEditTextCourseM2.getText().length() < 1) {
+                mSimulateMF.setText(getString(R.string.calculator_dialog_to_approve_final));
+                if(mEditTextCourseM1.getText().length() < 1 ){
+                    mSimulateB1.setText(getString(R.string.calculator_dialog_to_approve));
+                }
+                if(mEditTextCourseM2.getText().length() < 1 ){
+                    mSimulateB2.setText(getString(R.string.calculator_dialog_to_approve));
+                }
+            }
             if (mEditTextCourseM1.getText().length() < 1 || mEditTextCourseB1.getText().length() < 1) {
                 mEditTextCourseMB1.setText("");
             }
@@ -258,6 +268,14 @@ public class CalculatorFragment extends Fragment {
 
             if (mEditTextCourseMB1.getText().length() < 1 || mEditTextCourseMB2.getText().length() < 1) {
                 mEditTextCourseMF.setText("");
+            }
+
+            if (mEditTextCourseM1.getText().length() < 1 ) {
+                mEditTextCourseMB1.setText("");
+            }
+
+            if (mEditTextCourseM2.getText().length() < 1 ) {
+                mEditTextCourseMB2.setText("");
             }
         }
     };

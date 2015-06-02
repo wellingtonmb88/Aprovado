@@ -102,23 +102,21 @@
                 </LinearLayout>
 
                 <android.support.v7.widget.CardView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
                     card_view:cardCornerRadius="4dp"
                     android:layout_gravity="center">
 
-                    <com.wellingtonmb88.aprovado.custom.CustomRippleView
-                        android:id="@+id/button_simulate_mb1"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/textview_simulate_b1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:gravity="center"
-                        android:padding="10dp"
-                        android:text="@string/fragment_calculator_simulate_score_b1"
-                        android:textColor="@color/ColorPrimaryDark"
-                        ripple:rippleColor = "@color/rippleColor"
-                        ripple:alphaFactor="0.7"
-                        ripple:hover="true" />
+                        android:layout_gravity="center"
+                        android:text="@string/calculator_dialog_to_approve" />
+
                 </android.support.v7.widget.CardView>
 
             </LinearLayout>
@@ -208,23 +206,21 @@
                 </LinearLayout>
 
                 <android.support.v7.widget.CardView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
                     card_view:cardCornerRadius="4dp"
                     android:layout_gravity="center">
 
-                    <com.wellingtonmb88.aprovado.custom.CustomRippleView
-                        android:id="@+id/button_simulate_mb2"
-                        android:layout_width="match_parent"
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/textview_simulate_b2"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:gravity="center"
-                        android:padding="10dp"
-                        android:text="@string/fragment_calculator_simulate_score_b2"
-                        android:textColor="@color/ColorPrimaryDark"
-                        ripple:alphaFactor="0.7"
-                        ripple:rippleColor = "@color/rippleColor"
-                        ripple:hover="true"  />
+                        android:layout_gravity="center"
+                        android:text="@string/calculator_dialog_to_approve" />
+
                 </android.support.v7.widget.CardView>
 
             </LinearLayout>
@@ -265,23 +261,21 @@
 
 
                 <android.support.v7.widget.CardView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
                     card_view:cardCornerRadius="4dp"
                     android:layout_gravity="center">
 
-                    <com.wellingtonmb88.aprovado.custom.CustomRippleView
-                        android:id="@+id/button_simulate_mf"
-                        android:layout_width="match_parent"
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/textview_simulate_mf"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:gravity="center"
-                        android:padding="10dp"
-                        android:text="@string/fragment_calculator_simulate_score_final_average"
-                        android:textColor="@color/ColorPrimaryDark"
-                        ripple:rippleColor = "@color/rippleColor"
-                        ripple:alphaFactor="0.7"
-                        ripple:hover="true" />
+                        android:layout_gravity="center"
+                        android:text="@string/calculator_dialog_to_approve_final" />
+
                 </android.support.v7.widget.CardView>
 
             </LinearLayout>

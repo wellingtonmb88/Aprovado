@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private SlidingTabLayout mTabs;
     private Toolbar mToolbarLayout;
     private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditorSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +42,39 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mSharedPreferences = getSharedPreferences(Constants.TabSharedPreferences.SHARED_PREFERENCES_TAB, Context.MODE_PRIVATE);
-        int selectedTab = mSharedPreferences.getInt(Constants.TabSharedPreferences.SELECTED_TAB, 0);
+
+       /// mEditorSharedPreferences.putInt(Constants.TabSharedPreferences.SELECTED_TAB, 0);
+        //mEditorSharedPreferences.apply();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if(resultCode == RESULT_OK){
+                int selectedTab = data.getIntExtra(Constants.TabSharedPreferences.SELECTED_TAB,0);
+                mPager.setCurrentItem(selectedTab);
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putInt(Constants.TabSharedPreferences.SELECTED_TAB, mPager.getCurrentItem());
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore state members from saved instance
+        int selectedTab = savedInstanceState.getInt(Constants.TabSharedPreferences.SELECTED_TAB);
         mPager.setCurrentItem(selectedTab);
     }
 
@@ -54,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadDataUI(){
+        mSharedPreferences = getSharedPreferences(Constants.TabSharedPreferences.SHARED_PREFERENCES_TAB, Context.MODE_PRIVATE);
+        mEditorSharedPreferences = mSharedPreferences.edit();
         CharSequence mTitles[]={getString(R.string.tablebar_header_calculator), getString(R.string.tablebar_header_classes)};
         mAdapter =  new ViewPagerAdapter(getApplicationContext(), getSupportFragmentManager(), mTitles, mNumbofmTabs);
         mPager.setAdapter(mAdapter);
@@ -61,16 +95,15 @@ public class MainActivity extends AppCompatActivity {
         mTabs.setViewPager(mPager);
         mToolbarLayout.setTitleTextColor(getResources().getColor(R.color.white));
         setSupportActionBar(mToolbarLayout);
-        getSupportActionBar().setLogo(R.mipmap.actionbar_approved_logo);
+        if(getSupportActionBar() != null){
+            getSupportActionBar().setLogo(R.mipmap.actionbar_approved_logo);
+        }
     }
 
     private void setListener(){
         mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                SharedPreferences.Editor editor = mSharedPreferences.edit();
-                editor.putInt(Constants.TabSharedPreferences.SELECTED_TAB, position);
-                editor.apply();
                 return getResources().getColor(android.R.color.white);
             }
         });
@@ -92,10 +125,13 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            startActivity(new Intent(MainActivity.this, AboutActivity.class));
+            Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+            intent.putExtra(Constants.TabSharedPreferences.SELECTED_TAB, mPager.getCurrentItem());
+            startActivityForResult(intent, 1);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
 }

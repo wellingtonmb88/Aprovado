@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -52,6 +53,12 @@ public class CourseActivity extends AppCompatActivity {
         loadUI();
         loadDataUI();
         setListener();
+    }
+
+    @Override
+    public void onBackPressed() {
+        backForResult();
+        super.onBackPressed();
     }
 
     private void loadUI(){
@@ -232,5 +239,22 @@ public class CourseActivity extends AppCompatActivity {
             }
         }
     };
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if(id == android.R.id.home){
+            backForResult();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
+    private void backForResult(){
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra(Constants.TabSharedPreferences.SELECTED_TAB, 1);
+            setResult(RESULT_OK, returnIntent);
+            finish();
+    }
 }

@@ -11,6 +11,7 @@ import android.webkit.WebView;
 import android.widget.LinearLayout;
 
 import com.wellingtonmb88.aprovado.R;
+import com.wellingtonmb88.aprovado.utils.Constants;
 
 public class AboutActivity extends AppCompatActivity {
 
@@ -39,6 +40,12 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        backForResult();
+        super.onBackPressed();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_about, menu);
@@ -62,7 +69,19 @@ public class AboutActivity extends AppCompatActivity {
 
             return true;
         }
-
+        if(id == android.R.id.home){
+            backForResult();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void backForResult(){
+       if(getIntent().hasExtra(Constants.TabSharedPreferences.SELECTED_TAB)){
+           int result = getIntent().getIntExtra(Constants.TabSharedPreferences.SELECTED_TAB,0);
+           Intent returnIntent = new Intent();
+           returnIntent.putExtra(Constants.TabSharedPreferences.SELECTED_TAB, result);
+           setResult(RESULT_OK, returnIntent);
+           finish();
+       }
     }
 }
