@@ -8,19 +8,19 @@ import android.view.animation.Interpolator;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 
-/**
- * Created by Wellington on 27/05/2015.
- */
+import java.lang.ref.WeakReference;
+
 public class FloatActionButtonHideShow {
 
     private static final int TRANSLATE_DURATION_MILLIS = 300;
-    private final Interpolator mInterpolator = new AccelerateDecelerateInterpolator();
-    private View mView;
+    private final Interpolator mInterpolator;
+    private WeakReference<View> mView;
     private boolean mVisible;
 
-    public FloatActionButtonHideShow(View view){
-        mView = view;
+    public FloatActionButtonHideShow(View view) {
+        mView = new WeakReference<>(view);
         mVisible = true;
+        mInterpolator = new AccelerateDecelerateInterpolator();
     }
 
     public void show() {
@@ -42,31 +42,34 @@ public class FloatActionButtonHideShow {
     private void toggle(final boolean visible, final boolean animate, boolean force) {
         if (mVisible != visible || force) {
             mVisible = visible;
-            int height = mView.getHeight();
-            if (height == 0 && !force) {
-                ViewTreeObserver vto = mView.getViewTreeObserver();
-                if (vto.isAlive()) {
-                    vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                        @Override
-                        public boolean onPreDraw() {
-                            ViewTreeObserver currentVto = mView.getViewTreeObserver();
-                            if (currentVto.isAlive()) {
-                                currentVto.removeOnPreDrawListener(this);
+            final View viewRef = mView.get();
+            if (viewRef != null) {
+                int height = viewRef.getHeight();
+                if (height == 0 && !force) {
+                    ViewTreeObserver vto = viewRef.getViewTreeObserver();
+                    if (vto.isAlive()) {
+                        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                            @Override
+                            public boolean onPreDraw() {
+                                ViewTreeObserver currentVto = viewRef.getViewTreeObserver();
+                                if (currentVto.isAlive()) {
+                                    currentVto.removeOnPreDrawListener(this);
+                                }
+                                toggle(visible, animate, true);
+                                return true;
                             }
-                            toggle(visible, animate, true);
-                            return true;
-                        }
-                    });
-                    return;
+                        });
+                        return;
+                    }
                 }
-            }
-            int translationY = visible ? 0 : height + mView.getBottom();
-            if (animate) {
-                ViewPropertyAnimator.animate(mView).setInterpolator(mInterpolator)
-                        .setDuration(TRANSLATE_DURATION_MILLIS)
-                        .translationY(translationY);
-            } else {
-                ViewHelper.setTranslationY(mView, translationY);
+                int translationY = visible ? 0 : height + viewRef.getBottom();
+                if (animate) {
+                    ViewPropertyAnimator.animate(viewRef).setInterpolator(mInterpolator)
+                            .setDuration(TRANSLATE_DURATION_MILLIS)
+                            .translationY(translationY);
+                } else {
+                    ViewHelper.setTranslationY(viewRef, translationY);
+                }
             }
 
         }

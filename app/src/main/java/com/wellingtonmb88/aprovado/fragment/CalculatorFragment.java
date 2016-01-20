@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +57,7 @@ public class CalculatorFragment extends Fragment {
         @Override
         public void afterTextChanged(Editable editable) {
 
-            if (mEditTextCourseB1.getText().length() > 0 || mEditTextCourseM1.getText().length() > 0) {
+            if (!TextUtils.isEmpty(mEditTextCourseB1.getText()) || !TextUtils.isEmpty(mEditTextCourseM1.getText())) {
                 float m1 = 0;
                 float b1 = 0;
                 try {
@@ -66,16 +67,16 @@ public class CalculatorFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                if (mEditTextCourseB1.getText().length() < 1 && mEditTextCourseM1.getText().length() > 0) {
+                if (TextUtils.isEmpty(mEditTextCourseB1.getText()) && !TextUtils.isEmpty(mEditTextCourseM1.getText())) {
                     calculateNotaBimestral(mSimulateB1, mEditTextCourseM1.getText().toString());
-                } else if (mEditTextCourseB1.getText().length() > 0 && mEditTextCourseM1.getText().length() > 0) {
+                } else if (!TextUtils.isEmpty(mEditTextCourseB1.getText()) && !TextUtils.isEmpty(mEditTextCourseM1.getText())) {
                     float media = CommonUtils.roundFloatTwoHouse(((m1 * 4) + (b1 * 6)) / 10);
                     mEditTextCourseMB1.setError(null);
                     mEditTextCourseMB1.setText(String.valueOf(media));
                 }
             }
 
-            if (mEditTextCourseB2.getText().length() > 0 || mEditTextCourseM2.getText().length() > 0) {
+            if (!TextUtils.isEmpty(mEditTextCourseB2.getText()) || !TextUtils.isEmpty(mEditTextCourseM2.getText())) {
                 float m2 = 0;
                 float b2 = 0;
                 try {
@@ -85,20 +86,20 @@ public class CalculatorFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                if (mEditTextCourseB2.getText().length() < 1 && mEditTextCourseM2.getText().length() > 0) {
+                if (TextUtils.isEmpty(mEditTextCourseB2.getText()) && !TextUtils.isEmpty(mEditTextCourseM2.getText())) {
                     calculateNotaBimestral(mSimulateB2, mEditTextCourseM2.getText().toString());
-                } else if (mEditTextCourseB2.getText().length() > 0 && mEditTextCourseM2.getText().length() > 0) {
+                } else if (!TextUtils.isEmpty(mEditTextCourseB2.getText()) && !TextUtils.isEmpty(mEditTextCourseM2.getText())) {
                     float media = CommonUtils.roundFloatTwoHouse(((m2 * 4) + (b2 * 6)) / 10);
                     mEditTextCourseMB2.setText(String.valueOf(media));
                 }
             }
 
-            if (mEditTextCourseMB1.getText().length() > 0 && mEditTextCourseM2.getText().length() > 0) {
+            if (!TextUtils.isEmpty(mEditTextCourseMB1.getText()) && !TextUtils.isEmpty(mEditTextCourseM2.getText())) {
 
                 calculateMediaFinal(mSimulateMF, mEditTextCourseM2.getText().toString(), mEditTextCourseMB1.getText().toString());
             }
 
-            if (mEditTextCourseMB1.getText().length() > 0 && mEditTextCourseMB2.getText().length() > 0) {
+            if (!TextUtils.isEmpty(mEditTextCourseMB1.getText()) && !TextUtils.isEmpty(mEditTextCourseMB2.getText())) {
                 float mb1 = 0;
                 float mb2 = 0;
                 try {
@@ -112,32 +113,32 @@ public class CalculatorFragment extends Fragment {
                 mEditTextCourseMF.setText(String.valueOf(media));
             }
 
-            if (mEditTextCourseM1.getText().length() < 1 || mEditTextCourseM2.getText().length() < 1) {
+            if (TextUtils.isEmpty(mEditTextCourseM1.getText()) || TextUtils.isEmpty(mEditTextCourseM2.getText())) {
                 mSimulateMF.setText(getString(R.string.calculator_dialog_to_approve_final));
-                if (mEditTextCourseM1.getText().length() < 1) {
+                if (TextUtils.isEmpty(mEditTextCourseM1.getText())) {
                     mSimulateB1.setText(getString(R.string.calculator_dialog_to_approve));
                 }
-                if (mEditTextCourseM2.getText().length() < 1) {
+                if (TextUtils.isEmpty(mEditTextCourseM2.getText())) {
                     mSimulateB2.setText(getString(R.string.calculator_dialog_to_approve));
                 }
             }
-            if (mEditTextCourseM1.getText().length() < 1 || mEditTextCourseB1.getText().length() < 1) {
+            if (TextUtils.isEmpty(mEditTextCourseM1.getText()) || TextUtils.isEmpty(mEditTextCourseB1.getText())) {
                 mEditTextCourseMB1.setText("");
             }
 
-            if (mEditTextCourseM2.getText().length() < 1 || mEditTextCourseB2.getText().length() < 1) {
+            if (TextUtils.isEmpty(mEditTextCourseM2.getText()) || TextUtils.isEmpty(mEditTextCourseB2.getText())) {
                 mEditTextCourseMB2.setText("");
             }
 
-            if (mEditTextCourseMB1.getText().length() < 1 || mEditTextCourseMB2.getText().length() < 1) {
+            if (TextUtils.isEmpty(mEditTextCourseMB1.getText()) || TextUtils.isEmpty(mEditTextCourseMB2.getText())) {
                 mEditTextCourseMF.setText("");
             }
 
-            if (mEditTextCourseM1.getText().length() < 1) {
+            if (TextUtils.isEmpty(mEditTextCourseM1.getText())) {
                 mEditTextCourseMB1.setText("");
             }
 
-            if (mEditTextCourseM2.getText().length() < 1) {
+            if (TextUtils.isEmpty(mEditTextCourseM2.getText())) {
                 mEditTextCourseMB2.setText("");
             }
         }

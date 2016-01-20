@@ -52,24 +52,6 @@ public class CourseActivity extends AppCompatActivity {
     Toolbar mToolbarLayout;
 
     private Course mCourse;
-    private TextWatcher mTextWatcher = new TextWatcher() {
-
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-            if (!TextUtils.isEmpty(s)) {
-                mDisciplina.setError(null);
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +62,6 @@ public class CourseActivity extends AppCompatActivity {
 
         loadDataUI();
 
-        mDisciplina.addTextChangedListener(mTextWatcher);
     }
 
     @Override
@@ -132,7 +113,7 @@ public class CourseActivity extends AppCompatActivity {
     public void onSave() {
         try {
             String action = Constants.CourseDatabaseAction.INSERT_COURSE;
-            if (mCourse != null && mCourse.name != null && mCourse.name.length() > 0) {
+            if (mCourse != null && !TextUtils.isEmpty(mCourse.name)) {
                 action = Constants.CourseDatabaseAction.UPDATE_COURSE;
             }
             getCourse();

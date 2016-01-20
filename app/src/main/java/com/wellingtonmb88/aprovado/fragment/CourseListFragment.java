@@ -269,7 +269,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
         void onItemClick(View view, int position);
     }
 
-    private class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
+    private static class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
 
         private static final long DELAY_MILLIS = 100;
 

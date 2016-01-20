@@ -7,9 +7,6 @@ import android.widget.EditText;
 import java.text.ParseException;
 import java.util.Locale;
 
-/**
- * Created by Wellington on 29/05/2015.
- */
 public class CommonUtils {
 
     private static final String TAG = CommonUtils.class.getSimpleName();
@@ -57,7 +54,6 @@ public class CommonUtils {
      * Remove Comma or Period if there's already one.
      * Verify the max input's length according with the input's length after the
      * comma or period, to avoid more than one input.
-     * @param editText
      */
     public static int validateLengthWithComma(EditText editText, TextWatcher textWatcher,
                                               String beforeTextChanded) {
