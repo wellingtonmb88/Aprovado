@@ -49,7 +49,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
     private SwipeDismissRecyclerViewTouchListener mTouchListener;
     private FloatActionButtonHideShow mFloatActionButtonHideShow;
     private Runnable mWorkRunnable;
-    private Handler mWorkHnalder;
+    private Handler mWorkHandler;
     private List<Course> mList;
     private List<Course> mDeletedCourseList;
     private List<Integer> mDeletedPositionList;
@@ -86,7 +86,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
                     }
                     mDeletedCourseList.clear();
                     mDeletedPositionList.clear();
-                    mWorkHnalder.removeCallbacks(mWorkRunnable);
+                    mWorkHandler.removeCallbacks(mWorkRunnable);
                 }
             }
         }
@@ -129,7 +129,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
         createRunnable();
 
         mFloatActionButtonHideShow = new FloatActionButtonHideShow(mAddCourseFAB);
-        mWorkHnalder = new Handler();
+        mWorkHandler = new Handler();
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new CourseRecyclerViewAdapter(getActivity().getApplicationContext(), mList);
@@ -196,7 +196,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
                             @Override
                             public void onDismiss(RecyclerView recyclerView, final int[] reverseSortedPositions) {
                                 int selectedPosition = 0;
-                                mWorkHnalder.removeCallbacks(mWorkRunnable);
+                                mWorkHandler.removeCallbacks(mWorkRunnable);
 
                                 if (reverseSortedPositions.length > 0) {
                                     selectedPosition = reverseSortedPositions[0];
@@ -222,7 +222,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
                                 mAdapter.notifyDataSetChanged();
                                 snackbar.setAction(getString(R.string.fragment_courses_list_undo), mSnackBarClickListener);
                                 snackbar.show();
-                                mWorkHnalder.postDelayed(mWorkRunnable, WAIT_TIMEOUT);
+                                mWorkHandler.postDelayed(mWorkRunnable, WAIT_TIMEOUT);
                             }
                         });
 
@@ -234,7 +234,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
             @Override
             public void run() {
                 if (getActivity() != null) {
-                    mWorkHnalder.removeCallbacks(mWorkRunnable);
+                    mWorkHandler.removeCallbacks(mWorkRunnable);
                     for (Course course : mDeletedCourseList) {
                         deleteCourse(course);
                     }

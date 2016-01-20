@@ -19,8 +19,8 @@
     <string name="calculator_dialog_title">Simulação</string>
     <string name="calculator_edittext_error_message">Campo Obrigatório!</string>
     <string name="calculator_dialog_unpassed">Você não tem mais condições de ser aprovado!</string>
-    <string name="calculator_dialog_to_approve">Nota Bimestral mínima:</string>
-    <string name="calculator_dialog_to_approve_final">Nota B2 mínima:</string>
+    <string name="calculator_dialog_to_approve">Nota Bimestral mínima: </string>
+    <string name="calculator_dialog_to_approve_final">Nota B2 mínima: </string>
 
     <string name="courselist_snackbar_title">foi removido!</string>
     <string name="courselist_snackbar_itens">itens removidos!</string>
