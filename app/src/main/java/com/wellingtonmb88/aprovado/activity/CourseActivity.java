@@ -2,6 +2,7 @@ package com.wellingtonmb88.aprovado.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -14,7 +15,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
 
-import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.async.SQliteAsyncTask;
 import com.wellingtonmb88.aprovado.entity.Course;

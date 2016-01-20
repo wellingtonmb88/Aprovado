@@ -21,4 +21,10 @@
         <item name="colorAccent">@color/white</item>
         <item name="android:textColorSecondary">@color/white</item>
     </style>
+
+    <style name="FloatActionButtonTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorAccent">@color/teal</item>
+        <item name="android:textColorSecondary">@color/white</item>
+    </style>
 </resources>
