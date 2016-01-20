@@ -39,7 +39,6 @@ import butterknife.OnClick;
 public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQliteCallBack {
 
     private static final int WAIT_TIMEOUT = 5000;
-    private static final int ANIMATION_DURATION = 500;
 
     @Bind(R.id.recycler_view)
     RecyclerView mRecyclerView;
@@ -112,6 +111,12 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
     public void onResume() {
         super.onResume();
         getAllCourses();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 
     private void loadDataUI() {

@@ -155,6 +155,11 @@ public class CalculatorFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
 
     private void loadDataUI() {
 
