@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
@@ -36,27 +35,27 @@
             android:background="@android:color/darker_gray" />
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="80dp">
+            android:layout_height="80dp"
+            android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/imageView_card_item"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:contentDescription="@string/imageview_card_item_approved"
-                android:id="@+id/imageView_card_item"
-                android:layout_weight="0"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"  />
+                android:layout_marginStart="5dp"
+                android:layout_weight="0"
+                android:contentDescription="@string/imageview_card_item_approved" />
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="2"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp">
+                android:layout_marginRight="5dp"
+                android:layout_weight="2"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -166,19 +165,19 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/textView_card_item_approved"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/card_item_label_approved"
-                android:padding="2dp"
-                android:id="@+id/textView_card_item_approved"
-                android:layout_weight="1"
-                android:textColor="@android:color/white"
-                android:background="@color/ColorPrimary"
                 android:layout_gravity="center_vertical"
-                android:gravity="center"
+                android:layout_marginEnd="5dp"
                 android:layout_marginRight="5dp"
-                android:layout_marginEnd="5dp"  />
+                android:layout_weight="1"
+                android:background="@color/ColorPrimary"
+                android:gravity="center"
+                android:padding="2dp"
+                android:text="@string/card_item_label_approved"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
     </LinearLayout>

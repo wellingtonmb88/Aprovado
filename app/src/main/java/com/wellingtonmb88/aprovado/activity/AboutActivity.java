@@ -15,15 +15,13 @@ import com.wellingtonmb88.aprovado.utils.Constants;
 
 public class AboutActivity extends AppCompatActivity {
 
-    private Toolbar mToolbarLayout;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
         LinearLayout toolbar = (LinearLayout) findViewById(R.id.toolbar);
-        mToolbarLayout = (Toolbar) toolbar.findViewById(R.id.toolbar_layout);
+        Toolbar mToolbarLayout = (Toolbar) toolbar.findViewById(R.id.toolbar_layout);
         mToolbarLayout.setTitleTextColor(getResources().getColor(R.color.white));
         WebView wv = (WebView) findViewById(R.id.webView);
 

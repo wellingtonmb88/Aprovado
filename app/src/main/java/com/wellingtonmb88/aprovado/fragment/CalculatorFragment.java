@@ -17,51 +17,146 @@ import com.wellingtonmb88.aprovado.utils.CommonUtils;
 
 import java.text.ParseException;
 
-/**
- * Created by Wellington on 25/05/2015.
- */
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class CalculatorFragment extends Fragment {
 
+    @Bind(R.id.editText_m1)
+    EditText mEditTextCourseM1;
+    @Bind(R.id.editText_m2)
+    EditText mEditTextCourseM2;
+    @Bind(R.id.editText_b1)
+    EditText mEditTextCourseB1;
+    @Bind(R.id.editText_b2)
+    EditText mEditTextCourseB2;
+    @Bind(R.id.editText_mb1)
+    EditText mEditTextCourseMB1;
+    @Bind(R.id.editText_mb2)
+    EditText mEditTextCourseMB2;
+    @Bind(R.id.editText_mf)
+    EditText mEditTextCourseMF;
+    @Bind(R.id.textview_simulate_b1)
+    TextView mSimulateB1;
+    @Bind(R.id.textview_simulate_b2)
+    TextView mSimulateB2;
+    @Bind(R.id.textview_simulate_mf)
+    TextView mSimulateMF;
     private String mEditTextErrorMessage;
 
-    private EditText mEditTextCourseM1;
-    private EditText mEditTextCourseM2;
-    private EditText mEditTextCourseB1;
-    private EditText mEditTextCourseB2;
-    private EditText mEditTextCourseMB1;
-    private EditText mEditTextCourseMB2;
-    private EditText mEditTextCourseMF;
+    private TextWatcher mTextWatcher = new TextWatcher() {
 
-    private TextView mSimulateB1;
-    private TextView mSimulateB2;
-    private TextView mSimulateMF;
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
 
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+            if (mEditTextCourseB1.getText().length() > 0 || mEditTextCourseM1.getText().length() > 0) {
+                float m1 = 0;
+                float b1 = 0;
+                try {
+                    m1 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseM1.getText().toString());
+                    b1 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseB1.getText().toString());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                if (mEditTextCourseB1.getText().length() < 1 && mEditTextCourseM1.getText().length() > 0) {
+                    builderDialogBimestral(mSimulateB1, mEditTextCourseM1.getText().toString());
+                } else if (mEditTextCourseB1.getText().length() > 0 && mEditTextCourseM1.getText().length() > 0) {
+                    float media = CommonUtils.roundFloatTwoHouse(((m1 * 4) + (b1 * 6)) / 10);
+                    mEditTextCourseMB1.setError(null);
+                    mEditTextCourseMB1.setText(String.valueOf(media));
+                }
+            }
+
+            if (mEditTextCourseB2.getText().length() > 0 || mEditTextCourseM2.getText().length() > 0) {
+                float m2 = 0;
+                float b2 = 0;
+                try {
+                    m2 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseM2.getText().toString());
+                    b2 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseB2.getText().toString());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                if (mEditTextCourseB2.getText().length() < 1 && mEditTextCourseM2.getText().length() > 0) {
+                    builderDialogBimestral(mSimulateB2, mEditTextCourseM2.getText().toString());
+                } else if (mEditTextCourseB2.getText().length() > 0 && mEditTextCourseM2.getText().length() > 0) {
+                    float media = CommonUtils.roundFloatTwoHouse(((m2 * 4) + (b2 * 6)) / 10);
+                    mEditTextCourseMB2.setText(String.valueOf(media));
+                }
+            }
+
+            if (mEditTextCourseMB1.getText().length() > 0 && mEditTextCourseM2.getText().length() > 0) {
+
+                builderDialogMediaFinal(mSimulateMF, mEditTextCourseM2.getText().toString(), mEditTextCourseMB1.getText().toString());
+            }
+
+            if (mEditTextCourseMB1.getText().length() > 0 && mEditTextCourseMB2.getText().length() > 0) {
+                float mb1 = 0;
+                float mb2 = 0;
+                try {
+                    mb1 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseMB1.getText().toString());
+                    mb2 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseMB2.getText().toString());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                float media = CommonUtils.roundFloatTwoHouse(((mb1 * 2) + (mb2 * 3)) / 5);
+                mEditTextCourseMF.setText(String.valueOf(media));
+            }
+
+            if (mEditTextCourseM1.getText().length() < 1 || mEditTextCourseM2.getText().length() < 1) {
+                mSimulateMF.setText(getString(R.string.calculator_dialog_to_approve_final));
+                if (mEditTextCourseM1.getText().length() < 1) {
+                    mSimulateB1.setText(getString(R.string.calculator_dialog_to_approve));
+                }
+                if (mEditTextCourseM2.getText().length() < 1) {
+                    mSimulateB2.setText(getString(R.string.calculator_dialog_to_approve));
+                }
+            }
+            if (mEditTextCourseM1.getText().length() < 1 || mEditTextCourseB1.getText().length() < 1) {
+                mEditTextCourseMB1.setText("");
+            }
+
+            if (mEditTextCourseM2.getText().length() < 1 || mEditTextCourseB2.getText().length() < 1) {
+                mEditTextCourseMB2.setText("");
+            }
+
+            if (mEditTextCourseMB1.getText().length() < 1 || mEditTextCourseMB2.getText().length() < 1) {
+                mEditTextCourseMF.setText("");
+            }
+
+            if (mEditTextCourseM1.getText().length() < 1) {
+                mEditTextCourseMB1.setText("");
+            }
+
+            if (mEditTextCourseM2.getText().length() < 1) {
+                mEditTextCourseMB2.setText("");
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calculator, container, false);
 
-        loadUI(view);
+        ButterKnife.bind(this, view);
+
         loadDataUI();
         setButtonListener();
         return view;
     }
 
-    private void loadUI(View view){
-        mEditTextCourseM1 = (EditText) view.findViewById(R.id.editText_m1);
-        mEditTextCourseM2 = (EditText) view.findViewById(R.id.editText_m2);
-        mEditTextCourseB1 = (EditText) view.findViewById(R.id.editText_b1);
-        mEditTextCourseB2 = (EditText) view.findViewById(R.id.editText_b2);
-        mEditTextCourseMB1 = (EditText) view.findViewById(R.id.editText_mb1);
-        mEditTextCourseMB2 = (EditText) view.findViewById(R.id.editText_mb2);
-        mEditTextCourseMF = (EditText) view.findViewById(R.id.editText_mf);
 
-        mSimulateB1 = (TextView) view.findViewById(R.id.textview_simulate_b1);
-        mSimulateB2 = (TextView) view.findViewById(R.id.textview_simulate_b2);
-        mSimulateMF = (TextView) view.findViewById(R.id.textview_simulate_mf);
-    }
-
-    private  void loadDataUI(){
+    private void loadDataUI() {
 
         mEditTextErrorMessage = getString(R.string.calculator_edittext_error_message);
 
@@ -70,10 +165,10 @@ public class CalculatorFragment extends Fragment {
         mEditTextCourseB1.addTextChangedListener(mTextWatcher);
         mEditTextCourseB2.addTextChangedListener(mTextWatcher);
 
-        mEditTextCourseM1.addTextChangedListener(new TextChangeListener(mEditTextCourseM1).textWatcher);
-        mEditTextCourseM2.addTextChangedListener(new TextChangeListener(mEditTextCourseM2).textWatcher);
-        mEditTextCourseB1.addTextChangedListener(new TextChangeListener(mEditTextCourseB1).textWatcher);
-        mEditTextCourseB2.addTextChangedListener(new TextChangeListener(mEditTextCourseB2).textWatcher);
+        mEditTextCourseM1.addTextChangedListener(new TextChangeListener(mEditTextCourseM1));
+        mEditTextCourseM2.addTextChangedListener(new TextChangeListener(mEditTextCourseM2));
+        mEditTextCourseB1.addTextChangedListener(new TextChangeListener(mEditTextCourseB1));
+        mEditTextCourseB2.addTextChangedListener(new TextChangeListener(mEditTextCourseB2));
     }
 
     private void setButtonListener() {
@@ -81,10 +176,10 @@ public class CalculatorFragment extends Fragment {
         mSimulateB1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mEditTextCourseM1.getText().length() < 1 ) {
+                if (mEditTextCourseM1.getText().length() < 1) {
                     mEditTextCourseM1.setError(mEditTextErrorMessage);
                 } else {
-                   // builderDialogBimestral(mEditTextCourseM1.getText().toString());
+                    // builderDialogBimestral(mEditTextCourseM1.getText().toString());
                 }
 
             }
@@ -94,10 +189,10 @@ public class CalculatorFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if (mEditTextCourseM2.getText().length() < 1 ) {
+                if (mEditTextCourseM2.getText().length() < 1) {
                     mEditTextCourseM2.setError(mEditTextErrorMessage);
                 } else {
-                   // builderDialogBimestral(mEditTextCourseM2.getText().toString());
+                    // builderDialogBimestral(mEditTextCourseM2.getText().toString());
                 }
 
             }
@@ -141,16 +236,17 @@ public class CalculatorFragment extends Fragment {
         }
 
         double notaBimestral = CommonUtils.roundFloatOneHouse((5 - (notaMensal * 0.4)) / 0.6);
-        double result = (notaMensal * 0.4)+(notaBimestral * 0.6);
+        double result = (notaMensal * 0.4) + (notaBimestral * 0.6);
 
-        if(result < 5){
-            notaBimestral  = Math.abs(notaBimestral + 0.37);
+        if (result < 5) {
+            notaBimestral = Math.abs(notaBimestral + 0.37);
         }
 
-        textView.setText(getString(R.string.calculator_dialog_to_approve)+" "+String.valueOf(CommonUtils.roundFloatOneHouse(notaBimestral)));
+        textView.setText(getString(R.string.calculator_dialog_to_approve) + " " +
+                String.valueOf(CommonUtils.roundFloatOneHouse(notaBimestral)));
     }
 
-    private void builderDialogMediaFinal(TextView textView,String mensal, String bimestral) {
+    private void builderDialogMediaFinal(TextView textView, String mensal, String bimestral) {
         double mb1 = 0;
         double notaMensal2 = 0;
 
@@ -162,125 +258,23 @@ public class CalculatorFragment extends Fragment {
         }
 
         double mb2 = CommonUtils.roundFloatOneHouse((((((mb1 * 2) - 25) / 5) * 5) / 3) * -1);
-        double notaBimestral = (mb2 - (notaMensal2 * 0.4))/0.6;
-        double result = ((mb1 * 2)+(mb2 * 3))/5;
+        double notaBimestral = (mb2 - (notaMensal2 * 0.4)) / 0.6;
+        double result = ((mb1 * 2) + (mb2 * 3)) / 5;
 
-        if(notaBimestral <= 0){
+        if (notaBimestral <= 0) {
             notaBimestral = 0;
-        }else if(notaBimestral > 0 && notaBimestral < 1 ){
+        } else if (notaBimestral > 0 && notaBimestral < 1) {
             notaBimestral = 1;
-        }else if(result < 5){
+        } else if (result < 5) {
             notaBimestral = Math.abs(notaBimestral + 0.36);
         }
 
-        if(notaBimestral > 10){
+        if (notaBimestral > 10) {
             textView.setText(getString(R.string.calculator_dialog_unpassed));
-        }else{
-            textView.setText(getString(R.string.calculator_dialog_to_approve_final)+" "+String.valueOf(CommonUtils.roundFloatOneHouse(notaBimestral)));
+        } else {
+            textView.setText(getString(R.string.calculator_dialog_to_approve_final) + " " + String.valueOf(CommonUtils.roundFloatOneHouse(notaBimestral)));
         }
     }
-
-    private TextWatcher mTextWatcher = new TextWatcher() {
-
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-
-            if (mEditTextCourseB1.getText().length() > 0 || mEditTextCourseM1.getText().length() > 0) {
-                float m1 = 0;
-                float b1 = 0;
-                try {
-                    m1 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseM1.getText().toString());
-                    b1 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseB1.getText().toString());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-                if(mEditTextCourseB1.getText().length() < 1 && mEditTextCourseM1.getText().length() > 0){
-                    builderDialogBimestral(mSimulateB1, mEditTextCourseM1.getText().toString());
-                }else if(mEditTextCourseB1.getText().length() > 0 && mEditTextCourseM1.getText().length() > 0){
-                    float media = CommonUtils.roundFloatTwoHouse(((m1 * 4) + (b1 * 6)) / 10);
-                    mEditTextCourseMB1.setError(null);
-                    mEditTextCourseMB1.setText(String.valueOf(media));
-                }
-            }
-
-            if (mEditTextCourseB2.getText().length() > 0 || mEditTextCourseM2.getText().length() > 0) {
-                float m2 = 0;
-                float b2 = 0;
-                try {
-                    m2 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseM2.getText().toString());
-                    b2 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseB2.getText().toString());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-                if(mEditTextCourseB2.getText().length() < 1 && mEditTextCourseM2.getText().length() > 0){
-                    builderDialogBimestral(mSimulateB2, mEditTextCourseM2.getText().toString());
-                }else if(mEditTextCourseB2.getText().length() > 0 && mEditTextCourseM2.getText().length() > 0){
-                    float media = CommonUtils.roundFloatTwoHouse(((m2 * 4) + (b2 * 6)) / 10);
-                    mEditTextCourseMB2.setText(String.valueOf(media));
-                }
-            }
-
-            if (mEditTextCourseMB1.getText().length() > 0 && mEditTextCourseM2.getText().length() > 0) {
-
-                builderDialogMediaFinal(mSimulateMF, mEditTextCourseM2.getText().toString(), mEditTextCourseMB1.getText().toString());
-            }
-
-            if (mEditTextCourseMB1.getText().length() > 0 && mEditTextCourseMB2.getText().length() > 0) {
-                float mb1 = 0;
-                float mb2 = 0;
-                try {
-                    mb1 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseMB1.getText().toString());
-                    mb2 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseMB2.getText().toString());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-                float media = CommonUtils.roundFloatTwoHouse(((mb1 * 2)  + (mb2 * 3))/ 5);
-                mEditTextCourseMF.setText(String.valueOf(media));
-            }
-
-            if (mEditTextCourseM1.getText().length() < 1 || mEditTextCourseM2.getText().length() < 1) {
-                mSimulateMF.setText(getString(R.string.calculator_dialog_to_approve_final));
-                if(mEditTextCourseM1.getText().length() < 1 ){
-                    mSimulateB1.setText(getString(R.string.calculator_dialog_to_approve));
-                }
-                if(mEditTextCourseM2.getText().length() < 1 ){
-                    mSimulateB2.setText(getString(R.string.calculator_dialog_to_approve));
-                }
-            }
-            if (mEditTextCourseM1.getText().length() < 1 || mEditTextCourseB1.getText().length() < 1) {
-                mEditTextCourseMB1.setText("");
-            }
-
-            if (mEditTextCourseM2.getText().length() < 1 || mEditTextCourseB2.getText().length() < 1) {
-                mEditTextCourseMB2.setText("");
-            }
-
-            if (mEditTextCourseMB1.getText().length() < 1 || mEditTextCourseMB2.getText().length() < 1) {
-                mEditTextCourseMF.setText("");
-            }
-
-            if (mEditTextCourseM1.getText().length() < 1 ) {
-                mEditTextCourseMB1.setText("");
-            }
-
-            if (mEditTextCourseM2.getText().length() < 1 ) {
-                mEditTextCourseMB2.setText("");
-            }
-        }
-    };
-
-
 
 
 }

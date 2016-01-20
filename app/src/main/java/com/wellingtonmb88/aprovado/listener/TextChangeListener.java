@@ -1,43 +1,43 @@
 package com.wellingtonmb88.aprovado.listener;
 
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.widget.EditText;
 
 import com.wellingtonmb88.aprovado.utils.CommonUtils;
 
-/**
- * Created by Wellington on 29/05/2015.
- */
-public class TextChangeListener {
+import java.lang.ref.WeakReference;
+
+public class TextChangeListener implements TextWatcher {
 
     private String mBeforeTextChanded;
-    private EditText mEditText;
+    private WeakReference<EditText> mEditText;
 
     public TextChangeListener(EditText editText){
-        mEditText = editText;
+        mEditText = new WeakReference<>(editText);
     }
 
-    public TextWatcher textWatcher = new TextWatcher() {
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        mBeforeTextChanded = s.toString();
+    }
 
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            mBeforeTextChanded = charSequence.toString();
-        }
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
+    }
 
-        @Override
-        public void afterTextChanged(Editable s) {
-
-            if (!(s.toString().isEmpty() && s.toString().equals(""))) {
-                int location = CommonUtils.validateLengthWithComma(mEditText, this, mBeforeTextChanded);
-                if(location > -1)  {
-                    mEditText.setSelection(location);
+    @Override
+    public void afterTextChanged(Editable s) {
+        if (!TextUtils.isEmpty(s)) {
+            EditText editText = mEditText.get();
+            if(editText != null) {
+                int location = CommonUtils.validateLengthWithComma(editText, this, mBeforeTextChanded);
+                if (location > -1) {
+                    editText.setSelection(location);
                 }
             }
         }
-    };
+    }
 }
