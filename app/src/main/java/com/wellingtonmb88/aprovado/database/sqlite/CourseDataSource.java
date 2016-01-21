@@ -1,4 +1,4 @@
-package com.wellingtonmb88.aprovado.database;
+package com.wellingtonmb88.aprovado.database.sqlite;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,15 +6,12 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.wellingtonmb88.aprovado.database.table.CourseTable;
+import com.wellingtonmb88.aprovado.database.sqlite.table.CourseTable;
 import com.wellingtonmb88.aprovado.entity.Course;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Wellington on 30/05/2015.
- */
 public class CourseDataSource {
 
     private SQLiteDatabase database;

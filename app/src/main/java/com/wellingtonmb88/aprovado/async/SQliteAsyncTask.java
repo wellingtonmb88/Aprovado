@@ -3,7 +3,7 @@ package com.wellingtonmb88.aprovado.async;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.wellingtonmb88.aprovado.database.CourseDataSource;
+import com.wellingtonmb88.aprovado.database.sqlite.CourseDataSource;
 import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.utils.Constants;
 

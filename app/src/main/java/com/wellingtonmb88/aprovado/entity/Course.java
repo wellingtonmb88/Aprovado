@@ -4,11 +4,8 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.wellingtonmb88.aprovado.database.table.CourseTable;
+import com.wellingtonmb88.aprovado.database.sqlite.table.CourseTable;
 
-/**
- * Created by Wellington on 27/05/2015.
- */
 public class Course implements Parcelable {
 
     public long id;

@@ -1,8 +1,5 @@
-package com.wellingtonmb88.aprovado.database.table;
+package com.wellingtonmb88.aprovado.database.sqlite.table;
 
-/**
- * Created by Wellington on 30/05/2015.
- */
 public interface CourseTable {
     String TABLE_NAME = "course";
 
