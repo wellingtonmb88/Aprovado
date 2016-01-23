@@ -5,26 +5,33 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.wellingtonmb88.aprovado.AppApplication;
 import com.wellingtonmb88.aprovado.R;
-import com.wellingtonmb88.aprovado.async.SQliteAsyncTask;
+import com.wellingtonmb88.aprovado.dagger.components.DaggerActivityInjectorComponent;
+import com.wellingtonmb88.aprovado.database.DatabaseHelper;
 import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.utils.CommonUtils;
 import com.wellingtonmb88.aprovado.utils.Constants;
 
 import java.text.ParseException;
+import java.util.UUID;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observer;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 
 public class CourseActivity extends AppCompatActivity {
 
@@ -50,18 +57,63 @@ public class CourseActivity extends AppCompatActivity {
     Spinner mSpinnerSemestre;
     @Bind(R.id.toolbar_layout)
     Toolbar mToolbarLayout;
-
+    @Inject
+    DatabaseHelper<Course> mDatabaseHelper;
     private Course mCourse;
+    private Observer<Course> getCourseObserver = new Observer<Course>() {
+        @Override
+        public void onCompleted() {
+            // Called when the observable has no more data to emit
+            Log.d("MY OBSERVER", "onCompleted");
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            // Called when the observable encounters an error
+            Log.d("MY OBSERVER", "onError " + e.getLocalizedMessage());
+        }
+
+        @Override
+        public void onNext(Course course) {
+            // Called each time the observable emits data
+            mCourse = course;
+            if (mCourse.getName() != null) {
+                mDisciplina.setText(mCourse.getName());
+                mProfessor.setText(mCourse.getProfessor());
+                mSpinnerSemestre.setSelection(mCourse.getSemester());
+                validateFields();
+            }
+        }
+    };
+    private Subscription mSubscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
         ButterKnife.bind(this);
+
+        DaggerActivityInjectorComponent.builder()
+                .baseComponent(AppApplication.getBaseComponent())
+                .build()
+                .inject(this);
+
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         loadDataUI();
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mCourse = null;
+        mDatabaseHelper = null;
+        if (mSubscription != null) {
+            mSubscription.unsubscribe();
+        }
+        mSubscription = null;
+        getCourseObserver = null;
     }
 
     @Override
@@ -94,17 +146,13 @@ public class CourseActivity extends AppCompatActivity {
         if (intent != null && intent.hasExtra(Constants.CourseExtra.INTENT_EXTRA)) {
             Bundle bundle = intent.getBundleExtra(Constants.CourseExtra.INTENT_EXTRA);
             if (bundle != null) {
-                mCourse = bundle.getParcelable(Constants.CourseExtra.BUNDLE_EXTRA);
-                if (mCourse != null) {
-
-                    if (mCourse.name != null) {
-                        mDisciplina.setText(mCourse.name);
-                        mProfessor.setText(mCourse.professor);
-                        mSpinnerSemestre.setSelection(mCourse.semester);
-                        validateFields();
-                    }
-                }
+                String courseId = bundle.getString(Constants.CourseExtra.BUNDLE_EXTRA);
+                mSubscription = mDatabaseHelper.getById(Course.class, courseId)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(getCourseObserver);
             }
+        } else {
+            mCourse.setId(UUID.randomUUID().toString());
         }
 
     }
@@ -112,14 +160,9 @@ public class CourseActivity extends AppCompatActivity {
     @OnClick(R.id.floatingActionButton_save)
     public void onSave() {
         try {
-            String action = Constants.CourseDatabaseAction.INSERT_COURSE;
-            if (mCourse != null && !TextUtils.isEmpty(mCourse.name)) {
-                action = Constants.CourseDatabaseAction.UPDATE_COURSE;
-            }
             getCourse();
-            if (mDisciplina.getText().length() > 0) {
-                SQliteAsyncTask task = new SQliteAsyncTask(getApplicationContext(), null, mCourse);
-                task.execute(action);
+            if (!TextUtils.isEmpty(mDisciplina.getText())) {
+                mDatabaseHelper.createOrUpdate(mCourse);
                 finish();
             } else {
                 mDisciplina.setError(getString(R.string.calculator_edittext_error_message));
@@ -131,59 +174,59 @@ public class CourseActivity extends AppCompatActivity {
 
     private void getCourse() throws ParseException {
 
-        mCourse.name = mDisciplina.getText().toString();
-        mCourse.professor = mProfessor.getText().toString();
-        mCourse.semester = mSpinnerSemestre.getSelectedItemPosition();
+        mCourse.setName(mDisciplina.getText().toString());
+        mCourse.setProfessor(mProfessor.getText().toString());
+        mCourse.setSemester(mSpinnerSemestre.getSelectedItemPosition());
         validateNullFields();
     }
 
     private void validateNullFields() throws ParseException {
 
         if (TextUtils.isEmpty(mEditTextM1.getText())) {
-            mCourse.m1 = -1;
+            mCourse.setM1(-1);
         } else {
-            mCourse.m1 = CommonUtils.parseFloatLocaleSensitive(mEditTextM1.getText().toString());
+            mCourse.setM1(CommonUtils.parseFloatLocaleSensitive(mEditTextM1.getText().toString()));
         }
         if (TextUtils.isEmpty(mEditTextB1.getText())) {
-            mCourse.b1 = -1;
+            mCourse.setB1(-1);
         } else {
-            mCourse.b1 = CommonUtils.parseFloatLocaleSensitive(mEditTextB1.getText().toString());
+            mCourse.setB1(CommonUtils.parseFloatLocaleSensitive(mEditTextB1.getText().toString()));
         }
         if (TextUtils.isEmpty(mEditTextMB1.getText())) {
-            mCourse.mediaB1 = -1;
+            mCourse.setMediaB1(-1);
         } else {
-            mCourse.mediaB1 = CommonUtils.parseFloatLocaleSensitive(mEditTextMB1.getText().toString());
+            mCourse.setMediaB1(CommonUtils.parseFloatLocaleSensitive(mEditTextMB1.getText().toString()));
         }
         if (TextUtils.isEmpty(mEditTextM2.getText())) {
-            mCourse.m2 = -1;
+            mCourse.setM2(-1);
         } else {
-            mCourse.m2 = CommonUtils.parseFloatLocaleSensitive(mEditTextM2.getText().toString());
+            mCourse.setM2(CommonUtils.parseFloatLocaleSensitive(mEditTextM2.getText().toString()));
         }
         if (TextUtils.isEmpty(mEditTextB2.getText())) {
-            mCourse.b2 = -1;
+            mCourse.setB2(-1);
         } else {
-            mCourse.b2 = CommonUtils.parseFloatLocaleSensitive(mEditTextB2.getText().toString());
+            mCourse.setB2(CommonUtils.parseFloatLocaleSensitive(mEditTextB2.getText().toString()));
         }
         if (TextUtils.isEmpty(mEditTextMB2.getText())) {
-            mCourse.mediaB2 = -1;
+            mCourse.setMediaB2(-1);
         } else {
-            mCourse.mediaB2 = CommonUtils.parseFloatLocaleSensitive(mEditTextMB2.getText().toString());
+            mCourse.setMediaB2(CommonUtils.parseFloatLocaleSensitive(mEditTextMB2.getText().toString()));
         }
         if (TextUtils.isEmpty(mEditTextMF.getText())) {
-            mCourse.mediaFinal = -1;
+            mCourse.setMediaFinal(-1);
         } else {
-            mCourse.mediaFinal = CommonUtils.parseFloatLocaleSensitive(mEditTextMF.getText().toString());
+            mCourse.setMediaFinal(CommonUtils.parseFloatLocaleSensitive(mEditTextMF.getText().toString()));
         }
     }
 
     private void validateFields() {
-        String m1 = String.valueOf(mCourse.m1);
-        String m2 = String.valueOf(mCourse.m2);
-        String b1 = String.valueOf(mCourse.b1);
-        String b2 = String.valueOf(mCourse.b2);
-        String mb1 = String.valueOf(mCourse.mediaB1);
-        String mb2 = String.valueOf(mCourse.mediaB2);
-        String mf = String.valueOf(mCourse.mediaFinal);
+        String m1 = String.valueOf(mCourse.getM1());
+        String m2 = String.valueOf(mCourse.getM2());
+        String b1 = String.valueOf(mCourse.getB1());
+        String b2 = String.valueOf(mCourse.getB2());
+        String mb1 = String.valueOf(mCourse.getMediaB1());
+        String mb2 = String.valueOf(mCourse.getMediaB2());
+        String mf = String.valueOf(mCourse.getMediaFinal());
 
         String MINUS_ONE = "-1.0";
 

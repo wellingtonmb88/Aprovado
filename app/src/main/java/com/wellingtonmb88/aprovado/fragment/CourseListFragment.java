@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,11 +19,13 @@ import android.view.ViewGroup;
 
 import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersAdapter;
 import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersDecoration;
+import com.wellingtonmb88.aprovado.AppApplication;
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.activity.CourseActivity;
 import com.wellingtonmb88.aprovado.adapter.CourseRecyclerViewAdapter;
-import com.wellingtonmb88.aprovado.async.SQliteAsyncTask;
 import com.wellingtonmb88.aprovado.custom.FloatActionButtonHideShow;
+import com.wellingtonmb88.aprovado.dagger.components.DaggerFragmentInjectorComponent;
+import com.wellingtonmb88.aprovado.database.DatabaseHelper;
 import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.listener.SwipeDismissRecyclerViewTouchListener;
 import com.wellingtonmb88.aprovado.utils.Constants;
@@ -32,11 +35,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observer;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 
-public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQliteCallBack {
+public class CourseListFragment extends Fragment {
 
     private static final int WAIT_TIMEOUT = 5000;
 
@@ -44,6 +52,8 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
     RecyclerView mRecyclerView;
     @Bind(R.id.floatingActionButton_add)
     FloatingActionButton mAddCourseFAB;
+    @Inject
+    DatabaseHelper<Course> mDatabaseHelper;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private SwipeDismissRecyclerViewTouchListener mTouchListener;
@@ -51,9 +61,31 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
     private Runnable mWorkRunnable;
     private Handler mWorkHandler;
     private List<Course> mList;
+    private Observer<List<Course>> getAllCoursesObserver = new Observer<List<Course>>() {
+        @Override
+        public void onCompleted() {
+            // Called when the observable has no more data to emit
+            Log.d("MY OBSERVER", "onCompleted");
+            mAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            // Called when the observable encounters an error
+            Log.d("MY OBSERVER", "onError " + e.getLocalizedMessage());
+        }
+
+        @Override
+        public void onNext(List<Course> courseList) {
+            // Called each time the observable emits data
+            mList.clear();
+            mList.addAll(courseList);
+            Collections.sort(mList, new CourseSemesterComparator());
+            mAdapter.notifyDataSetChanged();
+        }
+    };
     private List<Course> mDeletedCourseList;
     private List<Integer> mDeletedPositionList;
-
     private View.OnClickListener mSnackBarClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -84,13 +116,14 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
                         mAdapter.notifyItemInserted(mDeletedPositionList.get(index));
                         index++;
                     }
-                    mDeletedCourseList.clear();
-                    mDeletedPositionList.clear();
-                    mWorkHandler.removeCallbacks(mWorkRunnable);
                 }
+                mDeletedCourseList.clear();
+                mDeletedPositionList.clear();
+                mWorkHandler.removeCallbacks(mWorkRunnable);
             }
         }
     };
+    private Subscription mSubscription;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -98,11 +131,14 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
 
         ButterKnife.bind(this, v);
 
+        DaggerFragmentInjectorComponent.builder().baseComponent(AppApplication.getBaseComponent())
+                .build()
+                .inject(this);
+
         mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
 
         loadDataUI();
         setListener();
-
 
         return v;
     }
@@ -117,6 +153,18 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+        mDatabaseHelper = null;
+        if (mSubscription != null) {
+            mSubscription.unsubscribe();
+            mSubscription = null;
+        }
+        getAllCoursesObserver = null;
+        mSnackBarClickListener = null;
+        mWorkRunnable = null;
+        if (mWorkHandler != null) {
+            mWorkHandler.removeCallbacksAndMessages(null);
+            mWorkHandler = null;
+        }
     }
 
     private void loadDataUI() {
@@ -152,9 +200,6 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
     @OnClick(R.id.floatingActionButton_add)
     public void addCourse() {
         final Intent intent = new Intent(getActivity().getApplicationContext(), CourseActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(Constants.CourseExtra.BUNDLE_EXTRA, new Course());
-        intent.putExtra(Constants.CourseExtra.INTENT_EXTRA, bundle);
         startActivity(intent);
     }
 
@@ -166,7 +211,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
                     public void onItemClick(View view, int position) {
                         Intent intent = new Intent(getActivity().getApplicationContext(), CourseActivity.class);
                         Bundle bundle = new Bundle();
-                        bundle.putParcelable(Constants.CourseExtra.BUNDLE_EXTRA, mList.get(position));
+                        bundle.putString(Constants.CourseExtra.BUNDLE_EXTRA, mList.get(position).getId());
                         intent.putExtra(Constants.CourseExtra.INTENT_EXTRA, bundle);
                         startActivityForResult(intent, 1);
                     }
@@ -213,11 +258,11 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
                                         .make(coordinatorLayout, "", Snackbar.LENGTH_LONG);
 
                                 if (mDeletedCourseList.size() > 1) {
-
                                     snackbar.setText(mDeletedCourseList.size() + " " + getString(R.string.courselist_snackbar_itens));
                                 } else {
-                                    snackbar.setText(deletedCourse.name + " " + getString(R.string.courselist_snackbar_title));
+                                    snackbar.setText(deletedCourse.getName() + " " + getString(R.string.courselist_snackbar_title));
                                 }
+
                                 mList.remove(selectedPosition);
                                 mAdapter.notifyDataSetChanged();
                                 snackbar.setAction(getString(R.string.fragment_courses_list_undo), mSnackBarClickListener);
@@ -238,31 +283,21 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
                     for (Course course : mDeletedCourseList) {
                         deleteCourse(course);
                     }
+                    mDeletedCourseList.clear();
+                    mDeletedPositionList.clear();
                 }
             }
         };
     }
 
-    @Override
-    public void getAllCourses(List<Course> courseList) {
-        mList.clear();
-        mList.addAll(courseList);
-        Collections.sort(mList, new CourseSemesterComparator());
-        mAdapter.notifyDataSetChanged();
-    }
-
     private void getAllCourses() {
-        if (getActivity() != null) {
-            SQliteAsyncTask task = new SQliteAsyncTask(getActivity().getApplicationContext(), this, null);
-            task.execute(Constants.CourseDatabaseAction.GET_ALL_COURSES);
-        }
+        mSubscription = mDatabaseHelper.getAll(Course.class)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getAllCoursesObserver);
     }
 
     private void deleteCourse(Course course) {
-        if (getActivity() != null) {
-            SQliteAsyncTask task = new SQliteAsyncTask(getActivity().getApplicationContext(), this, course);
-            task.execute(Constants.CourseDatabaseAction.DELETE_COURSE);
-        }
+        mDatabaseHelper.delete(Course.class, course.getId());
     }
 
     public interface OnItemClickListener {
@@ -275,7 +310,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
 
         private View mPressedView = null;
         private RecyclerView mRecyclerView;
-        private boolean mIsPrepressed = false;
+        private boolean mIsPressed = false;
         private boolean mIsShowPress = false;
         private GestureDetector mGestureDetector;
         private OnItemClickListener mListener;
@@ -290,7 +325,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
             mGestureDetector = new GestureDetector(mRecyclerView.getContext(), new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onDown(MotionEvent e) {
-                    mIsPrepressed = true;
+                    mIsPressed = true;
                     mPressedView = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
                     super.onDown(e);
                     return false;
@@ -298,7 +333,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
 
                 @Override
                 public void onShowPress(MotionEvent e) {
-                    if (mIsPrepressed && mPressedView != null) {
+                    if (mIsPressed && mPressedView != null) {
                         mPressedView.setPressed(true);
                         mIsShowPress = true;
                     }
@@ -307,7 +342,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
 
                 @Override
                 public boolean onSingleTapUp(MotionEvent e) {
-                    if (mIsPrepressed && mPressedView != null) {
+                    if (mIsPressed && mPressedView != null) {
                         mPressedView.setPressed(true);
                         final View pressedView = mPressedView;
                         pressedView.postDelayed(new Runnable() {
@@ -316,7 +351,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
                                 pressedView.setPressed(false);
                             }
                         }, DELAY_MILLIS);
-                        mIsPrepressed = false;
+                        mIsPressed = false;
                         mPressedView = null;
                     }
                     return true;
@@ -332,7 +367,7 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
             } else if (e.getActionMasked() == MotionEvent.ACTION_UP && mPressedView != null && mIsShowPress) {
                 mPressedView.setPressed(false);
                 mIsShowPress = false;
-                mIsPrepressed = false;
+                mIsPressed = false;
                 mPressedView = null;
             }
             return false;

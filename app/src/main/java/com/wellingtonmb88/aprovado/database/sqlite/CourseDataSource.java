@@ -7,7 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.wellingtonmb88.aprovado.database.sqlite.table.CourseTable;
-import com.wellingtonmb88.aprovado.entity.Course;
+import com.wellingtonmb88.aprovado.entity.CourseSQLite;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class CourseDataSource {
     }
 
 
-    public void insert(Course course) {
+    public void insert(CourseSQLite course) {
         ContentValues values = new ContentValues();
 
         values.put(CourseTable.COURSE_NAME, course.name);
@@ -47,7 +47,7 @@ public class CourseDataSource {
         database.insert(CourseTable.TABLE_NAME, null, values);
     }
 
-    public void update(Course course) {
+    public void update(CourseSQLite course) {
         ContentValues values = new ContentValues();
 
         values.put(CourseTable.COURSE_NAME, course.name);
@@ -64,13 +64,13 @@ public class CourseDataSource {
         database.update(CourseTable.TABLE_NAME, values, CourseTable.WHERE_ID_EQUALS, new String[]{String.valueOf(course.id)});
     }
 
-    public void delete(Course course) {
+    public void delete(CourseSQLite course) {
         long id = course.id;
         database.delete(CourseTable.TABLE_NAME, CourseTable.WHERE_ID_EQUALS, new String[]{String.valueOf(id)});
     }
 
-    public List<Course> getAllCourses() {
-        List<Course> courseList = new ArrayList<Course>();
+    public List<CourseSQLite> getAllCourses() {
+        List<CourseSQLite> courseList = new ArrayList<CourseSQLite>();
 
         Cursor cursor = database.query(CourseTable.TABLE_NAME,
                 CourseTable.ALL_COLUMNS, null, null, null, null, null);
@@ -78,7 +78,7 @@ public class CourseDataSource {
         if(cursor != null && cursor.moveToFirst()){
 
             do{
-                Course course = new Course(cursor);
+                CourseSQLite course = new CourseSQLite(cursor);
                 courseList.add(course);
             }while (cursor.moveToNext());
 

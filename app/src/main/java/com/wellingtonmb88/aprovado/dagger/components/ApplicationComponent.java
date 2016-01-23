@@ -4,8 +4,8 @@ import android.app.Application;
 
 import com.wellingtonmb88.aprovado.dagger.modules.ApplicationModule;
 import com.wellingtonmb88.aprovado.dagger.modules.LocalModule;
-import com.wellingtonmb88.aprovado.database.realm.RealmManager;
-import com.wellingtonmb88.aprovado.database.realm.model.Course;
+import com.wellingtonmb88.aprovado.database.DatabaseHelper;
+import com.wellingtonmb88.aprovado.entity.Course;
 
 import javax.inject.Singleton;
 
@@ -17,5 +17,6 @@ import dagger.Component;
 public interface ApplicationComponent {
     Application getApplication();
 
-    RealmManager<Course> getRealmManager();
+    DatabaseHelper<Course> getDatabaseHelper();
+
 }
