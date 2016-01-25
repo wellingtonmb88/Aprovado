@@ -11,8 +11,6 @@
     android:textStyle="bold"
     android:textColor="@android:color/white"
     tools:text="Animals starting with A"
-    android:paddingLeft="10dp"
+    android:paddingStart="5dp"
     android:paddingTop="2dp"
-    android:paddingBottom="2dp"
-    android:layout_marginLeft="2dp"
-    android:layout_marginStart="2dp" />
+    android:paddingBottom="2dp"  />

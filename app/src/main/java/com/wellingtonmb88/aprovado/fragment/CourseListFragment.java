@@ -66,7 +66,6 @@ public class CourseListFragment extends Fragment {
         public void onCompleted() {
             // Called when the observable has no more data to emit
             Log.d("MY OBSERVER", "onCompleted");
-            mAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -124,6 +123,10 @@ public class CourseListFragment extends Fragment {
         }
     };
     private Subscription mSubscription;
+
+
+    public CourseListFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

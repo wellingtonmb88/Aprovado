@@ -2,6 +2,7 @@ package com.wellingtonmb88.aprovado.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
@@ -13,7 +14,6 @@ import com.wellingtonmb88.aprovado.AppApplication;
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.adapter.ViewPagerAdapter;
 import com.wellingtonmb88.aprovado.dagger.components.DaggerActivityInjectorComponent;
-import com.wellingtonmb88.aprovado.slidingtab.SlidingTabLayout;
 import com.wellingtonmb88.aprovado.utils.Constants;
 
 import butterknife.Bind;
@@ -27,10 +27,9 @@ public class MainActivity extends BaseActivity {
     @Bind(R.id.pager)
     ViewPager mPager;
     @Bind(R.id.tabs)
-    SlidingTabLayout mTabs;
+    TabLayout mTabs;
     @Bind(R.id.toolbar_layout)
     Toolbar mToolbarLayout;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +44,6 @@ public class MainActivity extends BaseActivity {
                 .inject(this);
 
         loadDataUI();
-        setListener();
     }
 
     @Override
@@ -63,22 +61,12 @@ public class MainActivity extends BaseActivity {
         CharSequence mTitles[] = {getString(R.string.tablebar_header_calculator), getString(R.string.tablebar_header_classes)};
         ViewPagerAdapter mAdapter = new ViewPagerAdapter(getSupportFragmentManager(), mTitles, NUM_TABS);
         mPager.setAdapter(mAdapter);
-        mTabs.setDistributeEvenly(true);
-        mTabs.setViewPager(mPager);
+        mTabs.setupWithViewPager(mPager);
         mToolbarLayout.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         setSupportActionBar(mToolbarLayout);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setLogo(R.mipmap.actionbar_approved_logo);
         }
-    }
-
-    private void setListener() {
-        mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-            @Override
-            public int getIndicatorColor(int position) {
-                return ContextCompat.getColor(MainActivity.this, android.R.color.white);
-            }
-        });
     }
 
     @Override

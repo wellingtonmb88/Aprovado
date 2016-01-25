@@ -3,6 +3,8 @@ package com.wellingtonmb88.aprovado.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -13,16 +15,20 @@ import android.widget.LinearLayout;
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.utils.Constants;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class AboutActivity extends AppCompatActivity {
+
+    @Bind(R.id.toolbar_layout)
+    Toolbar mToolbarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
+        ButterKnife.bind(this);
 
-        LinearLayout toolbar = (LinearLayout) findViewById(R.id.toolbar);
-        Toolbar mToolbarLayout = (Toolbar) toolbar.findViewById(R.id.toolbar_layout);
-        mToolbarLayout.setTitleTextColor(getResources().getColor(R.color.white));
         WebView wv = (WebView) findViewById(R.id.webView);
 
         wv.loadUrl(getString(R.string.url_activity_about));
