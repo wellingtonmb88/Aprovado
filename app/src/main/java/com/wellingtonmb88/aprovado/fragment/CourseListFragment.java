@@ -10,7 +10,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -40,9 +39,9 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 public class CourseListFragment extends Fragment {
 
@@ -61,22 +60,9 @@ public class CourseListFragment extends Fragment {
     private Runnable mWorkRunnable;
     private Handler mWorkHandler;
     private List<Course> mList;
-    private Observer<List<Course>> getAllCoursesObserver = new Observer<List<Course>>() {
+    private Action1<List<Course>> getAllCoursesAction = new Action1<List<Course>>() {
         @Override
-        public void onCompleted() {
-            // Called when the observable has no more data to emit
-            Log.d("MY OBSERVER", "onCompleted");
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            // Called when the observable encounters an error
-            Log.d("MY OBSERVER", "onError " + e.getLocalizedMessage());
-        }
-
-        @Override
-        public void onNext(List<Course> courseList) {
-            // Called each time the observable emits data
+        public void call(List<Course> courseList) {
             mList.clear();
             mList.addAll(courseList);
             Collections.sort(mList, new CourseSemesterComparator());
@@ -161,7 +147,7 @@ public class CourseListFragment extends Fragment {
             mSubscription.unsubscribe();
             mSubscription = null;
         }
-        getAllCoursesObserver = null;
+        getAllCoursesAction = null;
         mSnackBarClickListener = null;
         mWorkRunnable = null;
         if (mWorkHandler != null) {
@@ -296,7 +282,7 @@ public class CourseListFragment extends Fragment {
     private void getAllCourses() {
         mSubscription = mDatabaseHelper.getAll(Course.class)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(getAllCoursesObserver);
+                .subscribe(getAllCoursesAction);
     }
 
     private void deleteCourse(Course course) {

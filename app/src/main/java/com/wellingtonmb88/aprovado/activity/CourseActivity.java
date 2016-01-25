@@ -6,7 +6,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -29,9 +28,9 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 public class CourseActivity extends AppCompatActivity {
 
@@ -60,22 +59,9 @@ public class CourseActivity extends AppCompatActivity {
     @Inject
     DatabaseHelper<Course> mDatabaseHelper;
     private Course mCourse;
-    private Observer<Course> getCourseObserver = new Observer<Course>() {
+    private Action1<Course> getCourseAction = new Action1<Course>() {
         @Override
-        public void onCompleted() {
-            // Called when the observable has no more data to emit
-            Log.d("MY OBSERVER", "onCompleted");
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            // Called when the observable encounters an error
-            Log.d("MY OBSERVER", "onError " + e.getLocalizedMessage());
-        }
-
-        @Override
-        public void onNext(Course course) {
-            // Called each time the observable emits data
+        public void call(Course course) {
             mCourse = course;
             if (mCourse.getName() != null) {
                 mDisciplina.setText(mCourse.getName());
@@ -85,6 +71,7 @@ public class CourseActivity extends AppCompatActivity {
             }
         }
     };
+
     private Subscription mSubscription;
 
     @Override
@@ -113,7 +100,7 @@ public class CourseActivity extends AppCompatActivity {
             mSubscription.unsubscribe();
         }
         mSubscription = null;
-        getCourseObserver = null;
+        getCourseAction = null;
     }
 
     @Override
@@ -149,7 +136,7 @@ public class CourseActivity extends AppCompatActivity {
                 String courseId = bundle.getString(Constants.CourseExtra.BUNDLE_EXTRA);
                 mSubscription = mDatabaseHelper.getById(Course.class, courseId)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(getCourseObserver);
+                        .subscribe(getCourseAction);
             }
         } else {
             mCourse.setId(UUID.randomUUID().toString());
