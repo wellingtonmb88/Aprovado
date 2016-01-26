@@ -17,6 +17,9 @@ import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.dagger.components.DaggerActivityInjectorComponent;
 import com.wellingtonmb88.aprovado.database.DatabaseHelper;
 import com.wellingtonmb88.aprovado.entity.Course;
+import com.wellingtonmb88.aprovado.presenter.CourseDetailsPresenterImpl;
+import com.wellingtonmb88.aprovado.presenter.interfaces.CourseDetailsPresenter;
+import com.wellingtonmb88.aprovado.presenter.interfaces.CourseDetailsView;
 import com.wellingtonmb88.aprovado.utils.CommonUtils;
 import com.wellingtonmb88.aprovado.utils.Constants;
 
@@ -28,14 +31,11 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 
-public class CourseActivity extends AppCompatActivity {
+public class CourseActivity extends AppCompatActivity implements CourseDetailsView {
 
     @Bind(R.id.editText_disciplina)
-    EditText mDisciplina;
+    EditText mSubject;
     @Bind(R.id.editText_professor)
     EditText mProfessor;
     @Bind(R.id.editText_m1)
@@ -53,26 +53,14 @@ public class CourseActivity extends AppCompatActivity {
     @Bind(R.id.editText_mf)
     EditText mEditTextMF;
     @Bind(R.id.spinner)
-    Spinner mSpinnerSemestre;
+    Spinner mSpinnerSemester;
     @Bind(R.id.toolbar_layout)
     Toolbar mToolbarLayout;
     @Inject
     DatabaseHelper<Course> mDatabaseHelper;
+    @Inject
+    CourseDetailsPresenterImpl mCourseDetailsPresenter;
     private Course mCourse;
-    private Action1<Course> getCourseAction = new Action1<Course>() {
-        @Override
-        public void call(Course course) {
-            mCourse = course;
-            if (mCourse.getName() != null) {
-                mDisciplina.setText(mCourse.getName());
-                mProfessor.setText(mCourse.getProfessor());
-                mSpinnerSemestre.setSelection(mCourse.getSemester());
-                validateFields();
-            }
-        }
-    };
-
-    private Subscription mSubscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +75,9 @@ public class CourseActivity extends AppCompatActivity {
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
+        mCourseDetailsPresenter.registerView(this);
+        mCourseDetailsPresenter.registerDatabaseHelper(mDatabaseHelper);
         loadDataUI();
-
     }
 
     @Override
@@ -96,11 +85,7 @@ public class CourseActivity extends AppCompatActivity {
         super.onDestroy();
         mCourse = null;
         mDatabaseHelper = null;
-        if (mSubscription != null) {
-            mSubscription.unsubscribe();
-        }
-        mSubscription = null;
-        getCourseAction = null;
+        mCourseDetailsPresenter.onDestroy();
     }
 
     @Override
@@ -116,7 +101,7 @@ public class CourseActivity extends AppCompatActivity {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(CourseActivity.this,
                 R.array.semester_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinnerSemestre.setAdapter(adapter);
+        mSpinnerSemester.setAdapter(adapter);
 
         mToolbarLayout.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         setSupportActionBar(mToolbarLayout);
@@ -134,9 +119,7 @@ public class CourseActivity extends AppCompatActivity {
             Bundle bundle = intent.getBundleExtra(Constants.CourseExtra.INTENT_EXTRA);
             if (bundle != null) {
                 String courseId = bundle.getString(Constants.CourseExtra.BUNDLE_EXTRA);
-                mSubscription = mDatabaseHelper.getById(Course.class, courseId)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(getCourseAction);
+                mCourseDetailsPresenter.onGetCourse(courseId);
             }
         } else {
             mCourse.setId(UUID.randomUUID().toString());
@@ -145,25 +128,14 @@ public class CourseActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.floatingActionButton_save)
-    public void onSave() {
-        try {
-            getCourse();
-            if (!TextUtils.isEmpty(mDisciplina.getText())) {
-                mDatabaseHelper.createOrUpdate(mCourse);
-                finish();
-            } else {
-                mDisciplina.setError(getString(R.string.calculator_edittext_error_message));
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+    public void saveButton() {
+        mCourseDetailsPresenter.onSaveCourse();
     }
 
-    private void getCourse() throws ParseException {
-
-        mCourse.setName(mDisciplina.getText().toString());
+    private void populateCourse() throws ParseException {
+        mCourse.setName(mSubject.getText().toString());
         mCourse.setProfessor(mProfessor.getText().toString());
-        mCourse.setSemester(mSpinnerSemestre.getSelectedItemPosition());
+        mCourse.setSemester(mSpinnerSemester.getSelectedItemPosition());
         validateNullFields();
     }
 
@@ -254,5 +226,31 @@ public class CourseActivity extends AppCompatActivity {
         returnIntent.putExtra(Constants.TabSharedPreferences.SELECTED_TAB, 1);
         setResult(RESULT_OK, returnIntent);
         finish();
+    }
+
+    @Override
+    public void saveCourse() {
+        try {
+            populateCourse();
+            if (!TextUtils.isEmpty(mSubject.getText())) {
+                mDatabaseHelper.createOrUpdate(mCourse);
+                finish();
+            } else {
+                mSubject.setError(getString(R.string.calculator_edittext_error_message));
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void getCourse(Course course) {
+        mCourse = course;
+        if (mCourse.getName() != null) {
+            mSubject.setText(mCourse.getName());
+            mProfessor.setText(mCourse.getProfessor());
+            mSpinnerSemester.setSelection(mCourse.getSemester());
+            validateFields();
+        }
     }
 }

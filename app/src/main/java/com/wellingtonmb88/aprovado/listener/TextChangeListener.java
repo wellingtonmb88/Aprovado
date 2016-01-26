@@ -11,7 +11,7 @@ import java.lang.ref.WeakReference;
 
 public class TextChangeListener implements TextWatcher {
 
-    private String mBeforeTextChanded;
+    private String mBeforeTextChanged;
     private WeakReference<EditText> mEditText;
 
     public TextChangeListener(EditText editText){
@@ -20,7 +20,7 @@ public class TextChangeListener implements TextWatcher {
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        mBeforeTextChanded = s.toString();
+        mBeforeTextChanged = s.toString();
     }
 
     @Override
@@ -33,7 +33,7 @@ public class TextChangeListener implements TextWatcher {
         if (!TextUtils.isEmpty(s)) {
             EditText editText = mEditText.get();
             if(editText != null) {
-                int location = CommonUtils.validateLengthWithComma(editText, this, mBeforeTextChanded);
+                int location = CommonUtils.validateLengthWithComma(editText, this, mBeforeTextChanged);
                 if (location > -1) {
                     editText.setSelection(location);
                 }

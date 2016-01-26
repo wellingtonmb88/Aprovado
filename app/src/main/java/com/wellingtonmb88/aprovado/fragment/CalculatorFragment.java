@@ -12,16 +12,22 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.wellingtonmb88.aprovado.AppApplication;
 import com.wellingtonmb88.aprovado.R;
+import com.wellingtonmb88.aprovado.dagger.components.DaggerFragmentInjectorComponent;
 import com.wellingtonmb88.aprovado.listener.TextChangeListener;
+import com.wellingtonmb88.aprovado.presenter.CalculatorFragmentPresenterImpl;
+import com.wellingtonmb88.aprovado.presenter.interfaces.CalculatorFragmentView;
 import com.wellingtonmb88.aprovado.utils.CommonUtils;
 
 import java.text.ParseException;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class CalculatorFragment extends Fragment {
+public class CalculatorFragment extends Fragment implements CalculatorFragmentView {
 
     @Bind(R.id.editText_m1)
     EditText mEditTextCourseM1;
@@ -43,6 +49,9 @@ public class CalculatorFragment extends Fragment {
     TextView mSimulateB2;
     @Bind(R.id.textview_simulate_mf)
     TextView mSimulateMF;
+
+    @Inject
+    CalculatorFragmentPresenterImpl mCalculatorFragmentPresenter;
 
     private TextWatcher mTextWatcher = new TextWatcher() {
 
@@ -68,7 +77,7 @@ public class CalculatorFragment extends Fragment {
                 }
 
                 if (TextUtils.isEmpty(mEditTextCourseB1.getText()) && !TextUtils.isEmpty(mEditTextCourseM1.getText())) {
-                    calculateNotaBimestral(mSimulateB1, mEditTextCourseM1.getText().toString());
+                    mCalculatorFragmentPresenter.calculateBimonthlyGrade1(getContext(), mEditTextCourseM1.getText().toString());
                 } else if (!TextUtils.isEmpty(mEditTextCourseB1.getText()) && !TextUtils.isEmpty(mEditTextCourseM1.getText())) {
                     float media = CommonUtils.roundFloatTwoHouse(((m1 * 4) + (b1 * 6)) / 10);
                     mEditTextCourseMB1.setError(null);
@@ -87,7 +96,7 @@ public class CalculatorFragment extends Fragment {
                 }
 
                 if (TextUtils.isEmpty(mEditTextCourseB2.getText()) && !TextUtils.isEmpty(mEditTextCourseM2.getText())) {
-                    calculateNotaBimestral(mSimulateB2, mEditTextCourseM2.getText().toString());
+                    mCalculatorFragmentPresenter.calculateBimonthlyGrade2(getContext(), mEditTextCourseM2.getText().toString());
                 } else if (!TextUtils.isEmpty(mEditTextCourseB2.getText()) && !TextUtils.isEmpty(mEditTextCourseM2.getText())) {
                     float media = CommonUtils.roundFloatTwoHouse(((m2 * 4) + (b2 * 6)) / 10);
                     mEditTextCourseMB2.setText(String.valueOf(media));
@@ -95,8 +104,7 @@ public class CalculatorFragment extends Fragment {
             }
 
             if (!TextUtils.isEmpty(mEditTextCourseMB1.getText()) && !TextUtils.isEmpty(mEditTextCourseM2.getText())) {
-
-                calculateMediaFinal(mSimulateMF, mEditTextCourseM2.getText().toString(), mEditTextCourseMB1.getText().toString());
+                mCalculatorFragmentPresenter.calculateFinalAverage(getContext(), mEditTextCourseM2.getText().toString(), mEditTextCourseMB1.getText().toString());
             }
 
             if (!TextUtils.isEmpty(mEditTextCourseMB1.getText()) && !TextUtils.isEmpty(mEditTextCourseMB2.getText())) {
@@ -122,6 +130,7 @@ public class CalculatorFragment extends Fragment {
                     mSimulateB2.setText(getString(R.string.calculator_dialog_to_approve));
                 }
             }
+
             if (TextUtils.isEmpty(mEditTextCourseM1.getText()) || TextUtils.isEmpty(mEditTextCourseB1.getText())) {
                 mEditTextCourseMB1.setText("");
             }
@@ -153,6 +162,11 @@ public class CalculatorFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
+        DaggerFragmentInjectorComponent.builder().baseComponent(AppApplication.getBaseComponent())
+                .build()
+                .inject(this);
+
+        mCalculatorFragmentPresenter.registerView(this);
         loadDataUI();
         return view;
     }
@@ -161,6 +175,7 @@ public class CalculatorFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+        mCalculatorFragmentPresenter.onDestroy();
     }
 
     private void loadDataUI() {
@@ -176,58 +191,18 @@ public class CalculatorFragment extends Fragment {
         mEditTextCourseB2.addTextChangedListener(new TextChangeListener(mEditTextCourseB2));
     }
 
-
-    private void calculateNotaBimestral(TextView textView, String mensal) {
-        float notaMensal = 0;
-        try {
-            notaMensal = CommonUtils.parseFloatLocaleSensitive(mensal);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        double notaBimestral = CommonUtils.roundFloatOneHouse((5 - (notaMensal * 0.4)) / 0.6);
-        double result = (notaMensal * 0.4) + (notaBimestral * 0.6);
-
-        if (result < 5) {
-            notaBimestral = Math.abs(notaBimestral + 0.37);
-        }
-
-        String dialog = getString(R.string.calculator_dialog_to_approve) +
-                " " + String.valueOf(CommonUtils.roundFloatOneHouse(notaBimestral));
-        textView.setText(dialog);
+    @Override
+    public void setTextBimonthlyGrade1(String message) {
+        mSimulateB1.setText(message);
     }
 
-    private void calculateMediaFinal(TextView textView, String mensal, String bimestral) {
-        double mb1 = 0;
-        double notaMensal2 = 0;
-
-        try {
-            mb1 = CommonUtils.parseFloatLocaleSensitive(bimestral);
-            notaMensal2 = CommonUtils.parseFloatLocaleSensitive(mensal);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        double mb2 = CommonUtils.roundFloatOneHouse((((((mb1 * 2) - 25) / 5) * 5) / 3) * -1);
-        double notaBimestral = (mb2 - (notaMensal2 * 0.4)) / 0.6;
-        double result = ((mb1 * 2) + (mb2 * 3)) / 5;
-
-        if (notaBimestral <= 0) {
-            notaBimestral = 0;
-        } else if (notaBimestral > 0 && notaBimestral < 1) {
-            notaBimestral = 1;
-        } else if (result < 5) {
-            notaBimestral = Math.abs(notaBimestral + 0.36);
-        }
-
-        if (notaBimestral > 10) {
-            textView.setText(getString(R.string.calculator_dialog_unpassed));
-        } else {
-            String dialog = getString(R.string.calculator_dialog_to_approve_final) +
-                    " " + String.valueOf(CommonUtils.roundFloatOneHouse(notaBimestral));
-            textView.setText(dialog);
-        }
+    @Override
+    public void setTextBimonthlyGrade2(String message) {
+        mSimulateB2.setText(message);
     }
 
-
+    @Override
+    public void setTextFinalAverage(String message) {
+        mSimulateMF.setText(message);
+    }
 }
