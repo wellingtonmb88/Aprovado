@@ -57,4 +57,10 @@
         <item>9º Semestre</item>
         <item>10º Semestre</item>
     </string-array>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_nav_sync_data">Sincronizar dados</string>
+    <string name="title_nav_login">Login</string>
+    <string name="title_nav_feedback">Feedback</string>
 </resources>
