@@ -2,7 +2,6 @@ package com.wellingtonmb88.aprovado.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -11,11 +10,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersAdapter;
 import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersDecoration;
 import com.wellingtonmb88.aprovado.AppApplication;
 import com.wellingtonmb88.aprovado.R;
@@ -25,12 +24,8 @@ import com.wellingtonmb88.aprovado.custom.FloatActionButtonHideShow;
 import com.wellingtonmb88.aprovado.dagger.components.DaggerFragmentInjectorComponent;
 import com.wellingtonmb88.aprovado.database.DatabaseHelper;
 import com.wellingtonmb88.aprovado.entity.Course;
-import com.wellingtonmb88.aprovado.listener.RecyclerItemClickListener;
-import com.wellingtonmb88.aprovado.listener.RecyclerViewSwipeDismissCallBacks;
-import com.wellingtonmb88.aprovado.listener.SnackBarClickListener;
-import com.wellingtonmb88.aprovado.listener.SwipeDismissRecyclerViewTouchListener;
+import com.wellingtonmb88.aprovado.listener.SimpleItemTouchHelperCallback;
 import com.wellingtonmb88.aprovado.presenter.CourseListFragmentPresenterImpl;
-import com.wellingtonmb88.aprovado.presenter.interfaces.CourseListFragmentPresenter;
 import com.wellingtonmb88.aprovado.presenter.interfaces.CourseListFragmentView;
 import com.wellingtonmb88.aprovado.utils.Constants;
 import com.wellingtonmb88.aprovado.utils.CourseSemesterComparator;
@@ -57,16 +52,10 @@ public class CourseListFragment extends Fragment implements CourseListFragmentVi
     DatabaseHelper<Course> mDatabaseHelper;
     @Inject
     CourseListFragmentPresenterImpl mCourseListFragmentPresenter;
-    private RecyclerView.Adapter mAdapter;
+    private CourseRecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private SwipeDismissRecyclerViewTouchListener mTouchListener;
     private FloatActionButtonHideShow mFloatActionButtonHideShow;
     private List<Course> mList;
-    private List<Course> mDeletedCourseList;
-    private List<Integer> mDeletedPositionList;
-    private View.OnClickListener mSnackBarClickListener;
-
-    private Handler mWorkHandler;
 
     public CourseListFragment() {
     }
@@ -103,14 +92,7 @@ public class CourseListFragment extends Fragment implements CourseListFragmentVi
         super.onDestroyView();
         ButterKnife.unbind(this);
         mDatabaseHelper = null;
-        mSnackBarClickListener = null;
-        mTouchListener = null;
         mCourseListFragmentPresenter.onDestroy();
-
-        if (mWorkHandler != null) {
-            mWorkHandler.removeCallbacks(null);
-            mWorkHandler = null;
-        }
     }
 
     private void loadDataUI() {
@@ -131,26 +113,24 @@ public class CourseListFragment extends Fragment implements CourseListFragmentVi
                                  }
         );
 
-        mWorkHandler = new Handler();
         mList = new ArrayList<>();
-        mDeletedCourseList = new ArrayList<>();
-        mDeletedPositionList = new ArrayList<>();
+        mCourseListFragmentPresenter.registerList(mList);
         createTouchListener();
 
         mFloatActionButtonHideShow = new FloatActionButtonHideShow(mAddCourseFAB);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new CourseRecyclerViewAdapter(getActivity().getApplicationContext(), mList);
+        mAdapter = new CourseRecyclerViewAdapter(mCourseListFragmentPresenter, getActivity().getApplicationContext(), mList);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setOnTouchListener(mTouchListener);
-        mRecyclerView.addOnScrollListener(mTouchListener.makeScrollListener());
 
-        mSnackBarClickListener = new SnackBarClickListener(mCourseListFragmentPresenter, mRecyclerView,
-                mList, mDeletedCourseList, mDeletedPositionList);
+        ItemTouchHelper.Callback callback =
+                new SimpleItemTouchHelperCallback(mAdapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(mRecyclerView);
 
         // Add the sticky headers decoration
         final StickyRecyclerHeadersDecoration headersDecor =
-                new StickyRecyclerHeadersDecoration((StickyRecyclerHeadersAdapter) mAdapter);
+                new StickyRecyclerHeadersDecoration(mAdapter);
         mRecyclerView.addItemDecoration(headersDecor);
         mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
@@ -174,13 +154,13 @@ public class CourseListFragment extends Fragment implements CourseListFragmentVi
 
     private void setListener() {
 
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(mRecyclerView,
-                new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        mCourseListFragmentPresenter.onOpenCourseDetails(position);
-                    }
-                }));
+//        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(mRecyclerView,
+//                new RecyclerItemClickListener.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(View view, int position) {
+//                        mCourseListFragmentPresenter.onOpenCourseDetails(position);
+//                    }
+//                }));
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -195,11 +175,11 @@ public class CourseListFragment extends Fragment implements CourseListFragmentVi
 
     private void createTouchListener() {
 
-        RecyclerViewSwipeDismissCallBacks recyclerViewSwipeDismissCallBacks =
-                new RecyclerViewSwipeDismissCallBacks(mCourseListFragmentPresenter, mList,
-                        mDeletedCourseList, mDeletedPositionList);
-        recyclerViewSwipeDismissCallBacks.setHandler(mWorkHandler);
-        mTouchListener = new SwipeDismissRecyclerViewTouchListener(mRecyclerView, recyclerViewSwipeDismissCallBacks);
+//        RecyclerViewSwipeDismissCallBacks recyclerViewSwipeDismissCallBacks =
+//                new RecyclerViewSwipeDismissCallBacks(mCourseListFragmentPresenter, mList,
+//                        mDeletedCourseList, mDeletedPositionList);
+//        recyclerViewSwipeDismissCallBacks.setHandler(mWorkHandler);
+//        mTouchListener = new SwipeDismissRecyclerViewTouchListener(mRecyclerView, recyclerViewSwipeDismissCallBacks);
     }
 
     @Override
@@ -212,15 +192,11 @@ public class CourseListFragment extends Fragment implements CourseListFragmentVi
     }
 
     @Override
-    public void undoCourseDeleted() {
-        mDeletedCourseList.clear();
-        mDeletedPositionList.clear();
-        mWorkHandler.removeCallbacksAndMessages(null);
-    }
-
-    @Override
-    public void notifyItemInserted(int position) {
-        mAdapter.notifyItemInserted(position);
+    public void notifyItemInserted(int deletedPosition) {
+        if (deletedPosition == 0) {
+            mRecyclerView.scrollToPosition(deletedPosition);
+        }
+        mAdapter.notifyItemInserted(deletedPosition);
     }
 
     @Override
@@ -239,22 +215,21 @@ public class CourseListFragment extends Fragment implements CourseListFragmentVi
     }
 
     @Override
-    public void showSnackBar(String deletedCourseName) {
+    public void showSnackBar(String snackBarText) {
 
         CoordinatorLayout coordinatorLayout = (CoordinatorLayout) mRecyclerView.getRootView()
                 .findViewById(R.id.coordinatorlayout_course_list);
 
         Snackbar snackbar = Snackbar
-                .make(coordinatorLayout, "", Snackbar.LENGTH_LONG);
-
-        if (mDeletedCourseList.size() > 1) {
-            snackbar.setText(mDeletedCourseList.size() + " " + getString(R.string.courselist_snackbar_itens));
-        } else {
-            snackbar.setText(deletedCourseName + " " + getString(R.string.courselist_snackbar_title));
-        }
+                .make(coordinatorLayout, snackBarText, Snackbar.LENGTH_LONG);
 
         mAdapter.notifyDataSetChanged();
-        snackbar.setAction(getString(R.string.fragment_courses_list_undo), mSnackBarClickListener);
+        snackbar.setAction(getString(R.string.fragment_courses_list_undo), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCourseListFragmentPresenter.onSnackBarClicked();
+            }
+        });
         snackbar.show();
     }
 

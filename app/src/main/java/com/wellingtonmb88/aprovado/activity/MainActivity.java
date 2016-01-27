@@ -52,7 +52,7 @@ public class MainActivity extends BaseActivity implements MainView {
 
         mMainPresenter.registerView(this);
 
-        CharSequence titles[] = {getString(R.string.tablebar_header_calculator), getString(R.string.tablebar_header_classes)};
+        CharSequence titles[] = {getString(R.string.tablebar_header_classes), getString(R.string.tablebar_header_calculator)};
         setViewPageAdapter(titles, NUM_TABS);
 
         mToolbarLayout.setTitleTextColor(ContextCompat.getColor(this, R.color.white));

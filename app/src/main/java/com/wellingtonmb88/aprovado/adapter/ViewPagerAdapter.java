@@ -21,9 +21,9 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            return new CalculatorFragment();
-        } else {
             return new CourseListFragment();
+        } else {
+            return new CalculatorFragment();
         }
     }
 

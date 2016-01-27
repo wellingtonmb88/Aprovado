@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersAdapter;
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.entity.Course;
+import com.wellingtonmb88.aprovado.listener.interfaces.ItemTouchHelperAdapter;
+import com.wellingtonmb88.aprovado.presenter.interfaces.CourseListFragmentPresenter;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -21,21 +23,25 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecyclerViewAdapter.ViewHolder>
-        implements StickyRecyclerHeadersAdapter<RecyclerView.ViewHolder> {
+        implements StickyRecyclerHeadersAdapter<RecyclerView.ViewHolder>, ItemTouchHelperAdapter {
 
+
+    private CourseListFragmentPresenter mCourseListFragmentPresenter;
     private WeakReference<Context> mContext;
     private List<Course> mCourses;
 
-    public CourseRecyclerViewAdapter(Context context, List<Course> courseListourse) {
+    public CourseRecyclerViewAdapter(CourseListFragmentPresenter courseListFragmentPresenter,
+                                     Context context, List<Course> courseList) {
+        mCourseListFragmentPresenter = courseListFragmentPresenter;
         mContext = new WeakReference<>(context);
-        mCourses = courseListourse;
+        mCourses = courseList;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_item_course, parent, false);
-        return new ViewHolder(v);
+        return new ViewHolder(mCourseListFragmentPresenter, v);
     }
 
 
@@ -108,6 +114,9 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
 
     @Override
     public long getHeaderId(int position) {
+        if (position < 0) {
+            position = 0;
+        }
         return mCourses.get(position).getSemester();
     }
 
@@ -135,7 +144,32 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         return mCourses.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+//        if (fromPosition < toPosition) {
+//            for (int i = fromPosition; i < toPosition; i++) {
+//                Collections.swap(mCourses, i, i + 1);
+//            }
+//        } else {
+//            for (int i = fromPosition; i > toPosition; i--) {
+//                Collections.swap(mCourses, i, i - 1);
+//            }
+//        }
+//        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        Context context = mContext.get();
+        if (context != null) {
+            mCourseListFragmentPresenter.onDismissRecyclerViewItem(context, position);
+            notifyItemRemoved(position);
+        }
+    }
+
+
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @Bind(R.id.txtName)
         TextView mTextViewCourseName;
@@ -151,10 +185,18 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         TextView mTextViewCourseApproved;
         @Bind(R.id.imageView_card_item)
         ImageView mImageViewCourse;
+        private CourseListFragmentPresenter mCourseListFragmentPresenter;
 
-        public ViewHolder(View view) {
+        public ViewHolder(CourseListFragmentPresenter courseListFragmentPresenter, View view) {
             super(view);
             ButterKnife.bind(this, view);
+            mCourseListFragmentPresenter = courseListFragmentPresenter;
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mCourseListFragmentPresenter.onOpenCourseDetails(getAdapterPosition());
         }
     }
 }

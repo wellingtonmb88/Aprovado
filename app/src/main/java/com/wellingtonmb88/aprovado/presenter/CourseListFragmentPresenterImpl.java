@@ -1,11 +1,15 @@
 package com.wellingtonmb88.aprovado.presenter;
 
+import android.content.Context;
+import android.os.Handler;
+
+import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.database.DatabaseHelper;
 import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.presenter.interfaces.CourseListFragmentPresenter;
 import com.wellingtonmb88.aprovado.presenter.interfaces.CourseListFragmentView;
-import com.wellingtonmb88.aprovado.presenter.interfaces.MainView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.Subscription;
@@ -14,10 +18,27 @@ import rx.functions.Action1;
 
 public class CourseListFragmentPresenterImpl implements CourseListFragmentPresenter {
 
+    private static final int HANDLER_TIMEOUT = 5000;
     private DatabaseHelper<Course> mDatabaseHelper;
     private CourseListFragmentView mView;
-
     private Subscription mSubscription;
+    private List<Course> mList;
+    private List<Course> mDeletedCourseList;
+    private List<Integer> mDeletedPositionList;
+    private Handler mWorkHandler;
+    private Runnable mWorkRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mWorkHandler != null) {
+                mWorkHandler.removeCallbacks(mWorkRunnable);
+                for (Course course : mDeletedCourseList) {
+                    mView.notifyCourseDeleted(course);
+                }
+                mDeletedCourseList.clear();
+                mDeletedPositionList.clear();
+            }
+        }
+    };
 
     private Action1<List<Course>> getAllCoursesAction = new Action1<List<Course>>() {
         @Override
@@ -26,14 +47,25 @@ public class CourseListFragmentPresenterImpl implements CourseListFragmentPresen
         }
     };
 
+    public CourseListFragmentPresenterImpl() {
+        mWorkHandler = new Handler();
+        mDeletedCourseList = new ArrayList<>();
+        mDeletedPositionList = new ArrayList<>();
+    }
+
     @Override
     public void registerView(CourseListFragmentView mainView) {
         this.mView = mainView;
     }
 
     @Override
-    public void registerDatabaseHelper(DatabaseHelper databaseHelper) {
+    public void registerDatabaseHelper(DatabaseHelper<Course> databaseHelper) {
         this.mDatabaseHelper = databaseHelper;
+    }
+
+    @Override
+    public void registerList(List<Course> list) {
+        mList = list;
     }
 
     @Override
@@ -47,23 +79,8 @@ public class CourseListFragmentPresenterImpl implements CourseListFragmentPresen
     }
 
     @Override
-    public void onUndoCourseDeleted() {
-        mView.undoCourseDeleted();
-    }
-
-    @Override
-    public void onShowSnackBar(String deletedCourseName) {
-        mView.showSnackBar(deletedCourseName);
-    }
-
-    @Override
-    public void onNotifyItemInserted(int position) {
-        mView.notifyItemInserted(position);
-    }
-
-    @Override
-    public void onNotifyCourseDeleted(Course course) {
-        mView.notifyCourseDeleted(course);
+    public void onSnackBarClicked() {
+        snackBarClicked();
     }
 
     @Override
@@ -82,5 +99,60 @@ public class CourseListFragmentPresenterImpl implements CourseListFragmentPresen
         }
         getAllCoursesAction = null;
         mView = null;
+        if (mWorkHandler != null) {
+            mWorkHandler.removeCallbacksAndMessages(null);
+        }
+        mWorkRunnable = null;
+    }
+
+    @Override
+    public void onDismissRecyclerViewItem(Context context, int selectedPosition) {
+
+        if (mWorkHandler != null) {
+            mWorkHandler.removeCallbacks(mWorkRunnable);
+
+            Course deletedCourse = mList.get(selectedPosition);
+            mDeletedPositionList.add(0, selectedPosition);
+            mDeletedCourseList.add(0, deletedCourse);
+            mList.remove(deletedCourse);
+            mWorkHandler.postDelayed(mWorkRunnable, HANDLER_TIMEOUT);
+            String snackBarText;
+            if (mDeletedCourseList.size() > 1) {
+                snackBarText = mDeletedCourseList.size() + " " + context.getString(R.string.courselist_snackbar_itens);
+            } else {
+                snackBarText = deletedCourse.getName() + " " + context.getString(R.string.courselist_snackbar_title);
+            }
+            mView.showSnackBar(snackBarText);
+        }
+    }
+
+    private void snackBarClicked() {
+        if (!mDeletedCourseList.isEmpty()) {
+            Integer deletedPosition = mDeletedPositionList.get(0);
+            Course deletedCourse = mDeletedCourseList.get(0);
+            if (mDeletedCourseList.size() == 1) {
+                if (mList.size() <= deletedPosition) {
+                    mList.add(deletedCourse);
+                } else {
+                    mList.add(deletedPosition, deletedCourse);
+                }
+                mView.notifyItemInserted(deletedPosition);
+            } else if (mDeletedCourseList.size() > 1) {
+                int index = 0;
+                for (Course course : mDeletedCourseList) {
+
+                    if (mList.size() <= deletedPosition) {
+                        mList.add(course);
+                    } else {
+                        mList.add(mDeletedPositionList.get(index), mDeletedCourseList.get(index));
+                    }
+                    mView.notifyItemInserted(mDeletedPositionList.get(index));
+                    index++;
+                }
+            }
+            mDeletedCourseList.clear();
+            mDeletedPositionList.clear();
+            mWorkHandler.removeCallbacksAndMessages(null);
+        }
     }
 }

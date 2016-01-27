@@ -1,7 +1,11 @@
 package com.wellingtonmb88.aprovado.presenter.interfaces;
 
+import android.content.Context;
+
 import com.wellingtonmb88.aprovado.database.DatabaseHelper;
 import com.wellingtonmb88.aprovado.entity.Course;
+
+import java.util.List;
 
 public interface CourseListFragmentPresenter {
 
@@ -9,13 +13,9 @@ public interface CourseListFragmentPresenter {
 
     void onOpenCourseDetails(int position);
 
-    void onUndoCourseDeleted();
+    void onSnackBarClicked();
 
-    void onShowSnackBar(String deletedCourseName);
-
-    void onNotifyItemInserted(int position);
-
-    void onNotifyCourseDeleted(Course course);
+    void onDismissRecyclerViewItem(Context context, int selectedPosition);
 
     void onSetCourseList();
 
@@ -23,5 +23,7 @@ public interface CourseListFragmentPresenter {
 
     void registerView(CourseListFragmentView mainView);
 
-    void registerDatabaseHelper(DatabaseHelper databaseHelper);
+    void registerDatabaseHelper(DatabaseHelper<Course> databaseHelper);
+
+    void registerList(List<Course> list);
 }

@@ -9,8 +9,6 @@ public interface CourseListFragmentView {
 
     void openCourseDetails(int position);
 
-    void undoCourseDeleted();
-
     void notifyItemInserted(int position);
 
     void notifyCourseDeleted(Course course);
