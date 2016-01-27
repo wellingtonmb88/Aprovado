@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,6 +31,7 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
     private CourseListFragmentPresenter mCourseListFragmentPresenter;
     private WeakReference<Context> mContext;
     private List<Course> mCourses;
+    private boolean mShouldAnimateView = true;
 
     public CourseRecyclerViewAdapter(CourseListFragmentPresenter courseListFragmentPresenter,
                                      Context context, List<Course> courseList) {
@@ -43,7 +46,6 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
                 .inflate(R.layout.card_item_course, parent, false);
         return new ViewHolder(mCourseListFragmentPresenter, v);
     }
-
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
@@ -109,8 +111,32 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
                 holder.mTextViewCourseApproved.setBackgroundColor(ContextCompat.getColor(context, R.color.ColorPrimary));
             }
         }
+
+        // Here you apply the animation when the view is bound
+        setAnimation(holder.itemView);
+
+        if(position == mCourses.size() -1 && !mShouldAnimateView){
+            mShouldAnimateView = true;
+        }
     }
 
+    /**
+     * Here is the key method to apply the animation
+     */
+    private void setAnimation(View viewToAnimate) {
+        Context context = mContext.get();
+        if(context != null && mShouldAnimateView) {
+            // If the bound view wasn't previously displayed on screen, it's animated
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_in_from_bottom);
+            viewToAnimate.startAnimation(animation);
+        }
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(ViewHolder holder) {
+        holder.itemView.clearAnimation();
+        super.onViewDetachedFromWindow(holder);
+    }
 
     @Override
     public long getHeaderId(int position) {
@@ -163,8 +189,11 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
     public void onItemDismiss(int position) {
         Context context = mContext.get();
         if (context != null) {
+            mShouldAnimateView = false;
             mCourseListFragmentPresenter.onDismissRecyclerViewItem(context, position);
             notifyItemRemoved(position);
+
+//            mShouldAnimateView = true;
         }
     }
 
