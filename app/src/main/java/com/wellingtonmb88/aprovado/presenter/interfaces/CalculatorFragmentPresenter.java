@@ -10,6 +10,8 @@ public interface CalculatorFragmentPresenter {
 
     void calculateFinalAverage(Context context, String grade, String bimonthly);
 
+    void onCleanFields();
+
     void onDestroy();
 
     void registerView(CalculatorFragmentView mainView);

@@ -27,6 +27,7 @@ import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.listener.SimpleItemTouchHelperCallback;
 import com.wellingtonmb88.aprovado.presenter.CourseListFragmentPresenterImpl;
 import com.wellingtonmb88.aprovado.presenter.interfaces.CourseListFragmentView;
+import com.wellingtonmb88.aprovado.utils.CommonUtils;
 import com.wellingtonmb88.aprovado.utils.Constants;
 import com.wellingtonmb88.aprovado.utils.CourseSemesterComparator;
 
@@ -115,7 +116,6 @@ public class CourseListFragment extends Fragment implements CourseListFragmentVi
 
         mList = new ArrayList<>();
         mCourseListFragmentPresenter.registerList(mList);
-        createTouchListener();
 
         mFloatActionButtonHideShow = new FloatActionButtonHideShow(mAddCourseFAB);
         mRecyclerView.setHasFixedSize(true);
@@ -154,14 +154,6 @@ public class CourseListFragment extends Fragment implements CourseListFragmentVi
 
     private void setListener() {
 
-//        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(mRecyclerView,
-//                new RecyclerItemClickListener.OnItemClickListener() {
-//                    @Override
-//                    public void onItemClick(View view, int position) {
-//                        mCourseListFragmentPresenter.onOpenCourseDetails(position);
-//                    }
-//                }));
-
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (dy > 0) {
@@ -171,15 +163,6 @@ public class CourseListFragment extends Fragment implements CourseListFragmentVi
                 }
             }
         });
-    }
-
-    private void createTouchListener() {
-
-//        RecyclerViewSwipeDismissCallBacks recyclerViewSwipeDismissCallBacks =
-//                new RecyclerViewSwipeDismissCallBacks(mCourseListFragmentPresenter, mList,
-//                        mDeletedCourseList, mDeletedPositionList);
-//        recyclerViewSwipeDismissCallBacks.setHandler(mWorkHandler);
-//        mTouchListener = new SwipeDismissRecyclerViewTouchListener(mRecyclerView, recyclerViewSwipeDismissCallBacks);
     }
 
     @Override

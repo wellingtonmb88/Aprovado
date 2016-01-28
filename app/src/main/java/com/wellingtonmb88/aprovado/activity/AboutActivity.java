@@ -3,16 +3,14 @@ package com.wellingtonmb88.aprovado.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
-import android.widget.LinearLayout;
 
 import com.wellingtonmb88.aprovado.R;
+import com.wellingtonmb88.aprovado.utils.CommonUtils;
 import com.wellingtonmb88.aprovado.utils.Constants;
 
 import butterknife.Bind;
@@ -35,7 +33,7 @@ public class AboutActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbarLayout);
 
-        if( getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setDisplayUseLogoEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
@@ -69,19 +67,16 @@ public class AboutActivity extends AppCompatActivity {
 
             return true;
         }
-        if(id == android.R.id.home){
+        if (id == android.R.id.home) {
             backForResult();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void backForResult(){
-       if(getIntent().hasExtra(Constants.TabSharedPreferences.SELECTED_TAB)){
-           int result = getIntent().getIntExtra(Constants.TabSharedPreferences.SELECTED_TAB,0);
-           Intent returnIntent = new Intent();
-           returnIntent.putExtra(Constants.TabSharedPreferences.SELECTED_TAB, result);
-           setResult(RESULT_OK, returnIntent);
-           finish();
-       }
+    private void backForResult() {
+        if (getIntent().hasExtra(Constants.TabSharedPreferences.SELECTED_TAB)) {
+            int result = getIntent().getIntExtra(Constants.TabSharedPreferences.SELECTED_TAB, 0);
+            CommonUtils.backForResult(this, result);
+        }
     }
 }

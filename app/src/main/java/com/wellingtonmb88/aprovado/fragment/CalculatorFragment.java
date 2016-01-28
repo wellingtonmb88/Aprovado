@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class CalculatorFragment extends Fragment implements CalculatorFragmentView {
 
@@ -189,6 +190,24 @@ public class CalculatorFragment extends Fragment implements CalculatorFragmentVi
         mEditTextCourseM2.addTextChangedListener(new TextChangeListener(mEditTextCourseM2));
         mEditTextCourseB1.addTextChangedListener(new TextChangeListener(mEditTextCourseB1));
         mEditTextCourseB2.addTextChangedListener(new TextChangeListener(mEditTextCourseB2));
+    }
+
+
+    @OnClick(R.id.button_clean_fields)
+    public void cleanFieldsButton(){
+        mCalculatorFragmentPresenter.onCleanFields();
+    }
+
+    @Override
+    public void cleanFields() {
+        mEditTextCourseM1.setText(null);
+        mEditTextCourseM2.setText(null);
+        mEditTextCourseB1.setText(null);
+        mEditTextCourseB2.setText(null);
+        mEditTextCourseMF.setText(null);
+        mSimulateB1.setText(getString(R.string.calculator_dialog_to_approve));
+        mSimulateB2.setText(getString(R.string.calculator_dialog_to_approve));
+        mSimulateMF.setText(getString(R.string.calculator_dialog_to_approve_final));
     }
 
     @Override

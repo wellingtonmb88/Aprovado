@@ -1,5 +1,6 @@
 package com.wellingtonmb88.aprovado.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -90,7 +91,7 @@ public class CourseActivity extends AppCompatActivity implements CourseDetailsVi
 
     @Override
     public void onBackPressed() {
-        backForResult();
+        CommonUtils.backForResult(CourseActivity.this, 0);
         super.onBackPressed();
     }
 
@@ -216,16 +217,9 @@ public class CourseActivity extends AppCompatActivity implements CourseDetailsVi
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            backForResult();
+            CommonUtils.backForResult(CourseActivity.this, 0);
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void backForResult() {
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra(Constants.TabSharedPreferences.SELECTED_TAB, 1);
-        setResult(RESULT_OK, returnIntent);
-        finish();
     }
 
     @Override

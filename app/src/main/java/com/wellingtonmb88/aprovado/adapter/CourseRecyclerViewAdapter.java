@@ -102,20 +102,22 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
                 holder.mImageViewCourse.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), R.mipmap.unapproved, null));
 
                 holder.mTextViewCourseApproved.setText(context.getResources().getString(R.string.card_item_label_unapproved));
-                holder.mTextViewCourseApproved.setBackgroundColor(ContextCompat.getColor(context, R.color.red_dark));
+                holder.mTextViewCourseApproved.setTextColor(ContextCompat.getColor(context, R.color.red_dark));
+//                holder.mTextViewCourseApproved.setBackgroundColor(ContextCompat.getColor(context, R.color.red_dark));
             } else {
 
                 holder.mImageViewCourse.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), R.mipmap.approved, null));
 
                 holder.mTextViewCourseApproved.setText(context.getResources().getString(R.string.card_item_label_approved));
-                holder.mTextViewCourseApproved.setBackgroundColor(ContextCompat.getColor(context, R.color.ColorPrimary));
+//                holder.mTextViewCourseApproved.setBackgroundColor(ContextCompat.getColor(context, R.color.ColorPrimary));
+                holder.mTextViewCourseApproved.setTextColor(ContextCompat.getColor(context, R.color.ColorPrimary));
             }
         }
 
         // Here you apply the animation when the view is bound
         setAnimation(holder.itemView);
 
-        if(position == mCourses.size() -1 && !mShouldAnimateView){
+        if (position == mCourses.size() - 1 && !mShouldAnimateView) {
             mShouldAnimateView = true;
         }
     }
@@ -125,7 +127,7 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
      */
     private void setAnimation(View viewToAnimate) {
         Context context = mContext.get();
-        if(context != null && mShouldAnimateView) {
+        if (context != null && mShouldAnimateView) {
             // If the bound view wasn't previously displayed on screen, it's animated
             Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_in_from_bottom);
             viewToAnimate.startAnimation(animation);

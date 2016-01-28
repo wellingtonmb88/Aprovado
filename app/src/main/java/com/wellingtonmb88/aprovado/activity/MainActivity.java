@@ -1,5 +1,6 @@
 package com.wellingtonmb88.aprovado.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 
 import com.wellingtonmb88.aprovado.AppApplication;
@@ -21,7 +23,10 @@ import com.wellingtonmb88.aprovado.adapter.ViewPagerAdapter;
 import com.wellingtonmb88.aprovado.dagger.components.DaggerActivityInjectorComponent;
 import com.wellingtonmb88.aprovado.presenter.MainPresenterImpl;
 import com.wellingtonmb88.aprovado.presenter.interfaces.MainView;
+import com.wellingtonmb88.aprovado.utils.CommonUtils;
 import com.wellingtonmb88.aprovado.utils.Constants;
+
+import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 
@@ -75,6 +80,7 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
                 this, mDrawerLayout, mToolbarLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.setDrawerListener(toggle);
         toggle.syncState();
+        mDrawerLayout.setDrawerListener(new SimpleDrawerListener(this));
 
         mNavigationView.setNavigationItemSelectedListener(this);
     }
@@ -118,12 +124,8 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            mMainPresenter.onOptionsItemSelected(id);
-            return true;
-        }
+        mMainPresenter.onOptionsItemSelected(item.getItemId());
 
         return super.onOptionsItemSelected(item);
     }
@@ -132,6 +134,7 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
         ViewPagerAdapter mAdapter = new ViewPagerAdapter(getSupportFragmentManager(), titles, numTabs);
         mPager.setAdapter(mAdapter);
         mTabs.setupWithViewPager(mPager);
+        mPager.addOnPageChangeListener(new SimpleOnPageChangeListener(this));
     }
 
     @Override
@@ -142,22 +145,56 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
     }
 
     @Override
+    public void openFeedbackScreen() {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        String uriString =
+                "market://details?id=com.wellingtonmb88.aprovado";
+        intent.setData(Uri.parse(uriString));
+        startActivity(intent);
+    }
+
+    @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        CommonUtils.hideSoftKeyBoard(this);
+        mMainPresenter.onNavigationItemSelected(item.getItemId());
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        return false;
+    }
 
-        if (id == R.id.nav_login) {
-        } else if (id == R.id.nav_sync_data) {
-        } else if (id == R.id.nav_feedback) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            String uriString =
-                    "market://details?id=com.wellingtonmb88.aprovado";
-            intent.setData(Uri.parse(uriString));
-            startActivity(intent);
+    private static class SimpleOnPageChangeListener extends ViewPager.SimpleOnPageChangeListener {
+
+        private WeakReference<Activity> mActivity;
+
+        public SimpleOnPageChangeListener(Activity activity) {
+            mActivity = new WeakReference<>(activity);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return false;
+        @Override
+        public void onPageSelected(int position) {
+            super.onPageSelected(position);
+            Activity activity = mActivity.get();
+            if (activity != null) {
+                CommonUtils.hideSoftKeyBoard(activity);
+            }
+        }
+    }
+
+    private static class SimpleDrawerListener extends DrawerLayout.SimpleDrawerListener {
+        
+        private WeakReference<Activity> mActivity;
+
+        public SimpleDrawerListener(Activity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void onDrawerOpened(View drawerView) {
+            super.onDrawerOpened(drawerView);
+            Activity activity = mActivity.get();
+            if (activity != null) {
+                CommonUtils.hideSoftKeyBoard(activity);
+            }
+        }
     }
 }

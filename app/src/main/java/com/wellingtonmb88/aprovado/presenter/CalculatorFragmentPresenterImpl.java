@@ -82,6 +82,11 @@ public class CalculatorFragmentPresenterImpl implements CalculatorFragmentPresen
     }
 
     @Override
+    public void onCleanFields() {
+        mView.cleanFields();
+    }
+
+    @Override
     public void onDestroy() {
         mView = null;
     }

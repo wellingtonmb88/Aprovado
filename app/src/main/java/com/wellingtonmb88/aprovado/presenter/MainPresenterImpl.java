@@ -24,4 +24,15 @@ public class MainPresenterImpl implements MainPresenter {
             mView.openAboutScreen();
         }
     }
+
+    @Override
+    public void onNavigationItemSelected(int id){
+        if (id == R.id.nav_login) {
+        } else if (id == R.id.nav_sync_data) {
+        } else if (id == R.id.nav_feedback) {
+            mView.openFeedbackScreen();
+        }else if (id == R.id.nav_about) {
+            mView.openAboutScreen();
+        }
+    }
 }
