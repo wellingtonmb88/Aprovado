@@ -75,7 +75,7 @@ public class CourseListFragment extends Fragment implements CourseListFragmentVi
         mCourseListFragmentPresenter.registerDatabaseHelper(mDatabaseHelper);
 
         mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.ColorPrimary);
         loadDataUI();
         setListener();
 
