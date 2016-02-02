@@ -61,9 +61,15 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_nav_sync_data">Sincronizar dados</string>
-    <string name="title_nav_login">Login</string>
     <string name="title_nav_feedback">Feedback</string>
     <string name="title_nav_about">About</string>
     <string name="button_label_clean_fields">Limpar Notas</string>
     <string name="email_fake">aprovado.app@android.com</string>
+    <string name="title_activity_sign_in">SignInActivity</string>
+    <string name="dialog_button_revoke">Revoke Access</string>
+    <string name="dialog_button_sign_out">Sign Out</string>
+    <string name="navigation_menu_item_login">Sign in</string>
+    <string name="nav_menu_item_sign_in_label">Sign in</string>
+    <string name="nav_menu_item_sign_out_label">Sign out</string>
+    <string name="dialog_progress_message">Loading...</string>
 </resources>

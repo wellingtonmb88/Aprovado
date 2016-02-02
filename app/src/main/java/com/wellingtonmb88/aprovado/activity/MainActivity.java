@@ -12,15 +12,21 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.wellingtonmb88.aprovado.AppApplication;
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.adapter.ViewPagerAdapter;
 import com.wellingtonmb88.aprovado.dagger.components.DaggerActivityInjectorComponent;
+import com.wellingtonmb88.aprovado.entity.User;
+import com.wellingtonmb88.aprovado.fragment.SignInDialogFragment;
+import com.wellingtonmb88.aprovado.preferences.UserPreferences;
 import com.wellingtonmb88.aprovado.presenter.MainPresenterImpl;
 import com.wellingtonmb88.aprovado.presenter.interfaces.MainView;
 import com.wellingtonmb88.aprovado.utils.CommonUtils;
@@ -32,6 +38,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class MainActivity extends BaseActivity implements MainView, NavigationView.OnNavigationItemSelectedListener {
@@ -83,6 +90,13 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
         mDrawerLayout.setDrawerListener(new SimpleDrawerListener(this));
 
         mNavigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        User user = UserPreferences.requestUserFromPreferences(this);
+        updateDrawerLayout(user);
     }
 
     @Override
@@ -145,6 +159,12 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
     }
 
     @Override
+    public void openLoginScreen() {
+        SignInDialogFragment newFragment = SignInDialogFragment.newInstance();
+        newFragment.show(getSupportFragmentManager(), "dialog");
+    }
+
+    @Override
     public void openFeedbackScreen() {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         String uriString =
@@ -160,6 +180,75 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
         mMainPresenter.onNavigationItemSelected(item.getItemId());
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return false;
+    }
+
+
+    @Override
+    public void updateDrawerLayout(User user) {
+        String nameLabel = null;
+        String emailLabel = null;
+        Uri pictureUri = null;
+
+        if (user != null) {
+            if (user.getName() != null) {
+                nameLabel = user.getName();
+            }
+
+            if (user.getEmail() != null) {
+                emailLabel = user.getEmail();
+            }
+
+            if (user.getPictureUri() != null) {
+                pictureUri = Uri.parse(user.getPictureUri());
+            }
+        }
+
+        MenuItem loginItem = mNavigationView.getMenu().findItem(R.id.nav_login);
+
+        View headerView = mNavigationView.getHeaderView(0);
+        if (headerView != null) {
+            TextView name = (TextView) headerView.findViewById(R.id.nav_header_textview_name);
+            TextView email = (TextView) headerView.findViewById(R.id.nav_header_textview_email);
+            CircleImageView image = (CircleImageView) headerView.findViewById(R.id.nav_header_profile_image);
+
+            if (name != null) {
+
+                if (TextUtils.isEmpty(nameLabel)) {
+                    name.setText(R.string.app_name);
+                    if (loginItem != null) {
+                        loginItem.setTitle(R.string.nav_menu_item_sign_in_label);
+                    }
+                } else {
+                    name.setText(nameLabel);
+                    if (loginItem != null) {
+                        loginItem.setTitle(R.string.nav_menu_item_sign_out_label);
+                    }
+                }
+            }
+
+            if (email != null) {
+
+                if (TextUtils.isEmpty(emailLabel)) {
+                    email.setVisibility(View.GONE);
+                } else {
+                    email.setVisibility(View.VISIBLE);
+                    email.setText(emailLabel);
+                }
+            }
+
+            if (image != null) {
+
+                if (pictureUri == null) {
+                    image.setImageResource(R.mipmap.approved_logo);
+                } else {
+                    Glide.with(this).fromUri().load(pictureUri).into(image);
+                    image.setVisibility(View.VISIBLE);
+
+                }
+            }
+
+        }
+
     }
 
     private static class SimpleOnPageChangeListener extends ViewPager.SimpleOnPageChangeListener {
@@ -181,7 +270,7 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
     }
 
     private static class SimpleDrawerListener extends DrawerLayout.SimpleDrawerListener {
-        
+
         private WeakReference<Activity> mActivity;
 
         public SimpleDrawerListener(Activity activity) {
