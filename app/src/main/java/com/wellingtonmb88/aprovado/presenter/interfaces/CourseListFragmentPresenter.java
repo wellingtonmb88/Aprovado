@@ -19,6 +19,8 @@ public interface CourseListFragmentPresenter {
 
     void onSetCourseList();
 
+    void onPause();
+
     void onDestroy();
 
     void registerView(CourseListFragmentView mainView);

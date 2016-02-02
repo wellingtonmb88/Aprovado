@@ -11,6 +11,7 @@ import com.wellingtonmb88.aprovado.presenter.interfaces.CourseListFragmentView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -29,14 +30,7 @@ public class CourseListFragmentPresenterImpl implements CourseListFragmentPresen
     private Runnable mWorkRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mWorkHandler != null) {
-                mWorkHandler.removeCallbacks(mWorkRunnable);
-                for (Course course : mDeletedCourseList) {
-                    mView.notifyCourseDeleted(course);
-                }
-                mDeletedCourseList.clear();
-                mDeletedPositionList.clear();
-            }
+            executeDeletedCourseList();
         }
     };
 
@@ -86,8 +80,14 @@ public class CourseListFragmentPresenterImpl implements CourseListFragmentPresen
     @Override
     public void onSetCourseList() {
         mSubscription = mDatabaseHelper.getAll(Course.class)
+                .delay(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getAllCoursesAction);
+    }
+
+    @Override
+    public void onPause() {
+        executeDeletedCourseList();
     }
 
     @Override
@@ -153,6 +153,17 @@ public class CourseListFragmentPresenterImpl implements CourseListFragmentPresen
             mDeletedCourseList.clear();
             mDeletedPositionList.clear();
             mWorkHandler.removeCallbacksAndMessages(null);
+        }
+    }
+
+    private void executeDeletedCourseList() {
+        if (mWorkHandler != null && !mDeletedCourseList.isEmpty()) {
+            mWorkHandler.removeCallbacks(mWorkRunnable);
+            for (Course course : mDeletedCourseList) {
+                mView.notifyCourseDeleted(course);
+            }
+            mDeletedCourseList.clear();
+            mDeletedPositionList.clear();
         }
     }
 }

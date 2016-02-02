@@ -1,5 +1,6 @@
 package com.wellingtonmb88.aprovado.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,7 +28,6 @@ import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.listener.SimpleItemTouchHelperCallback;
 import com.wellingtonmb88.aprovado.presenter.CourseListFragmentPresenterImpl;
 import com.wellingtonmb88.aprovado.presenter.interfaces.CourseListFragmentView;
-import com.wellingtonmb88.aprovado.utils.CommonUtils;
 import com.wellingtonmb88.aprovado.utils.Constants;
 import com.wellingtonmb88.aprovado.utils.CourseSemesterComparator;
 
@@ -42,6 +42,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class CourseListFragment extends Fragment implements CourseListFragmentView, SwipeRefreshLayout.OnRefreshListener {
+
+    public static int REQUEST_CODE_FRAGMENT = 3;
 
     @Bind(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
@@ -83,9 +85,9 @@ public class CourseListFragment extends Fragment implements CourseListFragmentVi
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        mCourseListFragmentPresenter.onSetCourseList();
+    public void onPause() {
+        super.onPause();
+        mCourseListFragmentPresenter.onPause();
     }
 
     @Override
@@ -149,7 +151,18 @@ public class CourseListFragment extends Fragment implements CourseListFragmentVi
     @Override
     public void addCourse() {
         final Intent intent = new Intent(getActivity().getApplicationContext(), CourseActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE_FRAGMENT);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_FRAGMENT) {
+            if (resultCode == Activity.RESULT_OK) {
+                mCourseListFragmentPresenter.onSetCourseList();
+            }
+        }
     }
 
     private void setListener() {
@@ -171,7 +184,7 @@ public class CourseListFragment extends Fragment implements CourseListFragmentVi
         Bundle bundle = new Bundle();
         bundle.putString(Constants.CourseExtra.BUNDLE_EXTRA, mList.get(position).getId());
         intent.putExtra(Constants.CourseExtra.INTENT_EXTRA, bundle);
-        startActivityForResult(intent, 1);
+        startActivityForResult(intent, REQUEST_CODE_FRAGMENT);
     }
 
     @Override

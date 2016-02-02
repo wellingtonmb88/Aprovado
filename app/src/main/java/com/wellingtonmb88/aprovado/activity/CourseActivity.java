@@ -228,6 +228,7 @@ public class CourseActivity extends AppCompatActivity implements CourseDetailsVi
             populateCourse();
             if (!TextUtils.isEmpty(mSubject.getText())) {
                 mDatabaseHelper.createOrUpdate(mCourse);
+                setResult(RESULT_OK);
                 finish();
             } else {
                 mSubject.setError(getString(R.string.calculator_edittext_error_message));

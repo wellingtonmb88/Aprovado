@@ -44,6 +44,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends BaseActivity implements MainView, NavigationView.OnNavigationItemSelectedListener {
 
     private static final int NUM_TABS = 2;
+    public static int REQUEST_CODE_MAIN_ACTIVITY = 2;
 
     @Bind(R.id.pager)
     ViewPager mPager;
@@ -118,7 +119,7 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
+        if (requestCode == REQUEST_CODE_MAIN_ACTIVITY) {
             if (resultCode == RESULT_OK) {
                 int selectedTab = data.getIntExtra(Constants.TabSharedPreferences.SELECTED_TAB, 0);
                 mPager.setCurrentItem(selectedTab);
@@ -155,7 +156,7 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
     public void openAboutScreen() {
         Intent intent = new Intent(MainActivity.this, AboutActivity.class);
         intent.putExtra(Constants.TabSharedPreferences.SELECTED_TAB, mPager.getCurrentItem());
-        startActivityForResult(intent, 1);
+        startActivityForResult(intent, REQUEST_CODE_MAIN_ACTIVITY);
     }
 
     @Override
