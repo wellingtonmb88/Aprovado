@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -64,8 +63,8 @@ public class CommonUtils {
                     ) {
                 isValid = true;
             }
-        } catch (Exception e) {
-            Log.e(TAG, "" + e.getLocalizedMessage());
+        } catch (ParseException e) {
+            AprovadoLogger.e("Error to parse String to Float: " + e.getLocalizedMessage());
         }
         return isValid;
     }
@@ -139,7 +138,7 @@ public class CommonUtils {
                         cursorLocation = editText.length();
                     }
                 } catch (ParseException e) {
-                    Log.e(TAG, "" + e.getLocalizedMessage());
+                    AprovadoLogger.e("Error to parse String to Float: " + e.getLocalizedMessage());
                 }
             }
 

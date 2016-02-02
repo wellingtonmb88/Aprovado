@@ -18,6 +18,7 @@ import com.wellingtonmb88.aprovado.dagger.components.DaggerFragmentInjectorCompo
 import com.wellingtonmb88.aprovado.listener.TextChangeListener;
 import com.wellingtonmb88.aprovado.presenter.CalculatorFragmentPresenterImpl;
 import com.wellingtonmb88.aprovado.presenter.interfaces.CalculatorFragmentView;
+import com.wellingtonmb88.aprovado.utils.AprovadoLogger;
 import com.wellingtonmb88.aprovado.utils.CommonUtils;
 
 import java.text.ParseException;
@@ -74,7 +75,7 @@ public class CalculatorFragment extends Fragment implements CalculatorFragmentVi
                     m1 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseM1.getText().toString());
                     b1 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseB1.getText().toString());
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    AprovadoLogger.e("Error to parse String to Float: " + e.getLocalizedMessage());
                 }
 
                 if (TextUtils.isEmpty(mEditTextCourseB1.getText()) && !TextUtils.isEmpty(mEditTextCourseM1.getText())) {
@@ -93,7 +94,7 @@ public class CalculatorFragment extends Fragment implements CalculatorFragmentVi
                     m2 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseM2.getText().toString());
                     b2 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseB2.getText().toString());
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    AprovadoLogger.e("Error to parse String to Float: " + e.getLocalizedMessage());
                 }
 
                 if (TextUtils.isEmpty(mEditTextCourseB2.getText()) && !TextUtils.isEmpty(mEditTextCourseM2.getText())) {
@@ -115,7 +116,7 @@ public class CalculatorFragment extends Fragment implements CalculatorFragmentVi
                     mb1 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseMB1.getText().toString());
                     mb2 = CommonUtils.parseFloatLocaleSensitive(mEditTextCourseMB2.getText().toString());
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    AprovadoLogger.e("Error to parse String to Float: " + e.getLocalizedMessage());
                 }
 
                 float media = CommonUtils.roundFloatTwoHouse(((mb1 * 2) + (mb2 * 3)) / 5);

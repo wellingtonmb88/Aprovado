@@ -1,6 +1,5 @@
 package com.wellingtonmb88.aprovado.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -19,8 +18,8 @@ import com.wellingtonmb88.aprovado.dagger.components.DaggerActivityInjectorCompo
 import com.wellingtonmb88.aprovado.database.DatabaseHelper;
 import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.presenter.CourseDetailsPresenterImpl;
-import com.wellingtonmb88.aprovado.presenter.interfaces.CourseDetailsPresenter;
 import com.wellingtonmb88.aprovado.presenter.interfaces.CourseDetailsView;
+import com.wellingtonmb88.aprovado.utils.AprovadoLogger;
 import com.wellingtonmb88.aprovado.utils.CommonUtils;
 import com.wellingtonmb88.aprovado.utils.Constants;
 
@@ -133,49 +132,54 @@ public class CourseActivity extends AppCompatActivity implements CourseDetailsVi
         mCourseDetailsPresenter.onSaveCourse();
     }
 
-    private void populateCourse() throws ParseException {
+    private void populateCourse() {
         mCourse.setName(mSubject.getText().toString());
         mCourse.setProfessor(mProfessor.getText().toString());
         mCourse.setSemester(mSpinnerSemester.getSelectedItemPosition());
         validateNullFields();
     }
 
-    private void validateNullFields() throws ParseException {
+    private void validateNullFields() {
 
-        if (TextUtils.isEmpty(mEditTextM1.getText())) {
-            mCourse.setM1(-1);
-        } else {
-            mCourse.setM1(CommonUtils.parseFloatLocaleSensitive(mEditTextM1.getText().toString()));
-        }
-        if (TextUtils.isEmpty(mEditTextB1.getText())) {
-            mCourse.setB1(-1);
-        } else {
-            mCourse.setB1(CommonUtils.parseFloatLocaleSensitive(mEditTextB1.getText().toString()));
-        }
-        if (TextUtils.isEmpty(mEditTextMB1.getText())) {
-            mCourse.setMediaB1(-1);
-        } else {
-            mCourse.setMediaB1(CommonUtils.parseFloatLocaleSensitive(mEditTextMB1.getText().toString()));
-        }
-        if (TextUtils.isEmpty(mEditTextM2.getText())) {
-            mCourse.setM2(-1);
-        } else {
-            mCourse.setM2(CommonUtils.parseFloatLocaleSensitive(mEditTextM2.getText().toString()));
-        }
-        if (TextUtils.isEmpty(mEditTextB2.getText())) {
-            mCourse.setB2(-1);
-        } else {
-            mCourse.setB2(CommonUtils.parseFloatLocaleSensitive(mEditTextB2.getText().toString()));
-        }
-        if (TextUtils.isEmpty(mEditTextMB2.getText())) {
-            mCourse.setMediaB2(-1);
-        } else {
-            mCourse.setMediaB2(CommonUtils.parseFloatLocaleSensitive(mEditTextMB2.getText().toString()));
-        }
-        if (TextUtils.isEmpty(mEditTextMF.getText())) {
-            mCourse.setMediaFinal(-1);
-        } else {
-            mCourse.setMediaFinal(CommonUtils.parseFloatLocaleSensitive(mEditTextMF.getText().toString()));
+        try {
+            if (TextUtils.isEmpty(mEditTextM1.getText())) {
+                mCourse.setM1(-1);
+            } else {
+                mCourse.setM1(CommonUtils.parseFloatLocaleSensitive(mEditTextM1.getText().toString()));
+            }
+            if (TextUtils.isEmpty(mEditTextB1.getText())) {
+                mCourse.setB1(-1);
+            } else {
+                mCourse.setB1(CommonUtils.parseFloatLocaleSensitive(mEditTextB1.getText().toString()));
+            }
+            if (TextUtils.isEmpty(mEditTextMB1.getText())) {
+                mCourse.setMediaB1(-1);
+            } else {
+                mCourse.setMediaB1(CommonUtils.parseFloatLocaleSensitive(mEditTextMB1.getText().toString()));
+            }
+            if (TextUtils.isEmpty(mEditTextM2.getText())) {
+                mCourse.setM2(-1);
+            } else {
+                mCourse.setM2(CommonUtils.parseFloatLocaleSensitive(mEditTextM2.getText().toString()));
+            }
+            if (TextUtils.isEmpty(mEditTextB2.getText())) {
+                mCourse.setB2(-1);
+            } else {
+                mCourse.setB2(CommonUtils.parseFloatLocaleSensitive(mEditTextB2.getText().toString()));
+            }
+            if (TextUtils.isEmpty(mEditTextMB2.getText())) {
+                mCourse.setMediaB2(-1);
+            } else {
+                mCourse.setMediaB2(CommonUtils.parseFloatLocaleSensitive(mEditTextMB2.getText().toString()));
+            }
+            if (TextUtils.isEmpty(mEditTextMF.getText())) {
+                mCourse.setMediaFinal(-1);
+            } else {
+                mCourse.setMediaFinal(CommonUtils.parseFloatLocaleSensitive(mEditTextMF.getText().toString()));
+            }
+
+        } catch (ParseException e) {
+            AprovadoLogger.e("Error to parse String to Float: " + e.getLocalizedMessage());
         }
     }
 
@@ -224,17 +228,13 @@ public class CourseActivity extends AppCompatActivity implements CourseDetailsVi
 
     @Override
     public void saveCourse() {
-        try {
-            populateCourse();
-            if (!TextUtils.isEmpty(mSubject.getText())) {
-                mDatabaseHelper.createOrUpdate(mCourse);
-                setResult(RESULT_OK);
-                finish();
-            } else {
-                mSubject.setError(getString(R.string.calculator_edittext_error_message));
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
+        populateCourse();
+        if (!TextUtils.isEmpty(mSubject.getText())) {
+            mDatabaseHelper.createOrUpdate(mCourse);
+            setResult(RESULT_OK);
+            finish();
+        } else {
+            mSubject.setError(getString(R.string.calculator_edittext_error_message));
         }
     }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.presenter.interfaces.CalculatorFragmentPresenter;
 import com.wellingtonmb88.aprovado.presenter.interfaces.CalculatorFragmentView;
+import com.wellingtonmb88.aprovado.utils.AprovadoLogger;
 import com.wellingtonmb88.aprovado.utils.CommonUtils;
 
 import java.text.ParseException;
@@ -33,7 +34,7 @@ public class CalculatorFragmentPresenterImpl implements CalculatorFragmentPresen
         try {
             monthGrade = CommonUtils.parseFloatLocaleSensitive(grade);
         } catch (ParseException e) {
-            e.printStackTrace();
+            AprovadoLogger.e("Error to parse String to Float: " + e.getLocalizedMessage());
         }
 
         double bimonthlyGrade = CommonUtils.roundFloatOneHouse((5 - (monthGrade * 0.4)) / 0.6);
@@ -56,7 +57,7 @@ public class CalculatorFragmentPresenterImpl implements CalculatorFragmentPresen
             mb1 = CommonUtils.parseFloatLocaleSensitive(bimonthly);
             monthGrade = CommonUtils.parseFloatLocaleSensitive(grade);
         } catch (ParseException e) {
-            e.printStackTrace();
+            AprovadoLogger.e("Error to parse String to Float: " + e.getLocalizedMessage());
         }
 
         double mb2 = CommonUtils.roundFloatOneHouse((((((mb1 * 2) - 25) / 5) * 5) / 3) * -1);
