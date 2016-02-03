@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_login"
+            android:icon="@mipmap/ic_login"
+            android:title="@string/nav_menu_item_sign_in_label" />
+
+        <!--<item-->
+        <!--android:id="@+id/nav_sync_data"-->
+        <!--android:icon="@mipmap/ic_connection"-->
+        <!--android:title="@string/title_nav_sync_data" />-->
+
+        <item
+            android:id="@+id/nav_feedback"
+            android:icon="@mipmap/ic_start"
+            android:title="@string/title_nav_feedback" />
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@mipmap/ic_about"
+            android:title="@string/title_nav_about" />
+    </group>
+
+</menu>

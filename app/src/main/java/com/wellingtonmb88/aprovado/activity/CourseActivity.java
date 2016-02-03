@@ -2,97 +2,111 @@ package com.wellingtonmb88.aprovado.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.text.TextUtils;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.Spinner;
 
+import com.wellingtonmb88.aprovado.AppApplication;
 import com.wellingtonmb88.aprovado.R;
-import com.wellingtonmb88.aprovado.async.SQliteAsyncTask;
+import com.wellingtonmb88.aprovado.dagger.components.DaggerActivityInjectorComponent;
+import com.wellingtonmb88.aprovado.database.DatabaseHelper;
 import com.wellingtonmb88.aprovado.entity.Course;
+import com.wellingtonmb88.aprovado.presenter.CourseDetailsPresenterImpl;
+import com.wellingtonmb88.aprovado.presenter.interfaces.CourseDetailsView;
+import com.wellingtonmb88.aprovado.utils.AprovadoLogger;
 import com.wellingtonmb88.aprovado.utils.CommonUtils;
 import com.wellingtonmb88.aprovado.utils.Constants;
 
 import java.text.ParseException;
+import java.util.UUID;
 
-/**
- * Created by Wellington on 26/05/2015.
- */
-public class CourseActivity extends AppCompatActivity {
+import javax.inject.Inject;
 
-    private EditText mDisciplina;
-    private EditText mProfessor;
-    private EditText mEditTextM1;
-    private EditText mEditTextM2;
-    private EditText mEditTextB1;
-    private EditText mEditTextB2;
-    private EditText mEditTextMB1;
-    private EditText mEditTextMB2;
-    private EditText mEditTextMF;
-    
-    private Spinner mSpinnerSemestre;
-    private Toolbar mToolbarLayout;
-    private FloatingActionButton mSaveFAB;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
+public class CourseActivity extends AppCompatActivity implements CourseDetailsView {
+
+    @Bind(R.id.editText_disciplina)
+    EditText mSubject;
+    @Bind(R.id.editText_professor)
+    EditText mProfessor;
+    @Bind(R.id.editText_m1)
+    EditText mEditTextM1;
+    @Bind(R.id.editText_m2)
+    EditText mEditTextM2;
+    @Bind(R.id.editText_b1)
+    EditText mEditTextB1;
+    @Bind(R.id.editText_b2)
+    EditText mEditTextB2;
+    @Bind(R.id.editText_mb1)
+    EditText mEditTextMB1;
+    @Bind(R.id.editText_mb2)
+    EditText mEditTextMB2;
+    @Bind(R.id.editText_mf)
+    EditText mEditTextMF;
+    @Bind(R.id.spinner)
+    Spinner mSpinnerSemester;
+    @Bind(R.id.toolbar_layout)
+    Toolbar mToolbarLayout;
+    @Inject
+    DatabaseHelper<Course> mDatabaseHelper;
+    @Inject
+    CourseDetailsPresenterImpl mCourseDetailsPresenter;
     private Course mCourse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
+        ButterKnife.bind(this);
+
+        DaggerActivityInjectorComponent.builder()
+                .baseComponent(AppApplication.getBaseComponent())
+                .build()
+                .inject(this);
+
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        loadUI();
+        mCourseDetailsPresenter.registerView(this);
+        mCourseDetailsPresenter.registerDatabaseHelper(mDatabaseHelper);
         loadDataUI();
-        setListener();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mCourse = null;
+        mDatabaseHelper = null;
+        mCourseDetailsPresenter.onDestroy();
     }
 
     @Override
     public void onBackPressed() {
-        backForResult();
+        CommonUtils.backForResult(CourseActivity.this, 0);
         super.onBackPressed();
     }
 
-    private void loadUI(){
-
-        FrameLayout toolbar = (FrameLayout) findViewById(R.id.toolbar);
-        mToolbarLayout = (Toolbar) toolbar.findViewById(R.id.toolbar_layout);
-
-        mSaveFAB = (FloatingActionButton) findViewById(R.id.floatingActionButton_save);
-        mDisciplina = (EditText) findViewById(R.id.editText_disciplina);
-        mProfessor = (EditText) findViewById(R.id.editText_professor);
-        mEditTextM1 = (EditText) findViewById(R.id.editText_m1);
-        mEditTextM2 = (EditText) findViewById(R.id.editText_m2);
-        mEditTextB1 = (EditText) findViewById(R.id.editText_b1);
-        mEditTextB2 = (EditText) findViewById(R.id.editText_b2);
-        mEditTextMB1 = (EditText) findViewById(R.id.editText_mb1);
-        mEditTextMB2 = (EditText) findViewById(R.id.editText_mb2);
-        mEditTextMF = (EditText) findViewById(R.id.editText_mf);
-
-        mSpinnerSemestre = (Spinner) findViewById(R.id.spinner);
-    }
-
-    private void loadDataUI(){
+    private void loadDataUI() {
 
         mCourse = new Course();
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(CourseActivity.this,
                 R.array.semester_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinnerSemestre.setAdapter(adapter);
+        mSpinnerSemester.setAdapter(adapter);
 
-        mToolbarLayout.setTitleTextColor(getResources().getColor(R.color.white));
+        mToolbarLayout.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         setSupportActionBar(mToolbarLayout);
 
-        if( getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setDisplayUseLogoEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
@@ -101,157 +115,137 @@ public class CourseActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        if(intent != null && intent.hasExtra(Constants.CourseExtra.INTENT_EXTRA)){
+        if (intent != null && intent.hasExtra(Constants.CourseExtra.INTENT_EXTRA)) {
             Bundle bundle = intent.getBundleExtra(Constants.CourseExtra.INTENT_EXTRA);
-            if(bundle != null){
-                mCourse = bundle.getParcelable(Constants.CourseExtra.BUNDLE_EXTRA);
-                if(mCourse != null){
-
-                    if(mCourse.name != null){
-                        mDisciplina.setText(mCourse.name);
-                        mProfessor.setText(mCourse.professor);
-                        mSpinnerSemestre.setSelection(mCourse.semester);
-                        validateFields();
-                    }
-                }
+            if (bundle != null) {
+                String courseId = bundle.getString(Constants.CourseExtra.BUNDLE_EXTRA);
+                mCourseDetailsPresenter.onGetCourse(courseId);
             }
+        } else {
+            mCourse.setId(UUID.randomUUID().toString());
         }
 
     }
 
-    private void setListener(){
-
-        mDisciplina.addTextChangedListener(mTextWatcher);
-
-        mSaveFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    String action = Constants.CourseDatabaseAction.INSERT_COURSE;
-                    if(mCourse != null && mCourse.name != null && mCourse.name.length() > 0 ){
-                        action = Constants.CourseDatabaseAction.UPDATE_COURSE;
-                    }
-                    getCourse();
-                    if(mDisciplina.getText().length() > 0){
-                        SQliteAsyncTask task = new SQliteAsyncTask(getApplicationContext(), null, mCourse);
-                        task.execute(action);
-                        finish();
-                    }else{
-                        mDisciplina.setError(getString(R.string.calculator_edittext_error_message));
-                    }
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+    @OnClick(R.id.floatingActionButton_save)
+    public void saveButton() {
+        mCourseDetailsPresenter.onSaveCourse();
     }
 
-    private void getCourse() throws ParseException {
-
-        mCourse.name = mDisciplina.getText().toString();
-        mCourse.professor = mProfessor.getText().toString();
-        mCourse.semester = mSpinnerSemestre.getSelectedItemPosition();
+    private void populateCourse() {
+        mCourse.setName(mSubject.getText().toString());
+        mCourse.setProfessor(mProfessor.getText().toString());
+        mCourse.setSemester(mSpinnerSemester.getSelectedItemPosition());
         validateNullFields();
     }
 
-    private void validateNullFields() throws ParseException{
+    private void validateNullFields() {
 
-        if(mEditTextM1.getText().length() < 1){
-            mCourse.m1 = -1;
-        }else{
-            mCourse.m1 = CommonUtils.parseFloatLocaleSensitive(mEditTextM1.getText().toString());
-        }
-        if(mEditTextB1.getText().length() < 1){
-            mCourse.b1 = -1;
-        }else{
-            mCourse.b1 = CommonUtils.parseFloatLocaleSensitive(mEditTextB1.getText().toString());
-        }
-        if(mEditTextMB1.getText().length() < 1){
-            mCourse.mediaB1 = -1;
-        }else{
-            mCourse.mediaB1 = CommonUtils.parseFloatLocaleSensitive(mEditTextMB1.getText().toString());
-        }
-        if(mEditTextM2.getText().length() < 1){
-            mCourse.m2 = -1;
-        }else{
-            mCourse.m2 = CommonUtils.parseFloatLocaleSensitive(mEditTextM2.getText().toString());
-        }
-        if(mEditTextB2.getText().length() < 1){
-            mCourse.b2 = -1;
-        }else{
-            mCourse.b2 = CommonUtils.parseFloatLocaleSensitive(mEditTextB2.getText().toString());
-        }
-        if(mEditTextMB2.getText().length() < 1){
-            mCourse.mediaB2 = -1;
-        }else{
-            mCourse.mediaB2 = CommonUtils.parseFloatLocaleSensitive(mEditTextMB2.getText().toString());
-        }
-        if(mEditTextMF.getText().length() < 1){
-            mCourse.mediaFinal = -1;
-        }else{
-            mCourse.mediaFinal = CommonUtils.parseFloatLocaleSensitive(mEditTextMF.getText().toString());
+        try {
+            if (TextUtils.isEmpty(mEditTextM1.getText())) {
+                mCourse.setM1(-1);
+            } else {
+                mCourse.setM1(CommonUtils.parseFloatLocaleSensitive(mEditTextM1.getText().toString()));
+            }
+            if (TextUtils.isEmpty(mEditTextB1.getText())) {
+                mCourse.setB1(-1);
+            } else {
+                mCourse.setB1(CommonUtils.parseFloatLocaleSensitive(mEditTextB1.getText().toString()));
+            }
+            if (TextUtils.isEmpty(mEditTextMB1.getText())) {
+                mCourse.setMediaB1(-1);
+            } else {
+                mCourse.setMediaB1(CommonUtils.parseFloatLocaleSensitive(mEditTextMB1.getText().toString()));
+            }
+            if (TextUtils.isEmpty(mEditTextM2.getText())) {
+                mCourse.setM2(-1);
+            } else {
+                mCourse.setM2(CommonUtils.parseFloatLocaleSensitive(mEditTextM2.getText().toString()));
+            }
+            if (TextUtils.isEmpty(mEditTextB2.getText())) {
+                mCourse.setB2(-1);
+            } else {
+                mCourse.setB2(CommonUtils.parseFloatLocaleSensitive(mEditTextB2.getText().toString()));
+            }
+            if (TextUtils.isEmpty(mEditTextMB2.getText())) {
+                mCourse.setMediaB2(-1);
+            } else {
+                mCourse.setMediaB2(CommonUtils.parseFloatLocaleSensitive(mEditTextMB2.getText().toString()));
+            }
+            if (TextUtils.isEmpty(mEditTextMF.getText())) {
+                mCourse.setMediaFinal(-1);
+            } else {
+                mCourse.setMediaFinal(CommonUtils.parseFloatLocaleSensitive(mEditTextMF.getText().toString()));
+            }
+
+        } catch (ParseException e) {
+            AprovadoLogger.e("Error to parse String to Float: " + e.getLocalizedMessage());
         }
     }
 
-    private void validateFields(){
-        String m1 = String.valueOf(mCourse.m1);
-        String m2 = String.valueOf(mCourse.m2);
-        String b1 = String.valueOf(mCourse.b1);
-        String b2 = String.valueOf(mCourse.b2);
-        String mb1 = String.valueOf(mCourse.mediaB1);
-        String mb2 = String.valueOf(mCourse.mediaB2);
-        String mf = String.valueOf(mCourse.mediaFinal);
+    private void validateFields() {
+        String m1 = String.valueOf(mCourse.getM1());
+        String m2 = String.valueOf(mCourse.getM2());
+        String b1 = String.valueOf(mCourse.getB1());
+        String b2 = String.valueOf(mCourse.getB2());
+        String mb1 = String.valueOf(mCourse.getMediaB1());
+        String mb2 = String.valueOf(mCourse.getMediaB2());
+        String mf = String.valueOf(mCourse.getMediaFinal());
 
         String MINUS_ONE = "-1.0";
 
-        if(!MINUS_ONE.equals(m1)){
+        if (!MINUS_ONE.equals(m1)) {
             mEditTextM1.setText(m1);
-        }if(!MINUS_ONE.equals(m2)){
+        }
+        if (!MINUS_ONE.equals(m2)) {
             mEditTextM2.setText(m2);
-        }if(!MINUS_ONE.equals(b1)){
+        }
+        if (!MINUS_ONE.equals(b1)) {
             mEditTextB1.setText(b1);
-        }if(!MINUS_ONE.equals(b2)){
+        }
+        if (!MINUS_ONE.equals(b2)) {
             mEditTextB2.setText(b2);
-        }if(!MINUS_ONE.equals(mb1)){
+        }
+        if (!MINUS_ONE.equals(mb1)) {
             mEditTextMB1.setText(mb1);
-        }if(!MINUS_ONE.equals(mb2)){
+        }
+        if (!MINUS_ONE.equals(mb2)) {
             mEditTextMB2.setText(mb2);
-        }if(!MINUS_ONE.equals(mf)){
+        }
+        if (!MINUS_ONE.equals(mf)) {
             mEditTextMF.setText(mf);
         }
     }
 
-    public TextWatcher mTextWatcher = new TextWatcher() {
-
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-            if (!(s.toString().isEmpty() && s.toString().equals("") && s.length() < 0)) {
-                mDisciplina.setError(null);
-            }
-        }
-    };
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == android.R.id.home){
-            backForResult();
+        if (id == android.R.id.home) {
+            CommonUtils.backForResult(CourseActivity.this, 0);
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void backForResult(){
-            Intent returnIntent = new Intent();
-            returnIntent.putExtra(Constants.TabSharedPreferences.SELECTED_TAB, 1);
-            setResult(RESULT_OK, returnIntent);
+    @Override
+    public void saveCourse() {
+        populateCourse();
+        if (!TextUtils.isEmpty(mSubject.getText())) {
+            mDatabaseHelper.createOrUpdate(mCourse);
+            setResult(RESULT_OK);
             finish();
+        } else {
+            mSubject.setError(getString(R.string.calculator_edittext_error_message));
+        }
+    }
+
+    @Override
+    public void getCourse(Course course) {
+        mCourse = course;
+        if (mCourse.getName() != null) {
+            mSubject.setText(mCourse.getName());
+            mProfessor.setText(mCourse.getProfessor());
+            mSpinnerSemester.setSelection(mCourse.getSemester());
+            validateFields();
+        }
     }
 }

@@ -1,32 +1,33 @@
 package com.wellingtonmb88.aprovado.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.GestureDetector;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersAdapter;
 import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersDecoration;
+import com.wellingtonmb88.aprovado.AppApplication;
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.activity.CourseActivity;
 import com.wellingtonmb88.aprovado.adapter.CourseRecyclerViewAdapter;
-import com.wellingtonmb88.aprovado.async.SQliteAsyncTask;
 import com.wellingtonmb88.aprovado.custom.FloatActionButtonHideShow;
+import com.wellingtonmb88.aprovado.dagger.components.DaggerFragmentInjectorComponent;
+import com.wellingtonmb88.aprovado.database.DatabaseHelper;
 import com.wellingtonmb88.aprovado.entity.Course;
-import com.wellingtonmb88.aprovado.listener.SwipeDismissRecyclerViewTouchListener;
+import com.wellingtonmb88.aprovado.listener.SimpleItemTouchHelperCallback;
+import com.wellingtonmb88.aprovado.presenter.CourseListFragmentPresenterImpl;
+import com.wellingtonmb88.aprovado.presenter.interfaces.CourseListFragmentView;
 import com.wellingtonmb88.aprovado.utils.Constants;
 import com.wellingtonmb88.aprovado.utils.CourseSemesterComparator;
 
@@ -34,37 +35,49 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by Wellington on 25/05/2015.
- */
-public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQliteCallBack {
+import javax.inject.Inject;
 
-    private static final int WAIT_TIMEOUT = 5000;
-    private static final int ANIMATION_DURATION = 500;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-    private LinearLayout mSnackBar;
-    private TextView snakBarText;
-    private TextView snakBarButton;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+public class CourseListFragment extends Fragment implements CourseListFragmentView, SwipeRefreshLayout.OnRefreshListener {
+
+    public final static int REQUEST_CODE_FRAGMENT = 3;
+
+    @Bind(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.recycler_view)
+    RecyclerView mRecyclerView;
+    @Bind(R.id.floatingActionButton_add)
+    FloatingActionButton mAddCourseFAB;
+    @Inject
+    DatabaseHelper<Course> mDatabaseHelper;
+    @Inject
+    CourseListFragmentPresenterImpl mCourseListFragmentPresenter;
+    private CourseRecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
-    private FloatingActionButton mAddCourseFAB;
-
-    private SwipeDismissRecyclerViewTouchListener mTouchListener;
     private FloatActionButtonHideShow mFloatActionButtonHideShow;
-    private Runnable mWorkRunnable;
-    private Handler mWorkHnalder;
     private List<Course> mList;
-    private List<Course> mDeletedCourseList;
-    private List<Integer> mDeletedPositionList;
-    private Animation mAnimation;
+
+    public CourseListFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_courses_list, container, false);
 
-        loadUI(v);
+        ButterKnife.bind(this, v);
+
+        DaggerFragmentInjectorComponent.builder().baseComponent(AppApplication.getBaseComponent())
+                .build()
+                .inject(this);
+
+        mCourseListFragmentPresenter.registerView(this);
+        mCourseListFragmentPresenter.registerDatabaseHelper(mDatabaseHelper);
+
+        mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.ColorPrimary);
         loadDataUI();
         setListener();
 
@@ -72,46 +85,54 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        getAllCourses();
+    public void onPause() {
+        super.onPause();
+        mCourseListFragmentPresenter.onPause();
     }
 
-    private void loadUI(View v){
-
-        mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-        mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
-        mSnackBar = (LinearLayout) v.findViewById(R.id.snackbar);
-        snakBarButton = (TextView) mSnackBar.findViewById(R.id.textView_snackbar_button);
-        snakBarText = (TextView) mSnackBar.findViewById(R.id.textView_snackbar_text);
-        mAddCourseFAB = (FloatingActionButton) v.findViewById(R.id.floatingActionButton_add);
-
-        mSnackBar.setVisibility(View.GONE);
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+        mDatabaseHelper = null;
+        mCourseListFragmentPresenter.onDestroy();
     }
 
-    private void loadDataUI(){
+    private void loadDataUI() {
+
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+
+        /**
+         * Showing Swipe Refresh animation on activity create
+         * As animation won't start on onCreate, post runnable is used
+         */
+        mSwipeRefreshLayout.post(new Runnable() {
+                                     @Override
+                                     public void run() {
+                                         mSwipeRefreshLayout.setRefreshing(true);
+
+                                         mCourseListFragmentPresenter.onSetCourseList();
+                                     }
+                                 }
+        );
 
         mList = new ArrayList<>();
-        mDeletedCourseList = new ArrayList<>();
-        mDeletedPositionList = new ArrayList<>();
-        getAllCourses();
-        createTouchListener();
-        createRunnable();
+        mCourseListFragmentPresenter.registerList(mList);
 
         mFloatActionButtonHideShow = new FloatActionButtonHideShow(mAddCourseFAB);
-        mWorkHnalder = new Handler();
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new CourseRecyclerViewAdapter(getActivity().getApplicationContext(), mList);
+        mAdapter = new CourseRecyclerViewAdapter(mCourseListFragmentPresenter, getActivity().getApplicationContext(), mList);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setOnTouchListener(mTouchListener);
-        mRecyclerView.addOnScrollListener(mTouchListener.makeScrollListener());
 
-        mAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.abc_slide_out_bottom);
-        mAnimation.setDuration(ANIMATION_DURATION);
+        ItemTouchHelper.Callback callback =
+                new SimpleItemTouchHelperCallback(mAdapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(mRecyclerView);
 
         // Add the sticky headers decoration
-        final StickyRecyclerHeadersDecoration headersDecor = new StickyRecyclerHeadersDecoration((StickyRecyclerHeadersAdapter) mAdapter);
+        final StickyRecyclerHeadersDecoration headersDecor =
+                new StickyRecyclerHeadersDecoration(mAdapter);
         mRecyclerView.addItemDecoration(headersDecor);
         mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
@@ -122,69 +143,29 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
 
     }
 
-    private void setListener(){
+    @OnClick(R.id.floatingActionButton_add)
+    public void addCourseButton() {
+        mCourseListFragmentPresenter.onAddCourse();
+    }
 
-        mAddCourseFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final Intent intent = new Intent(getActivity().getApplicationContext(), CourseActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(Constants.CourseExtra.BUNDLE_EXTRA, new Course());
-                intent.putExtra(Constants.CourseExtra.INTENT_EXTRA, bundle);
-                startActivity(intent);
+    @Override
+    public void addCourse() {
+        final Intent intent = new Intent(getActivity().getApplicationContext(), CourseActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_FRAGMENT);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_FRAGMENT) {
+            if (resultCode == Activity.RESULT_OK) {
+                mCourseListFragmentPresenter.onSetCourseList();
             }
-        });
+        }
+    }
 
-        snakBarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!mDeletedCourseList.isEmpty()) {
-                    Integer deletedPosition = mDeletedPositionList.get(0);
-                    Course deletedCourse = mDeletedCourseList.get(0);
-                    if (deletedPosition == 0) {
-                        mRecyclerView.scrollToPosition(deletedPosition);
-                    }
-                    if (mDeletedCourseList.size() == 1) {
-                        if (mList.size() <= deletedPosition) {
-                            mList.add(deletedCourse);
-                        } else {
-                            mList.add(deletedPosition, deletedCourse);
-                        }
-                        mAdapter.notifyItemInserted(deletedPosition);
-                        mDeletedCourseList.remove(deletedCourse);
-                        mDeletedPositionList.remove(deletedPosition);
-                    }else if(mDeletedCourseList.size() > 1){
-                        int index = 0;
-                        for(Course course : mDeletedCourseList){
-
-                            if (mList.size() <= deletedPosition) {
-                                mList.add(course);
-                            } else {
-                                mList.add(mDeletedPositionList.get(index), mDeletedCourseList.get(index));
-                            }
-                            mAdapter.notifyItemInserted(mDeletedPositionList.get(index));
-                            index++;
-                        }
-                        mDeletedCourseList.clear();
-                        mDeletedPositionList.clear();
-                        mSnackBar.setVisibility(View.GONE);
-                        mWorkHnalder.removeCallbacks(mWorkRunnable);
-                    }
-                }
-            }
-        });
-
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(mRecyclerView,
-                new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        Intent intent = new Intent(getActivity().getApplicationContext(), CourseActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable(Constants.CourseExtra.BUNDLE_EXTRA, mList.get(position));
-                        intent.putExtra(Constants.CourseExtra.INTENT_EXTRA, bundle);
-                        startActivityForResult(intent, 1);
-                    }
-                }));
+    private void setListener() {
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -197,175 +178,59 @@ public class CourseListFragment extends Fragment implements SQliteAsyncTask.SQli
         });
     }
 
-    private void createTouchListener(){
-         mTouchListener =
-                new SwipeDismissRecyclerViewTouchListener(
-                        mRecyclerView,
-                        new SwipeDismissRecyclerViewTouchListener.DismissCallbacks() {
-                            @Override
-                            public boolean canDismiss(int position) {
-                                return true;
-                            }
-
-                            @Override
-                            public void onDismiss(RecyclerView recyclerView, final int[] reverseSortedPositions) {
-                                int selectedPosition = 0 ;
-                                mWorkHnalder.removeCallbacks(mWorkRunnable);
-
-                                if(reverseSortedPositions.length > 0){
-                                    selectedPosition = reverseSortedPositions[0];
-                                }
-
-                                Course deletedCourse = mList.get(selectedPosition);
-                                mDeletedPositionList.add(0,selectedPosition);
-                                mDeletedCourseList.add(0, deletedCourse);
-                                if(mDeletedCourseList.size() > 1){
-                                    snakBarText.setText(mDeletedCourseList.size()+ " " + getString(R.string.courselist_snackbar_itens));
-                                }else{
-                                    snakBarText.setText(deletedCourse.name+ " " + getString(R.string.courselist_snackbar_title));
-                                }
-                                mList.remove(selectedPosition);
-                                mAdapter.notifyDataSetChanged();
-                                mSnackBar.setVisibility(View.VISIBLE);
-                                mWorkHnalder.postDelayed(mWorkRunnable, WAIT_TIMEOUT);
-                            }
-                        });
-
-
-    }
-
-    private void createRunnable(){
-        mWorkRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if(getActivity() != null){
-                    mSnackBar.startAnimation(mAnimation);
-                    mAnimation.setAnimationListener(new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            mSnackBar.setVisibility(View.GONE);
-                            mWorkHnalder.removeCallbacks(mWorkRunnable);
-                            for(Course course : mDeletedCourseList){
-                                deleteCourse(course);
-                            }
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-                        }
-                    });
-                }
-            }
-        };
+    @Override
+    public void openCourseDetails(int position) {
+        Intent intent = new Intent(getActivity().getApplicationContext(), CourseActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.CourseExtra.BUNDLE_EXTRA, mList.get(position).getId());
+        intent.putExtra(Constants.CourseExtra.INTENT_EXTRA, bundle);
+        startActivityForResult(intent, REQUEST_CODE_FRAGMENT);
     }
 
     @Override
-    public void getAllCourses(List<Course> courseList) {
+    public void notifyItemInserted(int deletedPosition) {
+        if (deletedPosition == 0) {
+            mRecyclerView.scrollToPosition(deletedPosition);
+        }
+        mAdapter.notifyItemInserted(deletedPosition);
+    }
+
+    @Override
+    public void notifyCourseDeleted(Course course) {
+        mDatabaseHelper.delete(Course.class, course.getId());
+    }
+
+    @Override
+    public void setCourseList(List<Course> courseList) {
         mList.clear();
         mList.addAll(courseList);
         Collections.sort(mList, new CourseSemesterComparator());
         mAdapter.notifyDataSetChanged();
+        // stopping swipe refresh
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
-    private void getAllCourses(){
-        if(getActivity() != null){
-            SQliteAsyncTask task = new SQliteAsyncTask(getActivity().getApplicationContext(), this, null);
-            task.execute(Constants.CourseDatabaseAction.GET_ALL_COURSES);
-        }
-    }
+    @Override
+    public void showSnackBar(String snackBarText) {
 
-    private void deleteCourse(Course course){
-        if(getActivity() != null){
-            SQliteAsyncTask task = new SQliteAsyncTask(getActivity().getApplicationContext(), this, course);
-            task.execute(Constants.CourseDatabaseAction.DELETE_COURSE);
-        }
-    }
+        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) mRecyclerView.getRootView()
+                .findViewById(R.id.coordinatorlayout_course_list);
 
-    public interface OnItemClickListener {
-        void onItemClick(View view, int position);
-    }
+        Snackbar snackbar = Snackbar
+                .make(coordinatorLayout, snackBarText, Snackbar.LENGTH_LONG);
 
-    private class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
-
-        private static final long DELAY_MILLIS = 100;
-
-        private View mPressedView = null;
-        private RecyclerView mRecyclerView;
-        private boolean mIsPrepressed = false;
-        private boolean mIsShowPress = false;
-        private GestureDetector mGestureDetector;
-        private OnItemClickListener mListener;
-
-        public RecyclerItemClickListener(RecyclerView recyclerView, OnItemClickListener listener) {
-            mListener = listener;
-            mRecyclerView = recyclerView;
-            setGestureDetector();
-        }
-
-        private void setGestureDetector(){
-            mGestureDetector = new GestureDetector(mRecyclerView.getContext(), new GestureDetector.SimpleOnGestureListener() {
-                @Override
-                public boolean onDown(MotionEvent e) {
-                    mIsPrepressed = true;
-                    mPressedView = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
-                    super.onDown(e);
-                    return false;
-                }
-
-                @Override
-                public void onShowPress(MotionEvent e) {
-                    if (mIsPrepressed && mPressedView != null) {
-                        mPressedView.setPressed(true);
-                        mIsShowPress = true;
-                    }
-                    super.onShowPress(e);
-                }
-
-                @Override
-                public boolean onSingleTapUp(MotionEvent e) {
-                    if (mIsPrepressed && mPressedView != null) {
-                        mPressedView.setPressed(true);
-                        final View pressedView = mPressedView;
-                        pressedView.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                pressedView.setPressed(false);
-                            }
-                        }, DELAY_MILLIS);
-                        mIsPrepressed = false;
-                        mPressedView = null;
-                    }
-                    return true;
-                }
-            });
-        }
-
-        @Override
-        public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
-            View childView = view.findChildViewUnder(e.getX(), e.getY());
-            if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
-                mListener.onItemClick(childView, view.getChildPosition(childView));
-            } else if (e.getActionMasked() == MotionEvent.ACTION_UP && mPressedView != null && mIsShowPress) {
-                mPressedView.setPressed(false);
-                mIsShowPress = false;
-                mIsPrepressed = false;
-                mPressedView = null;
+        mAdapter.notifyDataSetChanged();
+        snackbar.setAction(getString(R.string.fragment_courses_list_undo), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCourseListFragmentPresenter.onSnackBarClicked();
             }
-            return false;
-        }
-
-        @Override
-        public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) {
-        }
-
-        @Override
-        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-        }
+        });
+        snackbar.show();
     }
 
+    @Override
+    public void onRefresh() {
+        mCourseListFragmentPresenter.onSetCourseList();
+    }
 }

@@ -6,17 +6,13 @@
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/course_toolbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal" />
-
+        layout="@layout/course_toolbar" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
         android:orientation="vertical"
-        android:layout_marginTop="100dp"
         android:theme="@style/EditTextTheme">
 
         <LinearLayout
@@ -28,18 +24,18 @@
                 android:id="@+id/textView_disciplina"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/activity_course_class"
+                android:layout_marginEnd="5dp"
                 android:layout_marginRight="5dp"
-                android:layout_marginEnd="5dp"/>
+                android:text="@string/activity_course_class" />
 
             <android.support.v7.widget.AppCompatEditText
                 android:id="@+id/editText_disciplina"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="@string/activity_course_class"
                 android:layout_weight="1"
-                android:textSize="18sp"
-                android:imeOptions="actionNext"/>
+                android:hint="@string/activity_course_class"
+                android:imeOptions="actionNext"
+                android:textSize="18sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -51,18 +47,18 @@
                 android:id="@+id/textView_professor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/activity_course_teacher"
+                android:layout_marginEnd="5dp"
                 android:layout_marginRight="5dp"
-                android:layout_marginEnd="5dp"/>
+                android:text="@string/activity_course_teacher" />
 
             <android.support.v7.widget.AppCompatEditText
                 android:id="@+id/editText_professor"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="@string/activity_course_teacher"
                 android:layout_weight="1"
-                android:textSize="18sp"
-                android:imeOptions="actionNext" />
+                android:hint="@string/activity_course_teacher"
+                android:imeOptions="actionNext"
+                android:textSize="18sp" />
         </LinearLayout>
 
         <Spinner
@@ -72,10 +68,10 @@
             android:padding="5dp" />
 
         <fragment
+            android:id="@+id/fragment"
+            android:name="com.wellingtonmb88.aprovado.fragment.CalculatorFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:name="com.wellingtonmb88.aprovado.fragment.CalculatorFragment"
-            android:id="@+id/fragment"
             android:layout_gravity="center_horizontal"
             android:padding="10dp"
             tools:layout="@layout/fragment_calculator" />

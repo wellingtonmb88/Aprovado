@@ -8,30 +8,32 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
-import android.widget.LinearLayout;
 
 import com.wellingtonmb88.aprovado.R;
+import com.wellingtonmb88.aprovado.utils.CommonUtils;
 import com.wellingtonmb88.aprovado.utils.Constants;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class AboutActivity extends AppCompatActivity {
 
-    private Toolbar mToolbarLayout;
+    @Bind(R.id.toolbar_layout)
+    Toolbar mToolbarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
+        ButterKnife.bind(this);
 
-        LinearLayout toolbar = (LinearLayout) findViewById(R.id.toolbar);
-        mToolbarLayout = (Toolbar) toolbar.findViewById(R.id.toolbar_layout);
-        mToolbarLayout.setTitleTextColor(getResources().getColor(R.color.white));
         WebView wv = (WebView) findViewById(R.id.webView);
 
         wv.loadUrl(getString(R.string.url_activity_about));
 
         setSupportActionBar(mToolbarLayout);
 
-        if( getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setDisplayUseLogoEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
@@ -65,19 +67,16 @@ public class AboutActivity extends AppCompatActivity {
 
             return true;
         }
-        if(id == android.R.id.home){
+        if (id == android.R.id.home) {
             backForResult();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void backForResult(){
-       if(getIntent().hasExtra(Constants.TabSharedPreferences.SELECTED_TAB)){
-           int result = getIntent().getIntExtra(Constants.TabSharedPreferences.SELECTED_TAB,0);
-           Intent returnIntent = new Intent();
-           returnIntent.putExtra(Constants.TabSharedPreferences.SELECTED_TAB, result);
-           setResult(RESULT_OK, returnIntent);
-           finish();
-       }
+    private void backForResult() {
+        if (getIntent().hasExtra(Constants.TabSharedPreferences.SELECTED_TAB)) {
+            int result = getIntent().getIntExtra(Constants.TabSharedPreferences.SELECTED_TAB, 0);
+            CommonUtils.backForResult(this, result);
+        }
     }
 }
