@@ -6,7 +6,7 @@ import com.wellingtonmb88.aprovado.BuildConfig;
 
 public abstract class AprovadoLogger {
 
-    private static String TAG = "AprovadoLogger";
+    private final static String TAG = "AprovadoLogger";
 
     public static void d(String msg) {
 

@@ -12,9 +12,9 @@ import rx.schedulers.Schedulers;
 
 public class DatabaseHelper<T extends RealmObject> {
 
-    private static ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
+    private final static ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
 
-    private RealmDataSource<T> mRealmDataSource;
+    private final RealmDataSource<T> mRealmDataSource;
 
     public DatabaseHelper(RealmDataSource<T> realmDataSource) {
         mRealmDataSource = realmDataSource;

@@ -44,7 +44,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends BaseActivity implements MainView, NavigationView.OnNavigationItemSelectedListener {
 
     private static final int NUM_TABS = 2;
-    public static int REQUEST_CODE_MAIN_ACTIVITY = 2;
+    public static final int REQUEST_CODE_MAIN_ACTIVITY = 2;
 
     @Bind(R.id.pager)
     ViewPager mPager;
@@ -254,7 +254,7 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
 
     private static class SimpleOnPageChangeListener extends ViewPager.SimpleOnPageChangeListener {
 
-        private WeakReference<Activity> mActivity;
+        private final WeakReference<Activity> mActivity;
 
         public SimpleOnPageChangeListener(Activity activity) {
             mActivity = new WeakReference<>(activity);
@@ -272,7 +272,7 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
 
     private static class SimpleDrawerListener extends DrawerLayout.SimpleDrawerListener {
 
-        private WeakReference<Activity> mActivity;
+        private final WeakReference<Activity> mActivity;
 
         public SimpleDrawerListener(Activity activity) {
             mActivity = new WeakReference<>(activity);

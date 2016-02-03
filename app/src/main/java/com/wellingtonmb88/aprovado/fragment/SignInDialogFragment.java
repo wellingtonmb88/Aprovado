@@ -181,7 +181,7 @@ public class SignInDialogFragment extends DialogFragment implements
         }
     }
 
-    private User updateUserPreferences(GoogleSignInAccount acct) {
+    private void updateUserPreferences(GoogleSignInAccount acct) {
 
         User user = null;
 
@@ -192,7 +192,6 @@ public class SignInDialogFragment extends DialogFragment implements
         UserPreferences.saveUserToPreferences(getContext(), user);
 
         mMainPresenter.onUpdateDrawerLayout(user);
-        return user;
     }
 
     private void showProgressDialog() {

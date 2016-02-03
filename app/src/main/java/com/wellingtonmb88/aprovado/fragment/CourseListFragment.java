@@ -43,7 +43,7 @@ import butterknife.OnClick;
 
 public class CourseListFragment extends Fragment implements CourseListFragmentView, SwipeRefreshLayout.OnRefreshListener {
 
-    public static int REQUEST_CODE_FRAGMENT = 3;
+    public final static int REQUEST_CODE_FRAGMENT = 3;
 
     @Bind(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;

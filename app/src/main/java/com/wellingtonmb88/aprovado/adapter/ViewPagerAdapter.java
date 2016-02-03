@@ -6,12 +6,11 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.wellingtonmb88.aprovado.fragment.CalculatorFragment;
 import com.wellingtonmb88.aprovado.fragment.CourseListFragment;
-import com.wellingtonmb88.aprovado.utils.CommonUtils;
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    private CharSequence mTitles[];
-    private int mNumbOfTabs;
+    private final CharSequence mTitles[];
+    private final int mNumbOfTabs;
 
     public ViewPagerAdapter(FragmentManager fm, CharSequence titles[], int numbOfTabs) {
         super(fm);

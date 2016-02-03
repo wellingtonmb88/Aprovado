@@ -55,7 +55,7 @@ public class CalculatorFragment extends Fragment implements CalculatorFragmentVi
     @Inject
     CalculatorFragmentPresenterImpl mCalculatorFragmentPresenter;
 
-    private TextWatcher mTextWatcher = new TextWatcher() {
+    private final TextWatcher mTextWatcher = new TextWatcher() {
 
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {

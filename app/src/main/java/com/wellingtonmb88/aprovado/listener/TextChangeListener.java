@@ -12,7 +12,7 @@ import java.lang.ref.WeakReference;
 public class TextChangeListener implements TextWatcher {
 
     private String mBeforeTextChanged;
-    private WeakReference<EditText> mEditText;
+    private final WeakReference<EditText> mEditText;
 
     public TextChangeListener(EditText editText){
         mEditText = new WeakReference<>(editText);

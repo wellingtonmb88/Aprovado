@@ -12,7 +12,7 @@ import io.realm.RealmResults;
 
 public class RealmDataSource<T extends RealmObject> {
 
-    private WeakReference<Context> mContext;
+    private final WeakReference<Context> mContext;
 
     public RealmDataSource(Context context) {
         mContext = new WeakReference<>(context);

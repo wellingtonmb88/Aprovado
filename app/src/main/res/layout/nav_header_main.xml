@@ -16,8 +16,7 @@
         android:id="@+id/nav_header_profile_image"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/photo" />
+        android:layout_marginTop="30dp"/>
 
     <TextView
         android:id="@+id/nav_header_textview_name"

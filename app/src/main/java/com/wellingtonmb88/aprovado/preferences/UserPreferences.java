@@ -8,11 +8,11 @@ import com.wellingtonmb88.aprovado.entity.User;
 
 public abstract class UserPreferences {
 
-    private static String USER_NAME = "USER_NAME";
-    private static String USER_EMAIL = "USER_EMAIL";
-    private static String USER_PICTURE_URI = "USER_PICTURE_URI";
+    private static final String USER_NAME = "USER_NAME";
+    private static final String USER_EMAIL = "USER_EMAIL";
+    private static final String USER_PICTURE_URI = "USER_PICTURE_URI";
 
-    private static String USER_PREFERENCES = "USER_PREFERENCES";
+    private static final String USER_PREFERENCES = "USER_PREFERENCES";
 
     @SuppressLint("CommitPrefEdits")
     public static void saveUserToPreferences(Context context, User user) {

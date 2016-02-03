@@ -4,7 +4,6 @@ import com.wellingtonmb88.aprovado.database.DatabaseHelper;
 import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.presenter.interfaces.CourseDetailsPresenter;
 import com.wellingtonmb88.aprovado.presenter.interfaces.CourseDetailsView;
-import com.wellingtonmb88.aprovado.presenter.interfaces.CourseListFragmentView;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;

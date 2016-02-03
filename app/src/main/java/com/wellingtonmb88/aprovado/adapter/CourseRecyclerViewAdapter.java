@@ -28,9 +28,9 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         implements StickyRecyclerHeadersAdapter<RecyclerView.ViewHolder>, ItemTouchHelperAdapter {
 
 
-    private CourseListFragmentPresenter mCourseListFragmentPresenter;
-    private WeakReference<Context> mContext;
-    private List<Course> mCourses;
+    private final CourseListFragmentPresenter mCourseListFragmentPresenter;
+    private final WeakReference<Context> mContext;
+    private final List<Course> mCourses;
     private boolean mShouldAnimateView = true;
 
     public CourseRecyclerViewAdapter(CourseListFragmentPresenter courseListFragmentPresenter,
@@ -216,7 +216,7 @@ public class CourseRecyclerViewAdapter extends RecyclerView.Adapter<CourseRecycl
         TextView mTextViewCourseApproved;
         @Bind(R.id.imageView_card_item)
         ImageView mImageViewCourse;
-        private CourseListFragmentPresenter mCourseListFragmentPresenter;
+        private final CourseListFragmentPresenter mCourseListFragmentPresenter;
 
         public ViewHolder(CourseListFragmentPresenter courseListFragmentPresenter, View view) {
             super(view);

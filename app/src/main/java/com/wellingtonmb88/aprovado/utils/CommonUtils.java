@@ -11,9 +11,7 @@ import android.widget.EditText;
 import java.text.ParseException;
 import java.util.Locale;
 
-public class CommonUtils {
-
-    private static final String TAG = CommonUtils.class.getSimpleName();
+public abstract class CommonUtils {
 
     public static void hideSoftKeyBoard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);

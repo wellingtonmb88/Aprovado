@@ -1,15 +1,13 @@
 package com.wellingtonmb88.aprovado.entity;
 
 
-import android.net.Uri;
-
 public class User {
 
     private String mName;
     private String mEmail;
     private String mPictureUri;
 
-    public User(String name, String email, String pictureUri){
+    public User(String name, String email, String pictureUri) {
         this.mName = name;
         this.mEmail = email;
         this.mPictureUri = pictureUri;

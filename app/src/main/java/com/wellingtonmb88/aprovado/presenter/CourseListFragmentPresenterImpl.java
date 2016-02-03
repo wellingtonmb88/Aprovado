@@ -24,9 +24,9 @@ public class CourseListFragmentPresenterImpl implements CourseListFragmentPresen
     private CourseListFragmentView mView;
     private Subscription mSubscription;
     private List<Course> mList;
-    private List<Course> mDeletedCourseList;
-    private List<Integer> mDeletedPositionList;
-    private Handler mWorkHandler;
+    private final List<Course> mDeletedCourseList;
+    private final List<Integer> mDeletedPositionList;
+    private final Handler mWorkHandler;
     private Runnable mWorkRunnable = new Runnable() {
         @Override
         public void run() {

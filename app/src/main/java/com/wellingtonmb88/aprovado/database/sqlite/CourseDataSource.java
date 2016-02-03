@@ -15,9 +15,9 @@ import java.util.List;
 public class CourseDataSource {
 
     private SQLiteDatabase database;
-    private Database dbHelper;
+    private final Database dbHelper;
 
-    public CourseDataSource(Context context){
+    public CourseDataSource(Context context) {
         dbHelper = new Database(context);
     }
 
@@ -70,17 +70,17 @@ public class CourseDataSource {
     }
 
     public List<CourseSQLite> getAllCourses() {
-        List<CourseSQLite> courseList = new ArrayList<CourseSQLite>();
+        List<CourseSQLite> courseList = new ArrayList<>();
 
         Cursor cursor = database.query(CourseTable.TABLE_NAME,
                 CourseTable.ALL_COLUMNS, null, null, null, null, null);
 
-        if(cursor != null && cursor.moveToFirst()){
+        if (cursor != null && cursor.moveToFirst()) {
 
-            do{
+            do {
                 CourseSQLite course = new CourseSQLite(cursor);
                 courseList.add(course);
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
 
             cursor.close();
         }

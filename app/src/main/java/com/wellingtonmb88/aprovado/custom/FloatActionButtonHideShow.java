@@ -14,7 +14,7 @@ public class FloatActionButtonHideShow {
 
     private static final int TRANSLATE_DURATION_MILLIS = 300;
     private final Interpolator mInterpolator;
-    private WeakReference<View> mView;
+    private final WeakReference<View> mView;
     private boolean mVisible;
 
     public FloatActionButtonHideShow(View view) {
