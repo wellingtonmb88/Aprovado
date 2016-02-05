@@ -27,7 +27,7 @@ import com.wellingtonmb88.aprovado.database.DatabaseHelper;
 import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.listener.SimpleItemTouchHelperCallback;
 import com.wellingtonmb88.aprovado.presenter.CourseListFragmentPresenterImpl;
-import com.wellingtonmb88.aprovado.presenter.interfaces.CourseListFragmentView;
+import com.wellingtonmb88.aprovado.presenter.view.CourseListFragmentView;
 import com.wellingtonmb88.aprovado.utils.Constants;
 import com.wellingtonmb88.aprovado.utils.CourseSemesterComparator;
 

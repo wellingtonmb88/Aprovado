@@ -18,7 +18,7 @@ import com.wellingtonmb88.aprovado.dagger.components.DaggerActivityInjectorCompo
 import com.wellingtonmb88.aprovado.database.DatabaseHelper;
 import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.presenter.CourseDetailsPresenterImpl;
-import com.wellingtonmb88.aprovado.presenter.interfaces.CourseDetailsView;
+import com.wellingtonmb88.aprovado.presenter.view.CourseDetailsView;
 import com.wellingtonmb88.aprovado.utils.AprovadoLogger;
 import com.wellingtonmb88.aprovado.utils.CommonUtils;
 import com.wellingtonmb88.aprovado.utils.Constants;

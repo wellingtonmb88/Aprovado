@@ -3,7 +3,7 @@ package com.wellingtonmb88.aprovado.presenter;
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.entity.User;
 import com.wellingtonmb88.aprovado.presenter.interfaces.MainPresenter;
-import com.wellingtonmb88.aprovado.presenter.interfaces.MainView;
+import com.wellingtonmb88.aprovado.presenter.view.MainView;
 
 public class MainPresenterImpl implements MainPresenter {
 

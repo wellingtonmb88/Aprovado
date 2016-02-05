@@ -28,7 +28,7 @@ import com.wellingtonmb88.aprovado.entity.User;
 import com.wellingtonmb88.aprovado.fragment.SignInDialogFragment;
 import com.wellingtonmb88.aprovado.preferences.UserPreferences;
 import com.wellingtonmb88.aprovado.presenter.MainPresenterImpl;
-import com.wellingtonmb88.aprovado.presenter.interfaces.MainView;
+import com.wellingtonmb88.aprovado.presenter.view.MainView;
 import com.wellingtonmb88.aprovado.utils.CommonUtils;
 import com.wellingtonmb88.aprovado.utils.Constants;
 

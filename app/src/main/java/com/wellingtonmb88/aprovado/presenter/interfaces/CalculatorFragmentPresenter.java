@@ -2,6 +2,8 @@ package com.wellingtonmb88.aprovado.presenter.interfaces;
 
 import android.content.Context;
 
+import com.wellingtonmb88.aprovado.presenter.view.CalculatorFragmentView;
+
 public interface CalculatorFragmentPresenter {
 
     void calculateBimonthlyGrade1(Context context, String grade);

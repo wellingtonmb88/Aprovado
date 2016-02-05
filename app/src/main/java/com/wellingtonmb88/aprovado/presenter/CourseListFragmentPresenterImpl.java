@@ -7,7 +7,7 @@ import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.database.DatabaseHelper;
 import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.presenter.interfaces.CourseListFragmentPresenter;
-import com.wellingtonmb88.aprovado.presenter.interfaces.CourseListFragmentView;
+import com.wellingtonmb88.aprovado.presenter.view.CourseListFragmentView;
 
 import java.util.ArrayList;
 import java.util.List;
