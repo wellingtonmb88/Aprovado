@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.wellingtonmb88.aprovado.database.DatabaseHelper;
 import com.wellingtonmb88.aprovado.entity.Course;
+import com.wellingtonmb88.aprovado.presenter.view.CourseListFragmentView;
 
 import java.util.List;
 

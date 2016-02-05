@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.presenter.interfaces.CalculatorFragmentPresenter;
-import com.wellingtonmb88.aprovado.presenter.interfaces.CalculatorFragmentView;
+import com.wellingtonmb88.aprovado.presenter.view.CalculatorFragmentView;
 import com.wellingtonmb88.aprovado.utils.AprovadoLogger;
 import com.wellingtonmb88.aprovado.utils.CommonUtils;
 

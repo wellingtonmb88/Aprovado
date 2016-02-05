@@ -1,4 +1,4 @@
-package com.wellingtonmb88.aprovado.presenter.interfaces;
+package com.wellingtonmb88.aprovado.presenter.view;
 
 
 import com.wellingtonmb88.aprovado.entity.User;

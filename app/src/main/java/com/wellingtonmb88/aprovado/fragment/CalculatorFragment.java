@@ -17,7 +17,7 @@ import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.dagger.components.DaggerFragmentInjectorComponent;
 import com.wellingtonmb88.aprovado.listener.TextChangeListener;
 import com.wellingtonmb88.aprovado.presenter.CalculatorFragmentPresenterImpl;
-import com.wellingtonmb88.aprovado.presenter.interfaces.CalculatorFragmentView;
+import com.wellingtonmb88.aprovado.presenter.view.CalculatorFragmentView;
 import com.wellingtonmb88.aprovado.utils.AprovadoLogger;
 import com.wellingtonmb88.aprovado.utils.CommonUtils;
 
