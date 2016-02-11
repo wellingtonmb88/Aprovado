@@ -38,6 +38,15 @@ public class DatabaseHelper<T extends RealmObject> {
         });
     }
 
+    public List<T> createOrUpdateBatchSynchronous(final List<T> list, final Class<T> clazz) {
+
+        for (T entity : list) {
+            mRealmDataSource.createOrUpdate(entity);
+        }
+
+        return mRealmDataSource.getAll(clazz);
+    }
+
     public void delete(final Class<T> clazz, final String id) {
         EXECUTOR_SERVICE.execute(new Runnable() {
             @Override
@@ -56,7 +65,7 @@ public class DatabaseHelper<T extends RealmObject> {
         });
     }
 
-    public Observable<T>  getById(final Class<T> clazz, final String id) {
+    public Observable<T> getById(final Class<T> clazz, final String id) {
         return Observable.just(mRealmDataSource.getEntityById(clazz, id))
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.io());
@@ -68,5 +77,12 @@ public class DatabaseHelper<T extends RealmObject> {
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.io()).toList();
 
+    }
+
+    public Observable<List<T>> createOrUpdateBatch(final List<T> list, final Class<T> clazz) {
+
+        return Observable.from(createOrUpdateBatchSynchronous(list, clazz))
+                .onBackpressureBuffer()
+                .subscribeOn(Schedulers.io()).toList();
     }
 }

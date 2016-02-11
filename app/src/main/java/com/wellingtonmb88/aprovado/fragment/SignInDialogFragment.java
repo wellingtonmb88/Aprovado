@@ -2,6 +2,7 @@ package com.wellingtonmb88.aprovado.fragment;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
@@ -24,8 +26,10 @@ import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.activity.MainActivity;
 import com.wellingtonmb88.aprovado.dagger.components.DaggerFragmentInjectorComponent;
 import com.wellingtonmb88.aprovado.entity.User;
+import com.wellingtonmb88.aprovado.preferences.DriveApiPreferences;
 import com.wellingtonmb88.aprovado.preferences.UserPreferences;
 import com.wellingtonmb88.aprovado.presenter.MainPresenterImpl;
+import com.wellingtonmb88.aprovado.utils.AprovadoLogger;
 
 import javax.inject.Inject;
 
@@ -66,6 +70,7 @@ public class SignInDialogFragment extends DialogFragment implements
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+
     }
 
     @Override
@@ -167,7 +172,11 @@ public class SignInDialogFragment extends DialogFragment implements
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        AprovadoLogger.i("GoogleApiClient connection failed: " + connectionResult.toString());
+        if (!connectionResult.hasResolution()) {
+            // show the localized error dialog.
+            GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), connectionResult.getErrorCode(), 0).show();
+        }
     }
 
     private void updateUI(boolean signedIn) {
@@ -177,6 +186,10 @@ public class SignInDialogFragment extends DialogFragment implements
         } else {
             mSignInButton.setEnabled(true);
             mSignOutButton.setVisibility(View.GONE);
+            DriveApiPreferences.setDriveApiConnected(false);
+            UserPreferences.setFirstFlow(true);
+            mMainPresenter.onDisconnectFromDrive();
+            mMainPresenter.onHideNavMenuItem();
             updateUserPreferences(null);
         }
     }
@@ -186,10 +199,12 @@ public class SignInDialogFragment extends DialogFragment implements
         User user = null;
 
         if (acct != null) {
-            user = new User(acct.getDisplayName(), acct.getEmail(), acct.getPhotoUrl().toString());
+            Uri uri = Uri.parse("android.resource://" + getContext().getPackageName() + "/mipmap/ic_login_default");
+            String photoUrl = acct.getPhotoUrl() != null ? acct.getPhotoUrl().toString() : uri.toString();
+            user = new User(acct.getDisplayName(), acct.getEmail(), photoUrl);
         }
 
-        UserPreferences.saveUserToPreferences(getContext(), user);
+        UserPreferences.saveUserToPreferences(user);
 
         mMainPresenter.onUpdateDrawerLayout(user);
     }

@@ -1,11 +1,14 @@
 package com.wellingtonmb88.aprovado.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -24,8 +27,13 @@ import com.wellingtonmb88.aprovado.AppApplication;
 import com.wellingtonmb88.aprovado.R;
 import com.wellingtonmb88.aprovado.adapter.ViewPagerAdapter;
 import com.wellingtonmb88.aprovado.dagger.components.DaggerActivityInjectorComponent;
+import com.wellingtonmb88.aprovado.database.DatabaseHelper;
+import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.entity.User;
+import com.wellingtonmb88.aprovado.fragment.CalculatorFragment;
+import com.wellingtonmb88.aprovado.fragment.CourseListFragment;
 import com.wellingtonmb88.aprovado.fragment.SignInDialogFragment;
+import com.wellingtonmb88.aprovado.preferences.DriveApiPreferences;
 import com.wellingtonmb88.aprovado.preferences.UserPreferences;
 import com.wellingtonmb88.aprovado.presenter.MainPresenterImpl;
 import com.wellingtonmb88.aprovado.presenter.view.MainView;
@@ -33,6 +41,8 @@ import com.wellingtonmb88.aprovado.utils.CommonUtils;
 import com.wellingtonmb88.aprovado.utils.Constants;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -43,9 +53,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends BaseActivity implements MainView, NavigationView.OnNavigationItemSelectedListener {
 
-    private static final int NUM_TABS = 2;
     public static final int REQUEST_CODE_MAIN_ACTIVITY = 2;
-
+    public static final int REQUEST_CODE_DRIVE_API = 3;
+    private static final int NUM_TABS = 2;
     @Bind(R.id.pager)
     ViewPager mPager;
     @Bind(R.id.tabs)
@@ -56,9 +66,14 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
     DrawerLayout mDrawerLayout;
     @Bind(R.id.nav_view)
     NavigationView mNavigationView;
-
     @Inject
     MainPresenterImpl mMainPresenter;
+    @Inject
+    DatabaseHelper<Course> mDatabaseHelper;
+    private MenuItem mSyncDataNavMenuItem;
+    private MenuItem mDriveSignInNavMenuItem;
+    private CourseListFragment mCourseListFragment;
+    private ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,11 +87,20 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
                 .build()
                 .inject(this);
 
-        mMainPresenter.registerView(this);
+        progress = new ProgressDialog(this);
 
+        mMainPresenter.registerView(this);
+        mMainPresenter.registerDatabaseHelper(mDatabaseHelper);
+        mMainPresenter.onCreate();
+
+        mCourseListFragment = CourseListFragment.getNewInstance();
+
+        List<Fragment> fragmentList = new ArrayList<>();
+        fragmentList.add(mCourseListFragment);
+        fragmentList.add(CalculatorFragment.getNewInstance());
 
         CharSequence titles[] = {getString(R.string.tablebar_header_classes), getString(R.string.tablebar_header_calculator)};
-        setViewPageAdapter(titles, NUM_TABS);
+        setViewPageAdapter(fragmentList, titles, NUM_TABS);
 
         mToolbarLayout.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         setSupportActionBar(mToolbarLayout);
@@ -91,12 +115,16 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
         mDrawerLayout.setDrawerListener(new SimpleDrawerListener(this));
 
         mNavigationView.setNavigationItemSelectedListener(this);
+
+        mSyncDataNavMenuItem = mNavigationView.getMenu().findItem(R.id.nav_sync_data);
+        mDriveSignInNavMenuItem = mNavigationView.getMenu().findItem(R.id.nav_drive_sign_in);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        User user = UserPreferences.requestUserFromPreferences(this);
+        mMainPresenter.onResume();
+        User user = UserPreferences.getUserFromPreferences();
         updateDrawerLayout(user);
     }
 
@@ -124,6 +152,19 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
                 int selectedTab = data.getIntExtra(Constants.TabSharedPreferences.SELECTED_TAB, 0);
                 mPager.setCurrentItem(selectedTab);
             }
+        } else if (requestCode == REQUEST_CODE_DRIVE_API) {
+            if (resultCode == RESULT_OK) {
+                mSyncDataNavMenuItem.setVisible(true);
+                mDriveSignInNavMenuItem.setVisible(false);
+                mMainPresenter.onConnectToDrive();
+            } else {
+                mSyncDataNavMenuItem.setVisible(false);
+                mDriveSignInNavMenuItem.setVisible(true);
+                UserPreferences.setFirstFlow(false);
+                DriveApiPreferences.setDriveApiConnected(false);
+                DriveApiPreferences.setDriveApiConnectionDenied(true);
+                mMainPresenter.onDisconnectFromDrive();
+            }
         }
     }
 
@@ -145,8 +186,8 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
         return super.onOptionsItemSelected(item);
     }
 
-    private void setViewPageAdapter(CharSequence[] titles, int numTabs) {
-        ViewPagerAdapter mAdapter = new ViewPagerAdapter(getSupportFragmentManager(), titles, numTabs);
+    private void setViewPageAdapter(List<Fragment> fragmentList, CharSequence[] titles, int numTabs) {
+        ViewPagerAdapter mAdapter = new ViewPagerAdapter(getSupportFragmentManager(), fragmentList, titles, numTabs);
         mPager.setAdapter(mAdapter);
         mTabs.setupWithViewPager(mPager);
         mPager.addOnPageChangeListener(new SimpleOnPageChangeListener(this));
@@ -175,6 +216,40 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
     }
 
     @Override
+    public void courseListFromDriveApi(List<Course> courseList) {
+        if (mCourseListFragment != null) {
+            mCourseListFragment.setCourseList(courseList);
+        }
+    }
+
+    @Override
+    public void showAlertDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(R.string.alert_dialog_error_drive_title)
+                .setMessage(R.string.alert_dialog_error_drive_message).show();
+    }
+
+    @Override
+    public void showProgress(String message) {
+        if (!progress.isShowing()) {
+            progress.setMessage(message);
+            progress.show();
+        }
+    }
+
+    @Override
+    public void hideProgress() {
+        if (progress != null) {
+            progress.dismiss();
+        }
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         CommonUtils.hideSoftKeyBoard(this);
@@ -183,6 +258,17 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
         return false;
     }
 
+    @Override
+    public void onDriveApiDisconnectedChangeVisibilityOfNavMenuItem() {
+        mSyncDataNavMenuItem.setVisible(false);
+        mDriveSignInNavMenuItem.setVisible(false);
+    }
+
+    @Override
+    public void onDriveApiConnectedChangeVisibilityOfNavMenuItem() {
+        mSyncDataNavMenuItem.setVisible(true);
+        mDriveSignInNavMenuItem.setVisible(false);
+    }
 
     @Override
     public void updateDrawerLayout(User user) {
@@ -223,6 +309,20 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
                     name.setText(nameLabel);
                     if (loginItem != null) {
                         loginItem.setTitle(R.string.nav_menu_item_sign_out_label);
+
+                        boolean isDriveApiConnected = DriveApiPreferences.isDriveApiConnected();
+                        if (!isDriveApiConnected) {
+                            mSyncDataNavMenuItem.setVisible(false);
+                            mDriveSignInNavMenuItem.setVisible(true);
+                        } else {
+                            mSyncDataNavMenuItem.setVisible(true);
+                            mDriveSignInNavMenuItem.setVisible(false);
+                        }
+
+                        boolean isFirstFlow = UserPreferences.isFirstFlow();
+                        if (isFirstFlow) {
+                            mMainPresenter.onConnectToDrive();
+                        }
                     }
                 }
             }

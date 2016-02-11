@@ -8,6 +8,12 @@
         <item name="android:textColorPrimary">@color/ColorPrimaryDark</item>
     </style>
 
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="EditTextTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorAccent">@color/teal</item>
@@ -25,6 +31,12 @@
     <style name="FloatActionButtonTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorAccent">@color/teal</item>
+        <item name="android:textColorSecondary">@color/white</item>
+    </style>
+
+    <style name="FloatActionButtonTheme.CourseList" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorAccent">@color/ColorPrimary</item>
         <item name="android:textColorSecondary">@color/white</item>
     </style>
 

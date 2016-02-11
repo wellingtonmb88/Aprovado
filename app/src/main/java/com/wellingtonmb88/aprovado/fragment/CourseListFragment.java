@@ -63,6 +63,10 @@ public class CourseListFragment extends Fragment implements CourseListFragmentVi
     public CourseListFragment() {
     }
 
+    public static CourseListFragment getNewInstance() {
+        return new CourseListFragment();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_courses_list, container, false);
@@ -202,12 +206,19 @@ public class CourseListFragment extends Fragment implements CourseListFragmentVi
 
     @Override
     public void setCourseList(List<Course> courseList) {
-        mList.clear();
-        mList.addAll(courseList);
-        Collections.sort(mList, new CourseSemesterComparator());
-        mAdapter.notifyDataSetChanged();
-        // stopping swipe refresh
-        mSwipeRefreshLayout.setRefreshing(false);
+        if (!courseList.isEmpty()) {
+            mList.clear();
+            mList.addAll(courseList);
+            Collections.sort(mList, new CourseSemesterComparator());
+            mAdapter.notifyDataSetChanged();
+        }
+        setSwipeRefreshing(false);
+    }
+
+    public void setSwipeRefreshing(boolean refreshing) {
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setRefreshing(refreshing);
+        }
     }
 
     @Override

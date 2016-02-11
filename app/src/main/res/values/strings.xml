@@ -72,4 +72,9 @@
     <string name="nav_menu_item_sign_in_label">Sign in</string>
     <string name="nav_menu_item_sign_out_label">Sign out</string>
     <string name="dialog_progress_message">Loading....</string>
+    <string name="title_nav_drive_sign_in">Google Drive Sign in</string>
+    <string name="alert_dialog_error_drive_message">Ocorreu uma falha na conexão com o Google Drive! Por favor tente novamente mais tarde.</string>
+    <string name="alert_dialog_error_drive_title">Erro no Google Drive!</string>
+    <string name="progress_message_downloading_data">Downloading data..</string>
+    <string name="progress_message_syncing_data">Syncing data...</string>
 </resources>

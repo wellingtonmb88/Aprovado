@@ -7,10 +7,16 @@
             android:icon="@mipmap/ic_login"
             android:title="@string/nav_menu_item_sign_in_label" />
 
-        <!--<item-->
-        <!--android:id="@+id/nav_sync_data"-->
-        <!--android:icon="@mipmap/ic_connection"-->
-        <!--android:title="@string/title_nav_sync_data" />-->
+        <item
+            android:id="@+id/nav_sync_data"
+            android:icon="@mipmap/ic_sync"
+            android:title="@string/title_nav_sync_data"
+            android:visible="false" />
+        <item
+            android:id="@+id/nav_drive_sign_in"
+            android:icon="@mipmap/ic_folder"
+            android:title="@string/title_nav_drive_sign_in"
+            android:visible="false" />
 
         <item
             android:id="@+id/nav_feedback"

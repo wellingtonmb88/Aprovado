@@ -1,11 +1,7 @@
 package com.wellingtonmb88.aprovado.entity;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+public class CourseJSON {
 
-public class Course extends RealmObject {
-
-    @PrimaryKey
     private String id;
     private String name;
     private String professor;
@@ -21,11 +17,8 @@ public class Course extends RealmObject {
     /**
      * A constructor that initializes the Course object
      **/
-    public Course() {
-    }
-
-    public Course(String id, String name, String professor, int semester, float m1,
-                  float b1, float mediaB1, float m2, float b2, float mediaB2, float mediaFinal) {
+    public CourseJSON(String id, String name, String professor, int semester, float m1,
+                      float b1, float mediaB1, float m2, float b2, float mediaB2, float mediaFinal) {
         this.id = id;
         this.name = name;
         this.professor = professor;
