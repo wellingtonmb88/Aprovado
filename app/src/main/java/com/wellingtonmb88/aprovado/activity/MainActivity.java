@@ -245,7 +245,7 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
     }
 
     @Override
-    public Activity getActivity() {
+    public MainActivity getActivity() {
         return this;
     }
 

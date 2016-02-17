@@ -1,8 +1,7 @@
 package com.wellingtonmb88.aprovado.presenter.view;
 
 
-import android.app.Activity;
-
+import com.wellingtonmb88.aprovado.activity.MainActivity;
 import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.entity.User;
 
@@ -29,5 +28,5 @@ public interface MainView {
 
     void onDriveApiConnectedChangeVisibilityOfNavMenuItem();
 
-    Activity getActivity();
+    MainActivity getActivity();
 }

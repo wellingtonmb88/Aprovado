@@ -20,13 +20,13 @@ import rx.functions.Action1;
 public class CourseListFragmentPresenterImpl implements CourseListFragmentPresenter {
 
     private static final int HANDLER_TIMEOUT = 5000;
+    private final List<Course> mDeletedCourseList;
+    private final List<Integer> mDeletedPositionList;
+    private final Handler mWorkHandler;
     private DatabaseHelper<Course> mDatabaseHelper;
     private CourseListFragmentView mView;
     private Subscription mSubscription;
     private List<Course> mList;
-    private final List<Course> mDeletedCourseList;
-    private final List<Integer> mDeletedPositionList;
-    private final Handler mWorkHandler;
     private Runnable mWorkRunnable = new Runnable() {
         @Override
         public void run() {
@@ -80,6 +80,7 @@ public class CourseListFragmentPresenterImpl implements CourseListFragmentPresen
     @Override
     public void onSetCourseList() {
         mSubscription = mDatabaseHelper.getAll(Course.class)
+                .compose(mView.getFragment().<List<Course>>bindToLifecycle())
                 .delay(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getAllCoursesAction);

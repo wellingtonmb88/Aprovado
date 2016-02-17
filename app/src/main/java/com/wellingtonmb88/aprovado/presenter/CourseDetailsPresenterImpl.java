@@ -28,7 +28,7 @@ public class CourseDetailsPresenterImpl implements CourseDetailsPresenter {
     }
 
     @Override
-    public void registerDatabaseHelper(DatabaseHelper databaseHelper) {
+    public void registerDatabaseHelper(DatabaseHelper<Course> databaseHelper) {
         this.mDatabaseHelper = databaseHelper;
     }
 
@@ -51,6 +51,7 @@ public class CourseDetailsPresenterImpl implements CourseDetailsPresenter {
     @Override
     public void onGetCourse(String courseId) {
         mSubscription = mDatabaseHelper.getById(Course.class, courseId)
+                .compose(mView.getActivity().<Course>bindToLifecycle())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getCourseAction);
     }

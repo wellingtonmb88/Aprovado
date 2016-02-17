@@ -29,9 +29,10 @@ public class MainPresenterImpl implements MainPresenter,
 
     private DatabaseHelper<Course> mDatabaseHelper;
     private MainView mView;
-    private Subscription mSubscription;
+    private Subscription mSubscriptionBackUpToDrive;
+    private Subscription mSubscriptionGetAllCoursesFromDrive;
 
-    private Action1<List<Course>> getAllCoursesAction = new Action1<List<Course>>() {
+    private Action1<List<Course>> backUpToDriveAction = new Action1<List<Course>>() {
         @Override
         public void call(List<Course> courseList) {
 
@@ -84,9 +85,14 @@ public class MainPresenterImpl implements MainPresenter,
         mView = null;
         DriveApiManager.getInstance().disConnectGoogleDriveApi();
 
-        if (mSubscription != null) {
-            mSubscription.unsubscribe();
-            mSubscription = null;
+        if (mSubscriptionBackUpToDrive != null) {
+            mSubscriptionBackUpToDrive.unsubscribe();
+            mSubscriptionBackUpToDrive = null;
+        }
+
+        if (mSubscriptionGetAllCoursesFromDrive != null) {
+            mSubscriptionGetAllCoursesFromDrive.unsubscribe();
+            mSubscriptionGetAllCoursesFromDrive = null;
         }
     }
 
@@ -145,9 +151,10 @@ public class MainPresenterImpl implements MainPresenter,
 
     private void saveFileToDrive() {
         mView.showProgress(AppApplication.getAppContext().getString(R.string.progress_message_syncing_data));
-        mSubscription = mDatabaseHelper.getAll(Course.class)
+        mSubscriptionBackUpToDrive = mDatabaseHelper.getAll(Course.class)
+                .compose(mView.getActivity().<List<Course>>bindToLifecycle())
                 .observeOn(Schedulers.computation())
-                .subscribe(getAllCoursesAction);
+                .subscribe(backUpToDriveAction);
     }
 
     @Override
@@ -179,7 +186,8 @@ public class MainPresenterImpl implements MainPresenter,
             }
 
             if (!lisCourse.isEmpty() && mDatabaseHelper != null) {
-                mDatabaseHelper.createOrUpdateBatch(lisCourse, Course.class)
+                mSubscriptionGetAllCoursesFromDrive = mDatabaseHelper.createOrUpdateBatch(lisCourse, Course.class)
+                        .compose(mView.getActivity().<List<Course>>bindToLifecycle())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(getAllCoursesFromDriveAction);
             }

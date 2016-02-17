@@ -2,6 +2,7 @@ package com.wellingtonmb88.aprovado.presenter.interfaces;
 
 
 import com.wellingtonmb88.aprovado.database.DatabaseHelper;
+import com.wellingtonmb88.aprovado.entity.Course;
 import com.wellingtonmb88.aprovado.presenter.view.CourseDetailsView;
 
 public interface CourseDetailsPresenter {
@@ -14,5 +15,5 @@ public interface CourseDetailsPresenter {
 
     void registerView(CourseDetailsView mainView);
 
-    void registerDatabaseHelper(DatabaseHelper databaseHelper);
+    void registerDatabaseHelper(DatabaseHelper<Course> databaseHelper);
 }
