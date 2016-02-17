@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.wellingtonmb88.aprovado">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    
     <application
         android:name=".AppApplication"
         android:allowBackup="true"
@@ -22,6 +24,9 @@
         <activity
             android:name=".activity.AboutActivity"
             android:label="@string/title_activity_about" />
-    </application>
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="4e97d3000e5f574f8fcd1a48e7d74424b57e9b30" />
+    </application>
 </manifest>
