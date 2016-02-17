@@ -210,7 +210,8 @@ public class CourseListFragment extends BaseFragment implements CourseListFragme
 
     @Override
     public void setCourseList(List<Course> courseList) {
-        if (!courseList.isEmpty()) {
+        if (!courseList.isEmpty()
+                && mList != null && mAdapter != null) {
             mList.clear();
             mList.addAll(courseList);
             Collections.sort(mList, new CourseSemesterComparator());
