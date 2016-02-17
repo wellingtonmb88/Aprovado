@@ -34,8 +34,6 @@ dependencies {
     compile 'com.android.support:support-v4:' + supportLibVer
     apt 'com.google.dagger:dagger-compiler:2.0.1'
     provided 'javax.annotation:jsr250-api:1.0'
-    // If you want pre-written Activities and Fragments you can subclass as providers
-    //    compile 'com.google.android.gms:play-services-auth:8.4.0'
     compile 'com.timehop.stickyheadersrecyclerview:library:0.4.0@aar'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'io.realm:realm-android:0.87.0'
@@ -48,5 +46,10 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:8.3.0'
     compile 'com.google.android.gms:play-services-measurement:8.3.0'
 
+    // Include lower level libraries if you are using Google Play services v6.5 or
+    // greater. Details of the client libs can be found at https://goo.gl/jKNdLm.
+    compile 'com.google.android.gms:play-services-drive:8.3.0'
+
     compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.google.code.gson:gson:2.4'
 }

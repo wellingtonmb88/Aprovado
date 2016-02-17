@@ -158,6 +158,10 @@ public class CalculatorFragment extends Fragment implements CalculatorFragmentVi
     public CalculatorFragment() {
     }
 
+    public static CalculatorFragment getNewInstance(){
+        return new CalculatorFragment();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calculator, container, false);
