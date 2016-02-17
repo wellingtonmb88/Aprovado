@@ -78,7 +78,7 @@ public class DriveApiManager implements GoogleApiClient.OnConnectionFailedListen
     private DriveApiManager() {
     }
 
-    public static DriveApiManager getInstance() {
+    public static synchronized DriveApiManager getInstance() {
         if (sDriveApiManager == null) {
             sDriveApiManager = new DriveApiManager();
         }
