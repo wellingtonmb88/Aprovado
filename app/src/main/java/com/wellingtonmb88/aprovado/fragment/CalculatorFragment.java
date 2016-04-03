@@ -2,7 +2,6 @@ package com.wellingtonmb88.aprovado.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -29,7 +28,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class CalculatorFragment extends Fragment implements CalculatorFragmentView {
+public class CalculatorFragment extends BaseFragment implements CalculatorFragmentView {
 
     @Bind(R.id.editText_m1)
     EditText mEditTextCourseM1;
@@ -158,7 +157,7 @@ public class CalculatorFragment extends Fragment implements CalculatorFragmentVi
     public CalculatorFragment() {
     }
 
-    public static CalculatorFragment getNewInstance(){
+    public static CalculatorFragment getNewInstance() {
         return new CalculatorFragment();
     }
 
@@ -199,7 +198,7 @@ public class CalculatorFragment extends Fragment implements CalculatorFragmentVi
 
 
     @OnClick(R.id.button_clean_fields)
-    public void cleanFieldsButton(){
+    public void cleanFieldsButton() {
         mCalculatorFragmentPresenter.onCleanFields();
     }
 
@@ -213,6 +212,11 @@ public class CalculatorFragment extends Fragment implements CalculatorFragmentVi
         mSimulateB1.setText(getString(R.string.calculator_dialog_to_approve));
         mSimulateB2.setText(getString(R.string.calculator_dialog_to_approve));
         mSimulateMF.setText(getString(R.string.calculator_dialog_to_approve_final));
+    }
+
+    @Override
+    public CalculatorFragment getFragment() {
+        return this;
     }
 
     @Override

@@ -60,7 +60,7 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="title_nav_sync_data">Sincronizar dados</string>
+    <string name="title_nav_sync_data">Backup</string>
     <string name="title_nav_feedback">Feedback</string>
     <string name="title_nav_about">Sobre</string>
     <string name="button_label_clean_fields">Limpar Notas</string>
@@ -76,5 +76,5 @@
     <string name="alert_dialog_error_drive_message">Ocorreu uma falha na conexão com o Google Drive! Por favor tente novamente mais tarde.</string>
     <string name="alert_dialog_error_drive_title">Erro no Google Drive!</string>
     <string name="progress_message_downloading_data">Downloading data..</string>
-    <string name="progress_message_syncing_data">Syncing data...</string>
+    <string name="progress_message_syncing_data">Syncing data…</string>
 </resources>

@@ -3,11 +3,14 @@ package com.wellingtonmb88.aprovado;
 import android.app.Application;
 import android.content.Context;
 
+import com.crashlytics.android.Crashlytics;
 import com.wellingtonmb88.aprovado.dagger.components.ApplicationComponent;
 import com.wellingtonmb88.aprovado.dagger.components.BaseComponent;
 import com.wellingtonmb88.aprovado.dagger.components.DaggerApplicationComponent;
 import com.wellingtonmb88.aprovado.dagger.components.DaggerBaseComponent;
 import com.wellingtonmb88.aprovado.dagger.modules.ApplicationModule;
+
+import io.fabric.sdk.android.Fabric;
 
 public class AppApplication extends Application {
 
@@ -18,9 +21,17 @@ public class AppApplication extends Application {
         return sBaseComponent;
     }
 
+    public static Context getAppContext() {
+        return sContext;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics());
+        }
 
         sContext = getApplicationContext();
 
@@ -31,9 +42,5 @@ public class AppApplication extends Application {
         sBaseComponent = DaggerBaseComponent.builder()
                 .applicationComponent(applicationComponent)
                 .build();
-    }
-
-    public static Context getAppContext(){
-        return sContext;
     }
 }

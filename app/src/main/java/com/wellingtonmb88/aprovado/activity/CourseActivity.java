@@ -3,7 +3,6 @@ package com.wellingtonmb88.aprovado.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -32,7 +31,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class CourseActivity extends AppCompatActivity implements CourseDetailsView {
+public class CourseActivity extends BaseActivity implements CourseDetailsView {
 
     @Bind(R.id.editText_disciplina)
     EditText mSubject;
@@ -247,5 +246,10 @@ public class CourseActivity extends AppCompatActivity implements CourseDetailsVi
             mSpinnerSemester.setSelection(mCourse.getSemester());
             validateFields();
         }
+    }
+
+    @Override
+    public CourseActivity getActivity() {
+        return this;
     }
 }
