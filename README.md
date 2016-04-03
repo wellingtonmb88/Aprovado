@@ -1,6 +1,6 @@
 # Aprovado
 
-https://play.google.com/store/apps/details?id=com.wellingtonmb88.aprovado
+Android application: https://play.google.com/store/apps/details?id=com.wellingtonmb88.aprovado
 
 * The application is designed to help college students to calculate their bimonthly and end notes.
   
