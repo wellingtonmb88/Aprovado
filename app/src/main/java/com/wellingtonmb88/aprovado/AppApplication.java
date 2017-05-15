@@ -11,6 +11,8 @@ import com.wellingtonmb88.aprovado.dagger.components.DaggerBaseComponent;
 import com.wellingtonmb88.aprovado.dagger.modules.ApplicationModule;
 
 import io.fabric.sdk.android.Fabric;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 public class AppApplication extends Application {
 
@@ -31,6 +33,14 @@ public class AppApplication extends Application {
         if (!BuildConfig.DEBUG) {
             Fabric.with(this, new Crashlytics());
         }
+
+        Realm.init(this);
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
+                .deleteRealmIfMigrationNeeded()
+                .name("aprovado")
+                .build();
+
+        Realm.setDefaultConfiguration(realmConfiguration);
 
         sContext = getApplicationContext();
 
