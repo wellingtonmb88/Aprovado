@@ -27,6 +27,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [facebookAppId: project.hasProperty("FACEBOOK_API") ? FACEBOOK_APP_ID: System.getenv('FACEBOOK_API')]
     }
     buildTypes {
         release {
@@ -37,6 +38,7 @@ android {
     packagingOptions {
         exclude 'META-INF/services/javax.annotation.processing.Processor'
     }
+
 }
 
 dependencies {
