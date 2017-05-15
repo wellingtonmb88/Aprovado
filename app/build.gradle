@@ -42,6 +42,11 @@ android {
         ignore 'InvalidPackage'
         ignoreWarnings true 
     }
+     dexOptions {
+        incremental = true;
+        preDexLibraries = false
+        javaMaxHeapSize "4g" // 2g should be also OK
+    }
 }
 
 dependencies {
