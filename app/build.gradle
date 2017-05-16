@@ -18,13 +18,13 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'realm-android'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 23
     buildToolsVersion "25.0.3"
 
     defaultConfig {
         applicationId "com.wellingtonmb88.aprovado"
         minSdkVersion 18
-        targetSdkVersion 25
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
         manifestPlaceholders = [facebookAppId: project.hasProperty("FACEBOOK_API") ? FACEBOOK_APP_ID: System.getenv('FACEBOOK_API')]
