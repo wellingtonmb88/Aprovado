@@ -2,6 +2,8 @@ package com.wellingtonmb88.aprovado.dagger.components;
 
 import android.app.Application;
 
+import com.wellingtonmb88.aprovado.dagger.modules.ApplicationModule;
+import com.wellingtonmb88.aprovado.dagger.modules.LocalModule;
 import com.wellingtonmb88.aprovado.database.DatabaseHelper;
 import com.wellingtonmb88.aprovado.entity.Course;
 
