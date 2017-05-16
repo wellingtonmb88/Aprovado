@@ -1,46 +1,29 @@
-language: android 
+language: android
 jdk: oraclejdk8
 android:
   components:
-    # Uncomment the lines below if you want to
-    # use the latest revision of Android SDK Tools
-    - tools
-    - platform-tools
-
-    # The BuildTools version used by your project
-    - build-tools-25.0.3
-
-    # The SDK version used to compile your project
-    - android-25
-
-    # Additional components
-    - extra-google-google_play_services
-    - extra-google-m2repository
-    - extra-android-m2repository
-    - addon-google_apis-google-21 
-    
-    # Specify at least one system image,
-    # if you need to run emulator(s) during your tests
-    - sys-img-armeabi-v7a-android-22
-    
+  - tools
+  - platform-tools
+  - build-tools-25.0.3
+  - android-25
+  - extra-google-google_play_services
+  - extra-google-m2repository
+  - extra-android-m2repository
+  - addon-google_apis-google-21
+  - sys-img-armeabi-v7a-android-22
   licenses:
-    - 'android-sdk-preview-license-.+'
-    - 'android-sdk-license-.+'
-    - 'google-gdk-license-.+'
-    
+  - android-sdk-preview-license-.+
+  - android-sdk-license-.+
+  - google-gdk-license-.+
 env:
   global:
-   # install timeout in minutes (2 minutes by default)
-    - ADB_INSTALL_TIMEOUT=8
-
-# Emulator Management: Create, Start and Wait
+  - ADB_INSTALL_TIMEOUT=8
+  - secure: Y8JhTJDDte0f5+j4OYIzMXphz8JiOdsphi1eyvcA7m93319wdS0ZNZZi7cHIKQ8IS5kCR5zGreAe6exhf12fcurRQ9Uh930pvG4RmeIde88J9nLm9HTFA9VZEslVUafoRu+6Maga1lw9/pinTGJC3CmeFJrhODoMcFqug25r+ymWrWL+qaSg6R4lLnL3SaU3+3vdIi5RUgYGMyxXzHsMb1Kf+g+YA+yZkBvlQSxzjF0aDKyem8bCKV2RLqBDc1mo46bxG2Jr192qJ+jZohl31MuO3SkCtHsm45ylV8jv9yo7RXJBc9Mkiq+dDaN+DLYWjQuX+LWv/Qk1/ojApubw9CXNXCkJPhrBsDF+G2WM9ZPd63KC4M/wyZ36GKjyWM6fblsoI/In/JXPzRBoHC9ls1Fpmg8BkkDqIfcnCq4OeCpL+0T86I/7RLXpZP8tlqPCTMh0razb9ZcvTbJHdZO0SyXPWp05kvJWsQWPtjHzFgVRA5aA2I5FI18rFa5VvmUH+FP4ydhmpwe7NEbui1e3rv1OxHqg+Z+K1/HWxKm7o2Nk4TMI6Dc2shBPWjWwKHAF1Ke7K6o0HsOlZaKjyEx0dfVD47FSUZL/EzZDqetRPvJTOYuNwHrtJnDgi3Cui1ucLBR8ol25IwAgVkcAwWU6Wf74vh10GiC7je4u/g8ti7o=
 before_script:
-  - chmod +x gradlew
-  - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
-  - emulator -avd test -no-skin -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
-
+- chmod +x gradlew
+- echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
+- emulator -avd test -no-skin -no-audio -no-window &
+- android-wait-for-emulator
+- adb shell input keyevent 82 &
 script:
-  - ./gradlew connectedAndroidTest --stacktrace
- # - ./gradlew assembleDebug --stacktrace
+- "./gradlew connectedAndroidTest --stacktrace"

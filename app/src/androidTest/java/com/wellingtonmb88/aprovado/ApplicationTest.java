@@ -1,4 +1,4 @@
-package com.wellingtonmb88.passei;
+package com.wellingtonmb88.aprovado;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
